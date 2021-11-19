@@ -69,26 +69,32 @@ func (s *Syncer) Init(conf Config) {
 		s.currentBlockPosition = conf.General.StartBlockNumber
 	}
 	s.inspectors = make(map[string]inspector.Inspector)
-	s.registerInspectors(uniswapv3.NewUniswapV3(s.logger))
+	s.registerInspectors(uniswapv3.NewUniswapV3(s.logger, s.ws))
 }
 
 func (s *Syncer) Sync() {
 	newHeader := <-s.newHeaders
 
-	for s.currentBlockPosition < newHeader.Number.Uint64() - s.lag {
+	for s.currentBlockPosition < newHeader.Number.Uint64()-s.lag {
 		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(s.currentBlockPosition)))
 		if err != nil {
 			s.logger.Error("error getting block", zap.Error(err))
 		}
-		err = s.getInspector(uniswapv3.Inspector).InspectBlock(block)
-		if err != nil {
-			s.logger.Error("error inspecting block", zap.Error(err))
-		}
+		s.Inspect(block)
 		err = s.blockPositionHolder.Update(s.currentBlockPosition)
 		if err != nil {
 			s.logger.Error("error updating block position file", zap.Error(err))
 		}
 		s.currentBlockPosition++
+	}
+}
+
+func (s *Syncer) Inspect(block *types.Block) {
+	for k, v := range s.inspectors {
+		err := v.InspectBlock(block)
+		if err != nil {
+			s.logger.Error("error inspecting", zap.String("inspector", k), zap.Error(err))
+		}
 	}
 }
 

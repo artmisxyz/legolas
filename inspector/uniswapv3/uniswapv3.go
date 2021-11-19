@@ -6,13 +6,16 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
 	"os"
 )
 
 type uniswapV3 struct {
-	logger    *zap.Logger
-	contracts []contract
+	logger     *zap.Logger
+	contracts  []contract
+	ws         *ethclient.Client
+	filterFunc inspector.FilterFunc
 }
 
 type contract struct {
@@ -21,7 +24,7 @@ type contract struct {
 	name    string
 }
 
-const Inspector = "uniswapV3:inspector"
+const Name = "uniswapV3:inspector"
 
 const (
 	UniswapV3Factory                   = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
@@ -37,10 +40,11 @@ const (
 	V3Migrator                         = "0xA5644E29708357803b5A882D272c41cC0dF92B34"
 )
 
-func NewUniswapV3(logger *zap.Logger) inspector.Inspector {
+func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client) inspector.Inspector {
 	v := &uniswapV3{
-		logger:    logger.Named(Inspector),
+		logger:    logger.Named(Name),
 		contracts: make([]contract, 11),
+		ws:        ws,
 	}
 	base := "inspector/uniswapV3/abis/"
 
@@ -56,21 +60,36 @@ func NewUniswapV3(logger *zap.Logger) inspector.Inspector {
 	v.mustRegisterContract(NonfungiblePositionManager, base+"NonfungiblePositionManager.json", "NonfungiblePositionManager")
 	v.mustRegisterContract(V3Migrator, base+"V3Migrator.json", "V3Migrator")
 
+	var addresses []common.Address
+	for _, c := range v.contracts {
+		addresses = append(addresses, c.address)
+	}
+	v.filterFunc = inspector.GetFilterFunc(ws, addresses)
+
 	return v
 }
 
 func (v *uniswapV3) Name() string {
-	return Inspector
+	return Name
 }
 
 func (v *uniswapV3) InspectBlock(block *types.Block) error {
-	txs := v.Filter(block)
+	txs := v.FilterTransactions(block)
 	for _, tx := range txs {
 		err := v.InspectTransaction(tx)
 		if err != nil {
 			return fmt.Errorf("error inspecting tx. %w", err)
 		}
 	}
+	logs, err := v.filterLogs(block)
+	if err != nil {
+		return err
+	}
+	for _, log := range logs {
+		fmt.Println(v.isUniswapV3Contract(log.Address.String()))
+		fmt.Println(log.Data)
+	}
+
 	return nil
 }
 
@@ -80,17 +99,25 @@ func (v *uniswapV3) InspectTransaction(tx *types.Transaction) error {
 	return nil
 }
 
-func (v *uniswapV3) Filter(block *types.Block) []*types.Transaction {
+func (v *uniswapV3) FilterTransactions(block *types.Block) []*types.Transaction {
 	var filtered []*types.Transaction
 	txs := block.Transactions()
 	for _, tx := range txs {
 		if tx.To() != nil {
-			if v.isMine(tx.To().String()) {
+			if v.isUniswapV3Contract(tx.To().String()) {
 				filtered = append(filtered, tx)
 			}
 		}
 	}
 	return filtered
+}
+
+func (v *uniswapV3) filterLogs(block *types.Block) ([]types.Log, error) {
+	logs, err := v.filterFunc(block.Number())
+	if err != nil {
+		return nil, err
+	}
+	return logs, nil
 }
 
 func (v *uniswapV3) mustRegisterContract(address, abiPath, name string) {
@@ -110,7 +137,7 @@ func (v *uniswapV3) mustRegisterContract(address, abiPath, name string) {
 	v.contracts = append(v.contracts, c)
 }
 
-func (v *uniswapV3) isMine(address string) bool {
+func (v *uniswapV3) isUniswapV3Contract(address string) bool {
 	for _, c := range v.contracts {
 		if c.address.String() == address {
 			return true
