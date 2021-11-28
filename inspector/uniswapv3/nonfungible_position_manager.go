@@ -55,3 +55,32 @@ func (i *increaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash
 	v.tokenId = topics[1].Big()
 	return nil
 }
+
+
+
+type DecreaseLiquidityEvent struct {
+	tokenId   *big.Int
+	liquidity *big.Int
+	amount0   *big.Int
+	amount1   *big.Int
+}
+
+type decreaseLiquidityEventHandler struct {}
+
+func (d decreaseLiquidityEventHandler) Signature() string {
+	return crypto.Keccak256Hash([]byte("DecreaseLiquidity(uint256,uint128,uint256,uint256)")).String()
+}
+
+func (d decreaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+	var v DecreaseLiquidityEvent
+	err := abi.UnpackIntoInterface(&v, "DecreaseLiquidity", data)
+	if err != nil {
+		return err
+	}
+	v.tokenId = topics[1].Big()
+	return nil
+}
+
+func NewDecreaseLiquidityEventHandler() inspector.EventHandler {
+	return &decreaseLiquidityEventHandler{}
+}
