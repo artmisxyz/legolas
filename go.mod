@@ -3,9 +3,9 @@ module github.com/artmisxyz/blockinspector
 go 1.17
 
 require (
-	github.com/daoleno/uniswapv3-sdk/examples/quoter v0.0.0-20211104083937-6b7302131b1c
 	github.com/ethereum/go-ethereum v1.10.11
 	go.uber.org/zap v1.19.1
+	gotest.tools v2.2.0+incompatible
 )
 
 require (
@@ -14,9 +14,9 @@ require (
 	github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/google/uuid v1.1.5 // indirect
+	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/rjeczalik/notify v0.9.1 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect

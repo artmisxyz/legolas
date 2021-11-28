@@ -1,10 +1,13 @@
 package main
 
-import "github.com/artmisxyz/blockinspector/syncer"
+import (
+	"fmt"
+	"github.com/artmisxyz/blockinspector/syncer"
+)
 
 func main() {
 	conf := syncer.Config{}
-	conf.General.StartBlockNumber = 13550914
+	conf.General.StartBlockNumber = 13639719
 	conf.General.BlockLag = 10
 	conf.General.PosFileLocation = "."
 	conf.General.PosFileName = "block_inspector.pos"
@@ -14,7 +17,7 @@ func main() {
 
 	s := &syncer.Syncer{}
 	s.Init(conf)
-
+	fmt.Println("init successful")
 	for {
 		s.Sync()
 	}

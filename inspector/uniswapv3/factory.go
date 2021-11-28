@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"math/big"
 )
 
 type FactoryState struct {
@@ -25,8 +26,8 @@ type FactoryState struct {
 type PoolCreatedEvent struct {
 	Token0      common.Address
 	Token1      common.Address
-	Fee         int
-	TickSpacing int
+	Fee         *big.Int
+	TickSpacing *big.Int
 	Pool        common.Address
 }
 
@@ -35,11 +36,13 @@ type poolCreatedEventHandler struct {
 }
 
 func NewPoolCreatedEventHandler() inspector.EventHandler {
-	return &poolCreatedEventHandler{}
+	return &poolCreatedEventHandler{
+		factoryState: &FactoryState{},
+	}
 }
 
 func (p *poolCreatedEventHandler) Signature() string {
-	return crypto.Keccak256Hash([]byte("createPool(address,address,uint24)")).String()
+	return crypto.Keccak256Hash([]byte("PoolCreated(address,address,uint24,int24,address)")).String()
 }
 
 func (p *poolCreatedEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) {
@@ -48,7 +51,8 @@ func (p *poolCreatedEventHandler) Handle(abi abi.ABI, topics []common.Hash, data
 	if err != nil {
 		fmt.Println("err", err)
 	}
-	fmt.Println("token0", v.Token0)
-	fmt.Println("token1", v.Token1)
+	v.Token0 = common.BytesToAddress(topics[1].Bytes())
+	v.Token1 = common.BytesToAddress(topics[2].Bytes())
+	v.Fee = topics[3].Big()
 	p.factoryState.poolCount++
 }

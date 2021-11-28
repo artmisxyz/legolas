@@ -1,6 +1,7 @@
 package inspector
 
 import (
+	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -20,6 +21,7 @@ type Contract struct {
 
 func (c *Contract) HandleEvent(log types.Log) {
 	for _, e := range c.EventHandlers {
+		fmt.Println(log.Topics[0].String())
 		if e.Signature() == log.Topics[0].String() {
 			e.Handle(c.ABI, log.Topics, log.Data)
 		}
