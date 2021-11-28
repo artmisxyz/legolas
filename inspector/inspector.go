@@ -10,10 +10,8 @@ import (
 )
 
 type Inspector interface {
-	InspectTransaction(tx *types.Transaction) error
-	InspectBlock(block *types.Block) error
-	FilterTransactions(block *types.Block) []*types.Transaction
 	Name() string
+	InspectBlock(block *types.Block) error
 }
 
 type FilterFunc func(blockNumber *big.Int) ([]types.Log, error)
