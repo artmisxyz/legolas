@@ -1,7 +1,6 @@
 package uniswapv3
 
 import (
-	"fmt"
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -45,14 +44,15 @@ func (p *poolCreatedEventHandler) Signature() string {
 	return crypto.Keccak256Hash([]byte("PoolCreated(address,address,uint24,int24,address)")).String()
 }
 
-func (p *poolCreatedEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) {
+func (p *poolCreatedEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
 	var v PoolCreatedEvent
 	err := abi.UnpackIntoInterface(&v, "PoolCreated", data)
 	if err != nil {
-		fmt.Println("err", err)
+		return err
 	}
 	v.Token0 = common.BytesToAddress(topics[1].Bytes())
 	v.Token1 = common.BytesToAddress(topics[2].Bytes())
 	v.Fee = topics[3].Big()
 	p.factoryState.poolCount++
+	return nil
 }
