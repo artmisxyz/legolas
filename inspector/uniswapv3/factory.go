@@ -4,7 +4,6 @@ import (
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"math/big"
 )
 
@@ -41,7 +40,7 @@ func NewPoolCreatedEventHandler() inspector.EventHandler {
 }
 
 func (p *poolCreatedEventHandler) Signature() string {
-	return crypto.Keccak256Hash([]byte("PoolCreated(address,address,uint24,int24,address)")).String()
+	return "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118"
 }
 
 func (p *poolCreatedEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {

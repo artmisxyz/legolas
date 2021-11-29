@@ -4,7 +4,6 @@ import (
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"math/big"
 )
 
@@ -43,7 +42,7 @@ func NewIncreaseLiquidityEventHandler() inspector.EventHandler {
 }
 
 func (i *increaseLiquidityEventHandler) Signature() string {
-	return crypto.Keccak256Hash([]byte("IncreaseLiquidity(uint256,uint128,uint256,uint256)")).String()
+	return "0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f"
 }
 
 func (i *increaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
@@ -56,8 +55,6 @@ func (i *increaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash
 	return nil
 }
 
-
-
 type DecreaseLiquidityEvent struct {
 	tokenId   *big.Int
 	liquidity *big.Int
@@ -65,13 +62,13 @@ type DecreaseLiquidityEvent struct {
 	amount1   *big.Int
 }
 
-type decreaseLiquidityEventHandler struct {}
+type decreaseLiquidityEventHandler struct{}
 
-func (d decreaseLiquidityEventHandler) Signature() string {
-	return crypto.Keccak256Hash([]byte("DecreaseLiquidity(uint256,uint128,uint256,uint256)")).String()
+func (d *decreaseLiquidityEventHandler) Signature() string {
+	return "0x26f6a048ee9138f2c0ce266f322cb99228e8d619ae2bff30c67f8dcf9d2377b4"
 }
 
-func (d decreaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+func (d *decreaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
 	var v DecreaseLiquidityEvent
 	err := abi.UnpackIntoInterface(&v, "DecreaseLiquidity", data)
 	if err != nil {
@@ -83,4 +80,56 @@ func (d decreaseLiquidityEventHandler) Handle(abi abi.ABI, topics []common.Hash,
 
 func NewDecreaseLiquidityEventHandler() inspector.EventHandler {
 	return &decreaseLiquidityEventHandler{}
+}
+
+type CollectEvent struct {
+	tokenId   *big.Int
+	recipient *big.Int
+	amount0   *big.Int
+	amount1   *big.Int
+}
+
+type collectEventHandler struct {
+}
+
+func NewCollectEventHandler() inspector.EventHandler {
+	return &collectEventHandler{}
+}
+
+func (c *collectEventHandler) Signature() string {
+	return "0x40d0efd1a53d60ecbf40971b9daf7dc90178c3aadc7aab1765632738fa8b8f01"
+}
+
+func (c *collectEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+	var v CollectEvent
+	err := abi.UnpackIntoInterface(&v, "Collect", data)
+	if err != nil {
+		return err
+	}
+	v.tokenId = topics[1].Big()
+	return nil
+}
+
+type TransferEvent struct {
+	from    common.Address
+	to      common.Address
+	tokenId *big.Int
+}
+
+type transferEventHandler struct{}
+
+func NewTransferEventHandler() inspector.EventHandler {
+	return &transferEventHandler{}
+}
+
+func (t transferEventHandler) Signature() string {
+	return "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+}
+
+func (t transferEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+	var v TransferEvent
+	v.from = common.BytesToAddress(topics[1].Bytes())
+	v.to = common.BytesToAddress(topics[2].Bytes())
+	v.tokenId = topics[3].Big()
+	return nil
 }

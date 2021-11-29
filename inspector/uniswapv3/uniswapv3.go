@@ -111,6 +111,12 @@ func (v *uniswapV3) mustRegisterContract(address, abiPath, name string) {
 	if c.Address.String() == UniswapV3Factory {
 		c.RegisterEventHandler(NewPoolCreatedEventHandler())
 	}
+	if c.Address.String() == NonfungiblePositionManager {
+		c.RegisterEventHandler(NewIncreaseLiquidityEventHandler())
+		c.RegisterEventHandler(NewDecreaseLiquidityEventHandler())
+		c.RegisterEventHandler(NewCollectEventHandler())
+		c.RegisterEventHandler(NewTransferEventHandler())
+	}
 	v.contracts = append(v.contracts, c)
 }
 
