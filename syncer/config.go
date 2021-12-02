@@ -6,7 +6,7 @@ type Config struct {
 		PosFileName      string `yaml:"PosFileName"`
 		BlockLag         int    `yaml:"BlockLag"`
 		StartBlockNumber uint64 `yaml:"StartBlockNumber"`
-	}
+	} `yaml:"General"`
 	Node struct {
 		RPC       string `yaml:"RPC"`
 		Websocket string `yaml:"Websocket"`
@@ -14,4 +14,6 @@ type Config struct {
 	Logger struct {
 		Level string `yaml:"Level"`
 	}
+	Contracts struct {
+	} `yaml:"Contracts"`
 }
