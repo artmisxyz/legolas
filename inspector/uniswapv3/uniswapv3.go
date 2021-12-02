@@ -1,7 +1,6 @@
 package uniswapv3
 
 import (
-	"fmt"
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -43,16 +42,16 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client) inspector.Inspector 
 	base := "inspector/uniswapV3/abis/"
 
 	v.mustRegisterContract(UniswapV3Factory, base+"UniswapV3Factory.json", "UniswapV3Factory")
-	//v.mustRegisterContract(Multicall2, base+"Multicall2.json", "Multicall2")
-	//v.mustRegisterContract(ProxyAdmin, base+"ProxyAdmin.json", "ProxyAdmin")
-	//v.mustRegisterContract(TickLens, base+"TickLens.json", "TickLens")
-	//v.mustRegisterContract(Quoter, base+"Quoter.json", "Quoter")
-	//v.mustRegisterContract(SwapRouter, base+"SwapRouter.json", "SwapRouter")
-	//v.mustRegisterContract(NFTDescriptor, base+"NFTDescriptor.json", "NFTDescriptor")
-	//v.mustRegisterContract(NonfungibleTokenPositionDescriptor, base+"NonfungibleTokenPositionDescriptor.json", "NonfungibleTokenPositionDescriptor")
-	//v.mustRegisterContract(TransparentUpgradeableProxy, base+"TransparentUpgradeableProxy.json", "TransparentUpgradeableProxy")
-	//v.mustRegisterContract(NonfungiblePositionManager, base+"NonfungiblePositionManager.json", "NonfungiblePositionManager")
-	//v.mustRegisterContract(V3Migrator, base+"V3Migrator.json", "V3Migrator")
+	v.mustRegisterContract(Multicall2, base+"Multicall2.json", "Multicall2")
+	v.mustRegisterContract(ProxyAdmin, base+"ProxyAdmin.json", "ProxyAdmin")
+	v.mustRegisterContract(TickLens, base+"TickLens.json", "TickLens")
+	v.mustRegisterContract(Quoter, base+"Quoter.json", "Quoter")
+	v.mustRegisterContract(SwapRouter, base+"SwapRouter.json", "SwapRouter")
+	v.mustRegisterContract(NFTDescriptor, base+"NFTDescriptor.json", "NFTDescriptor")
+	v.mustRegisterContract(NonfungibleTokenPositionDescriptor, base+"NonfungibleTokenPositionDescriptor.json", "NonfungibleTokenPositionDescriptor")
+	v.mustRegisterContract(TransparentUpgradeableProxy, base+"TransparentUpgradeableProxy.json", "TransparentUpgradeableProxy")
+	v.mustRegisterContract(NonfungiblePositionManager, base+"NonfungiblePositionManager.json", "NonfungiblePositionManager")
+	v.mustRegisterContract(V3Migrator, base+"V3Migrator.json", "V3Migrator")
 
 	var addresses []common.Address
 	for _, c := range v.contracts {
@@ -71,7 +70,6 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("block", block.Number())
 	for _, log := range logs {
 		v.HandleEvent(log)
 	}
