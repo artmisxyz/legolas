@@ -8,6 +8,34 @@ import (
 )
 
 var (
+	// EventsColumns holds the columns for the "events" table.
+	EventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "signature", Type: field.TypeString},
+		{Name: "address", Type: field.TypeString},
+		{Name: "block_number", Type: field.TypeUint64},
+		{Name: "tx_hash", Type: field.TypeString},
+		{Name: "tx_index", Type: field.TypeUint64},
+		{Name: "block_hash", Type: field.TypeString},
+		{Name: "index", Type: field.TypeUint64},
+		{Name: "hash", Type: field.TypeString, Unique: true},
+		{Name: "uniswap_v3increase_liqudity_event", Type: field.TypeInt, Nullable: true},
+	}
+	// EventsTable holds the schema information for the "events" table.
+	EventsTable = &schema.Table{
+		Name:       "events",
+		Columns:    EventsColumns,
+		PrimaryKey: []*schema.Column{EventsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "events_uniswap_v3increase_liqudities_event",
+				Columns:    []*schema.Column{EventsColumns[10]},
+				RefColumns: []*schema.Column{UniswapV3increaseLiquditiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// PositionsColumns holds the columns for the "positions" table.
 	PositionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
@@ -35,11 +63,28 @@ var (
 		Columns:    PositionsColumns,
 		PrimaryKey: []*schema.Column{PositionsColumns[0]},
 	}
+	// UniswapV3increaseLiquditiesColumns holds the columns for the "uniswap_v3increase_liqudities" table.
+	UniswapV3increaseLiquditiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+	}
+	// UniswapV3increaseLiquditiesTable holds the schema information for the "uniswap_v3increase_liqudities" table.
+	UniswapV3increaseLiquditiesTable = &schema.Table{
+		Name:       "uniswap_v3increase_liqudities",
+		Columns:    UniswapV3increaseLiquditiesColumns,
+		PrimaryKey: []*schema.Column{UniswapV3increaseLiquditiesColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		EventsTable,
 		PositionsTable,
+		UniswapV3increaseLiquditiesTable,
 	}
 )
 
 func init() {
+	EventsTable.ForeignKeys[0].RefTable = UniswapV3increaseLiquditiesTable
 }

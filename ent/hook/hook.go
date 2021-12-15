@@ -9,6 +9,19 @@ import (
 	"github.com/artmisxyz/blockinspector/ent"
 )
 
+// The EventFunc type is an adapter to allow the use of ordinary
+// function as Event mutator.
+type EventFunc func(context.Context, *ent.EventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EventMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PositionFunc type is an adapter to allow the use of ordinary
 // function as Position mutator.
 type PositionFunc func(context.Context, *ent.PositionMutation) (ent.Value, error)
@@ -18,6 +31,19 @@ func (f PositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	mv, ok := m.(*ent.PositionMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PositionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UniswapV3IncreaseLiqudityFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3IncreaseLiqudity mutator.
+type UniswapV3IncreaseLiqudityFunc func(context.Context, *ent.UniswapV3IncreaseLiqudityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3IncreaseLiqudityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3IncreaseLiqudityMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3IncreaseLiqudityMutation", m)
 	}
 	return f(ctx, mv)
 }

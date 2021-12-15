@@ -8,7 +8,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -29,7 +31,9 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		position.Table: position.ValidColumn,
+		event.Table:                     event.ValidColumn,
+		position.Table:                  position.ValidColumn,
+		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

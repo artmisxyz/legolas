@@ -6,5 +6,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Event is the predicate function for event builders.
+type Event func(*sql.Selector)
+
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
+
+// UniswapV3IncreaseLiqudity is the predicate function for uniswapv3increaseliqudity builders.
+type UniswapV3IncreaseLiqudity func(*sql.Selector)

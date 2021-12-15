@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
 	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 
 	"entgo.io/ent"
 )
@@ -23,8 +25,836 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypePosition = "Position"
+	TypeEvent                     = "Event"
+	TypePosition                  = "Position"
+	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
 )
+
+// EventMutation represents an operation that mutates the Event nodes in the graph.
+type EventMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	signature       *string
+	address         *string
+	block_number    *uint64
+	addblock_number *uint64
+	tx_hash         *string
+	tx_index        *uint64
+	addtx_index     *uint64
+	block_hash      *string
+	index           *uint64
+	addindex        *uint64
+	hash            *string
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*Event, error)
+	predicates      []predicate.Event
+}
+
+var _ ent.Mutation = (*EventMutation)(nil)
+
+// eventOption allows management of the mutation configuration using functional options.
+type eventOption func(*EventMutation)
+
+// newEventMutation creates new mutation for the Event entity.
+func newEventMutation(c config, op Op, opts ...eventOption) *EventMutation {
+	m := &EventMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEvent,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEventID sets the ID field of the mutation.
+func withEventID(id int) eventOption {
+	return func(m *EventMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Event
+		)
+		m.oldValue = func(ctx context.Context) (*Event, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Event.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEvent sets the old Event of the mutation.
+func withEvent(node *Event) eventOption {
+	return func(m *EventMutation) {
+		m.oldValue = func(context.Context) (*Event, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EventMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EventMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EventMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the "name" field.
+func (m *EventMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *EventMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *EventMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSignature sets the "signature" field.
+func (m *EventMutation) SetSignature(s string) {
+	m.signature = &s
+}
+
+// Signature returns the value of the "signature" field in the mutation.
+func (m *EventMutation) Signature() (r string, exists bool) {
+	v := m.signature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignature returns the old "signature" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldSignature(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSignature is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSignature requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignature: %w", err)
+	}
+	return oldValue.Signature, nil
+}
+
+// ResetSignature resets all changes to the "signature" field.
+func (m *EventMutation) ResetSignature() {
+	m.signature = nil
+}
+
+// SetAddress sets the "address" field.
+func (m *EventMutation) SetAddress(s string) {
+	m.address = &s
+}
+
+// Address returns the value of the "address" field in the mutation.
+func (m *EventMutation) Address() (r string, exists bool) {
+	v := m.address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddress returns the old "address" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldAddress(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddress: %w", err)
+	}
+	return oldValue.Address, nil
+}
+
+// ResetAddress resets all changes to the "address" field.
+func (m *EventMutation) ResetAddress() {
+	m.address = nil
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (m *EventMutation) SetBlockNumber(u uint64) {
+	m.block_number = &u
+	m.addblock_number = nil
+}
+
+// BlockNumber returns the value of the "block_number" field in the mutation.
+func (m *EventMutation) BlockNumber() (r uint64, exists bool) {
+	v := m.block_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockNumber returns the old "block_number" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldBlockNumber(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBlockNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBlockNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockNumber: %w", err)
+	}
+	return oldValue.BlockNumber, nil
+}
+
+// AddBlockNumber adds u to the "block_number" field.
+func (m *EventMutation) AddBlockNumber(u uint64) {
+	if m.addblock_number != nil {
+		*m.addblock_number += u
+	} else {
+		m.addblock_number = &u
+	}
+}
+
+// AddedBlockNumber returns the value that was added to the "block_number" field in this mutation.
+func (m *EventMutation) AddedBlockNumber() (r uint64, exists bool) {
+	v := m.addblock_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBlockNumber resets all changes to the "block_number" field.
+func (m *EventMutation) ResetBlockNumber() {
+	m.block_number = nil
+	m.addblock_number = nil
+}
+
+// SetTxHash sets the "tx_hash" field.
+func (m *EventMutation) SetTxHash(s string) {
+	m.tx_hash = &s
+}
+
+// TxHash returns the value of the "tx_hash" field in the mutation.
+func (m *EventMutation) TxHash() (r string, exists bool) {
+	v := m.tx_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTxHash returns the old "tx_hash" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldTxHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTxHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTxHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTxHash: %w", err)
+	}
+	return oldValue.TxHash, nil
+}
+
+// ResetTxHash resets all changes to the "tx_hash" field.
+func (m *EventMutation) ResetTxHash() {
+	m.tx_hash = nil
+}
+
+// SetTxIndex sets the "tx_index" field.
+func (m *EventMutation) SetTxIndex(u uint64) {
+	m.tx_index = &u
+	m.addtx_index = nil
+}
+
+// TxIndex returns the value of the "tx_index" field in the mutation.
+func (m *EventMutation) TxIndex() (r uint64, exists bool) {
+	v := m.tx_index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTxIndex returns the old "tx_index" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldTxIndex(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTxIndex is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTxIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTxIndex: %w", err)
+	}
+	return oldValue.TxIndex, nil
+}
+
+// AddTxIndex adds u to the "tx_index" field.
+func (m *EventMutation) AddTxIndex(u uint64) {
+	if m.addtx_index != nil {
+		*m.addtx_index += u
+	} else {
+		m.addtx_index = &u
+	}
+}
+
+// AddedTxIndex returns the value that was added to the "tx_index" field in this mutation.
+func (m *EventMutation) AddedTxIndex() (r uint64, exists bool) {
+	v := m.addtx_index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTxIndex resets all changes to the "tx_index" field.
+func (m *EventMutation) ResetTxIndex() {
+	m.tx_index = nil
+	m.addtx_index = nil
+}
+
+// SetBlockHash sets the "block_hash" field.
+func (m *EventMutation) SetBlockHash(s string) {
+	m.block_hash = &s
+}
+
+// BlockHash returns the value of the "block_hash" field in the mutation.
+func (m *EventMutation) BlockHash() (r string, exists bool) {
+	v := m.block_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockHash returns the old "block_hash" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldBlockHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBlockHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBlockHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockHash: %w", err)
+	}
+	return oldValue.BlockHash, nil
+}
+
+// ResetBlockHash resets all changes to the "block_hash" field.
+func (m *EventMutation) ResetBlockHash() {
+	m.block_hash = nil
+}
+
+// SetIndex sets the "index" field.
+func (m *EventMutation) SetIndex(u uint64) {
+	m.index = &u
+	m.addindex = nil
+}
+
+// Index returns the value of the "index" field in the mutation.
+func (m *EventMutation) Index() (r uint64, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old "index" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldIndex(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds u to the "index" field.
+func (m *EventMutation) AddIndex(u uint64) {
+	if m.addindex != nil {
+		*m.addindex += u
+	} else {
+		m.addindex = &u
+	}
+}
+
+// AddedIndex returns the value that was added to the "index" field in this mutation.
+func (m *EventMutation) AddedIndex() (r uint64, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex resets all changes to the "index" field.
+func (m *EventMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// SetHash sets the "hash" field.
+func (m *EventMutation) SetHash(s string) {
+	m.hash = &s
+}
+
+// Hash returns the value of the "hash" field in the mutation.
+func (m *EventMutation) Hash() (r string, exists bool) {
+	v := m.hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHash returns the old "hash" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHash: %w", err)
+	}
+	return oldValue.Hash, nil
+}
+
+// ResetHash resets all changes to the "hash" field.
+func (m *EventMutation) ResetHash() {
+	m.hash = nil
+}
+
+// Where appends a list predicates to the EventMutation builder.
+func (m *EventMutation) Where(ps ...predicate.Event) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *EventMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Event).
+func (m *EventMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EventMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.name != nil {
+		fields = append(fields, event.FieldName)
+	}
+	if m.signature != nil {
+		fields = append(fields, event.FieldSignature)
+	}
+	if m.address != nil {
+		fields = append(fields, event.FieldAddress)
+	}
+	if m.block_number != nil {
+		fields = append(fields, event.FieldBlockNumber)
+	}
+	if m.tx_hash != nil {
+		fields = append(fields, event.FieldTxHash)
+	}
+	if m.tx_index != nil {
+		fields = append(fields, event.FieldTxIndex)
+	}
+	if m.block_hash != nil {
+		fields = append(fields, event.FieldBlockHash)
+	}
+	if m.index != nil {
+		fields = append(fields, event.FieldIndex)
+	}
+	if m.hash != nil {
+		fields = append(fields, event.FieldHash)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EventMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case event.FieldName:
+		return m.Name()
+	case event.FieldSignature:
+		return m.Signature()
+	case event.FieldAddress:
+		return m.Address()
+	case event.FieldBlockNumber:
+		return m.BlockNumber()
+	case event.FieldTxHash:
+		return m.TxHash()
+	case event.FieldTxIndex:
+		return m.TxIndex()
+	case event.FieldBlockHash:
+		return m.BlockHash()
+	case event.FieldIndex:
+		return m.Index()
+	case event.FieldHash:
+		return m.Hash()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case event.FieldName:
+		return m.OldName(ctx)
+	case event.FieldSignature:
+		return m.OldSignature(ctx)
+	case event.FieldAddress:
+		return m.OldAddress(ctx)
+	case event.FieldBlockNumber:
+		return m.OldBlockNumber(ctx)
+	case event.FieldTxHash:
+		return m.OldTxHash(ctx)
+	case event.FieldTxIndex:
+		return m.OldTxIndex(ctx)
+	case event.FieldBlockHash:
+		return m.OldBlockHash(ctx)
+	case event.FieldIndex:
+		return m.OldIndex(ctx)
+	case event.FieldHash:
+		return m.OldHash(ctx)
+	}
+	return nil, fmt.Errorf("unknown Event field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EventMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case event.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case event.FieldSignature:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignature(v)
+		return nil
+	case event.FieldAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddress(v)
+		return nil
+	case event.FieldBlockNumber:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockNumber(v)
+		return nil
+	case event.FieldTxHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTxHash(v)
+		return nil
+	case event.FieldTxIndex:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTxIndex(v)
+		return nil
+	case event.FieldBlockHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockHash(v)
+		return nil
+	case event.FieldIndex:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	case event.FieldHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHash(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Event field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EventMutation) AddedFields() []string {
+	var fields []string
+	if m.addblock_number != nil {
+		fields = append(fields, event.FieldBlockNumber)
+	}
+	if m.addtx_index != nil {
+		fields = append(fields, event.FieldTxIndex)
+	}
+	if m.addindex != nil {
+		fields = append(fields, event.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EventMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case event.FieldBlockNumber:
+		return m.AddedBlockNumber()
+	case event.FieldTxIndex:
+		return m.AddedTxIndex()
+	case event.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EventMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case event.FieldBlockNumber:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBlockNumber(v)
+		return nil
+	case event.FieldTxIndex:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTxIndex(v)
+		return nil
+	case event.FieldIndex:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Event numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EventMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EventMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EventMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Event nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EventMutation) ResetField(name string) error {
+	switch name {
+	case event.FieldName:
+		m.ResetName()
+		return nil
+	case event.FieldSignature:
+		m.ResetSignature()
+		return nil
+	case event.FieldAddress:
+		m.ResetAddress()
+		return nil
+	case event.FieldBlockNumber:
+		m.ResetBlockNumber()
+		return nil
+	case event.FieldTxHash:
+		m.ResetTxHash()
+		return nil
+	case event.FieldTxIndex:
+		m.ResetTxIndex()
+		return nil
+	case event.FieldBlockHash:
+		m.ResetBlockHash()
+		return nil
+	case event.FieldIndex:
+		m.ResetIndex()
+		return nil
+	case event.FieldHash:
+		m.ResetHash()
+		return nil
+	}
+	return fmt.Errorf("unknown Event field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EventMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EventMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EventMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EventMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EventMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EventMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EventMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Event unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EventMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Event edge %s", name)
+}
 
 // PositionMutation represents an operation that mutates the Position nodes in the graph.
 type PositionMutation struct {
@@ -1186,4 +2016,551 @@ func (m *PositionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PositionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Position edge %s", name)
+}
+
+// UniswapV3IncreaseLiqudityMutation represents an operation that mutates the UniswapV3IncreaseLiqudity nodes in the graph.
+type UniswapV3IncreaseLiqudityMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	token_id      **schema.BigInt
+	liquidity     **schema.BigInt
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	clearedFields map[string]struct{}
+	event         map[int]struct{}
+	removedevent  map[int]struct{}
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3IncreaseLiqudity, error)
+	predicates    []predicate.UniswapV3IncreaseLiqudity
+}
+
+var _ ent.Mutation = (*UniswapV3IncreaseLiqudityMutation)(nil)
+
+// uniswapv3increaseliqudityOption allows management of the mutation configuration using functional options.
+type uniswapv3increaseliqudityOption func(*UniswapV3IncreaseLiqudityMutation)
+
+// newUniswapV3IncreaseLiqudityMutation creates new mutation for the UniswapV3IncreaseLiqudity entity.
+func newUniswapV3IncreaseLiqudityMutation(c config, op Op, opts ...uniswapv3increaseliqudityOption) *UniswapV3IncreaseLiqudityMutation {
+	m := &UniswapV3IncreaseLiqudityMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3IncreaseLiqudity,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3IncreaseLiqudityID sets the ID field of the mutation.
+func withUniswapV3IncreaseLiqudityID(id int) uniswapv3increaseliqudityOption {
+	return func(m *UniswapV3IncreaseLiqudityMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3IncreaseLiqudity
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3IncreaseLiqudity, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3IncreaseLiqudity.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3IncreaseLiqudity sets the old UniswapV3IncreaseLiqudity of the mutation.
+func withUniswapV3IncreaseLiqudity(node *UniswapV3IncreaseLiqudity) uniswapv3increaseliqudityOption {
+	return func(m *UniswapV3IncreaseLiqudityMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3IncreaseLiqudity, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3IncreaseLiqudityMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3IncreaseLiqudityMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3IncreaseLiqudityMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetTokenID sets the "token_id" field.
+func (m *UniswapV3IncreaseLiqudityMutation) SetTokenID(si *schema.BigInt) {
+	m.token_id = &si
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the UniswapV3IncreaseLiqudity entity.
+// If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3IncreaseLiqudityMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetTokenID() {
+	m.token_id = nil
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (m *UniswapV3IncreaseLiqudityMutation) SetLiquidity(si *schema.BigInt) {
+	m.liquidity = &si
+}
+
+// Liquidity returns the value of the "liquidity" field in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exists bool) {
+	v := m.liquidity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLiquidity returns the old "liquidity" field's value of the UniswapV3IncreaseLiqudity entity.
+// If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3IncreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLiquidity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLiquidity: %w", err)
+	}
+	return oldValue.Liquidity, nil
+}
+
+// ResetLiquidity resets all changes to the "liquidity" field.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetLiquidity() {
+	m.liquidity = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3IncreaseLiqudityMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3IncreaseLiqudity entity.
+// If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3IncreaseLiqudityMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3IncreaseLiqudityMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3IncreaseLiqudity entity.
+// If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3IncreaseLiqudityMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// AddEventIDs adds the "event" edge to the Event entity by ids.
+func (m *UniswapV3IncreaseLiqudityMutation) AddEventIDs(ids ...int) {
+	if m.event == nil {
+		m.event = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.event[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3IncreaseLiqudityMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3IncreaseLiqudityMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// RemoveEventIDs removes the "event" edge to the Event entity by IDs.
+func (m *UniswapV3IncreaseLiqudityMutation) RemoveEventIDs(ids ...int) {
+	if m.removedevent == nil {
+		m.removedevent = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.event, ids[i])
+		m.removedevent[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEvent returns the removed IDs of the "event" edge to the Event entity.
+func (m *UniswapV3IncreaseLiqudityMutation) RemovedEventIDs() (ids []int) {
+	for id := range m.removedevent {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) EventIDs() (ids []int) {
+	for id := range m.event {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+	m.removedevent = nil
+}
+
+// Where appends a list predicates to the UniswapV3IncreaseLiqudityMutation builder.
+func (m *UniswapV3IncreaseLiqudityMutation) Where(ps ...predicate.UniswapV3IncreaseLiqudity) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3IncreaseLiqudityMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3IncreaseLiqudity).
+func (m *UniswapV3IncreaseLiqudityMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3IncreaseLiqudityMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.token_id != nil {
+		fields = append(fields, uniswapv3increaseliqudity.FieldTokenID)
+	}
+	if m.liquidity != nil {
+		fields = append(fields, uniswapv3increaseliqudity.FieldLiquidity)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3increaseliqudity.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3increaseliqudity.FieldAmount1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3IncreaseLiqudityMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3increaseliqudity.FieldTokenID:
+		return m.TokenID()
+	case uniswapv3increaseliqudity.FieldLiquidity:
+		return m.Liquidity()
+	case uniswapv3increaseliqudity.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3increaseliqudity.FieldAmount1:
+		return m.Amount1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3IncreaseLiqudityMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3increaseliqudity.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case uniswapv3increaseliqudity.FieldLiquidity:
+		return m.OldLiquidity(ctx)
+	case uniswapv3increaseliqudity.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3increaseliqudity.FieldAmount1:
+		return m.OldAmount1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3IncreaseLiqudity field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3IncreaseLiqudityMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3increaseliqudity.FieldTokenID:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case uniswapv3increaseliqudity.FieldLiquidity:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLiquidity(v)
+		return nil
+	case uniswapv3increaseliqudity.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3increaseliqudity.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3IncreaseLiqudityMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3IncreaseLiqudityMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3IncreaseLiqudityMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3increaseliqudity.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case uniswapv3increaseliqudity.FieldLiquidity:
+		m.ResetLiquidity()
+		return nil
+	case uniswapv3increaseliqudity.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3increaseliqudity.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3increaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3increaseliqudity.EdgeEvent:
+		ids := make([]ent.Value, 0, len(m.event))
+		for id := range m.event {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedevent != nil {
+		edges = append(edges, uniswapv3increaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3increaseliqudity.EdgeEvent:
+		ids := make([]ent.Value, 0, len(m.removedevent))
+		for id := range m.removedevent {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3increaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3increaseliqudity.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3IncreaseLiqudityMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3IncreaseLiqudityMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3increaseliqudity.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity edge %s", name)
 }

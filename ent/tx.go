@@ -12,8 +12,12 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
+	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,7 +153,9 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Event = NewEventClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
+	tx.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -159,7 +165,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Position.QueryXXX(), the query will be executed
+// applies a query, for example: Event.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

@@ -10,10 +10,13 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/migrate"
 	"github.com/artmisxyz/blockinspector/ent/schema"
 
+	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -21,8 +24,12 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
+	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -36,7 +43,9 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Event = NewEventClient(c.config)
 	c.Position = NewPositionClient(c.config)
+	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -68,9 +77,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Position: NewPositionClient(cfg),
+		ctx:                       ctx,
+		config:                    cfg,
+		Event:                     NewEventClient(cfg),
+		Position:                  NewPositionClient(cfg),
+		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
 	}, nil
 }
 
@@ -88,15 +99,17 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		config:   cfg,
-		Position: NewPositionClient(cfg),
+		config:                    cfg,
+		Event:                     NewEventClient(cfg),
+		Position:                  NewPositionClient(cfg),
+		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Position.
+//		Event.
 //		Query().
 //		Count(ctx)
 //
@@ -119,7 +132,99 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Event.Use(hooks...)
 	c.Position.Use(hooks...)
+	c.UniswapV3IncreaseLiqudity.Use(hooks...)
+}
+
+// EventClient is a client for the Event schema.
+type EventClient struct {
+	config
+}
+
+// NewEventClient returns a client for the Event from the given config.
+func NewEventClient(c config) *EventClient {
+	return &EventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `event.Hooks(f(g(h())))`.
+func (c *EventClient) Use(hooks ...Hook) {
+	c.hooks.Event = append(c.hooks.Event, hooks...)
+}
+
+// Create returns a create builder for Event.
+func (c *EventClient) Create() *EventCreate {
+	mutation := newEventMutation(c.config, OpCreate)
+	return &EventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Event entities.
+func (c *EventClient) CreateBulk(builders ...*EventCreate) *EventCreateBulk {
+	return &EventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Event.
+func (c *EventClient) Update() *EventUpdate {
+	mutation := newEventMutation(c.config, OpUpdate)
+	return &EventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventClient) UpdateOne(e *Event) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEvent(e))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventClient) UpdateOneID(id int) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEventID(id))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Event.
+func (c *EventClient) Delete() *EventDelete {
+	mutation := newEventMutation(c.config, OpDelete)
+	return &EventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *EventClient) DeleteOne(e *Event) *EventDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *EventClient) DeleteOneID(id int) *EventDeleteOne {
+	builder := c.Delete().Where(event.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventDeleteOne{builder}
+}
+
+// Query returns a query builder for Event.
+func (c *EventClient) Query() *EventQuery {
+	return &EventQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Event entity by its id.
+func (c *EventClient) Get(ctx context.Context, id int) (*Event, error) {
+	return c.Query().Where(event.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventClient) GetX(ctx context.Context, id int) *Event {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EventClient) Hooks() []Hook {
+	return c.hooks.Event
 }
 
 // PositionClient is a client for the Position schema.
@@ -210,4 +315,110 @@ func (c *PositionClient) GetX(ctx context.Context, id *schema.BigInt) *Position 
 // Hooks returns the client hooks.
 func (c *PositionClient) Hooks() []Hook {
 	return c.hooks.Position
+}
+
+// UniswapV3IncreaseLiqudityClient is a client for the UniswapV3IncreaseLiqudity schema.
+type UniswapV3IncreaseLiqudityClient struct {
+	config
+}
+
+// NewUniswapV3IncreaseLiqudityClient returns a client for the UniswapV3IncreaseLiqudity from the given config.
+func NewUniswapV3IncreaseLiqudityClient(c config) *UniswapV3IncreaseLiqudityClient {
+	return &UniswapV3IncreaseLiqudityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3increaseliqudity.Hooks(f(g(h())))`.
+func (c *UniswapV3IncreaseLiqudityClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3IncreaseLiqudity = append(c.hooks.UniswapV3IncreaseLiqudity, hooks...)
+}
+
+// Create returns a create builder for UniswapV3IncreaseLiqudity.
+func (c *UniswapV3IncreaseLiqudityClient) Create() *UniswapV3IncreaseLiqudityCreate {
+	mutation := newUniswapV3IncreaseLiqudityMutation(c.config, OpCreate)
+	return &UniswapV3IncreaseLiqudityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3IncreaseLiqudity entities.
+func (c *UniswapV3IncreaseLiqudityClient) CreateBulk(builders ...*UniswapV3IncreaseLiqudityCreate) *UniswapV3IncreaseLiqudityCreateBulk {
+	return &UniswapV3IncreaseLiqudityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3IncreaseLiqudity.
+func (c *UniswapV3IncreaseLiqudityClient) Update() *UniswapV3IncreaseLiqudityUpdate {
+	mutation := newUniswapV3IncreaseLiqudityMutation(c.config, OpUpdate)
+	return &UniswapV3IncreaseLiqudityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3IncreaseLiqudityClient) UpdateOne(uvl *UniswapV3IncreaseLiqudity) *UniswapV3IncreaseLiqudityUpdateOne {
+	mutation := newUniswapV3IncreaseLiqudityMutation(c.config, OpUpdateOne, withUniswapV3IncreaseLiqudity(uvl))
+	return &UniswapV3IncreaseLiqudityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3IncreaseLiqudityClient) UpdateOneID(id int) *UniswapV3IncreaseLiqudityUpdateOne {
+	mutation := newUniswapV3IncreaseLiqudityMutation(c.config, OpUpdateOne, withUniswapV3IncreaseLiqudityID(id))
+	return &UniswapV3IncreaseLiqudityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3IncreaseLiqudity.
+func (c *UniswapV3IncreaseLiqudityClient) Delete() *UniswapV3IncreaseLiqudityDelete {
+	mutation := newUniswapV3IncreaseLiqudityMutation(c.config, OpDelete)
+	return &UniswapV3IncreaseLiqudityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3IncreaseLiqudityClient) DeleteOne(uvl *UniswapV3IncreaseLiqudity) *UniswapV3IncreaseLiqudityDeleteOne {
+	return c.DeleteOneID(uvl.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3IncreaseLiqudityClient) DeleteOneID(id int) *UniswapV3IncreaseLiqudityDeleteOne {
+	builder := c.Delete().Where(uniswapv3increaseliqudity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3IncreaseLiqudityDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3IncreaseLiqudity.
+func (c *UniswapV3IncreaseLiqudityClient) Query() *UniswapV3IncreaseLiqudityQuery {
+	return &UniswapV3IncreaseLiqudityQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3IncreaseLiqudity entity by its id.
+func (c *UniswapV3IncreaseLiqudityClient) Get(ctx context.Context, id int) (*UniswapV3IncreaseLiqudity, error) {
+	return c.Query().Where(uniswapv3increaseliqudity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3IncreaseLiqudityClient) GetX(ctx context.Context, id int) *UniswapV3IncreaseLiqudity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3IncreaseLiqudity.
+func (c *UniswapV3IncreaseLiqudityClient) QueryEvent(uvl *UniswapV3IncreaseLiqudity) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, uniswapv3increaseliqudity.EventTable, uniswapv3increaseliqudity.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3IncreaseLiqudityClient) Hooks() []Hook {
+	return c.hooks.UniswapV3IncreaseLiqudity
 }
