@@ -2,7 +2,7 @@ package uniswapv3
 
 import (
 	"context"
-	"fmt"
+	"github.com/artmisxyz/blockinspector/ent"
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -27,7 +27,7 @@ const (
 	V3Migrator                 = "0xA5644E29708357803b5A882D272c41cC0dF92B34"
 )
 
-func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client) inspector.Inspector {
+func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) inspector.Inspector {
 	v := &uniswapV3{
 		logger:        logger.Named(Name),
 		ws:            ws,
@@ -40,13 +40,12 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client) inspector.Inspector 
 	v.registerAddress(common.HexToAddress(NonfungiblePositionManager))
 
 	v.registerEventHandlers(
-		NewIncreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws),
-		NewDecreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws),
-		NewCollectEventHandler(common.HexToAddress(NonfungiblePositionManager), ws),
-		NewTransferEventHandler(common.HexToAddress(NonfungiblePositionManager), ws))
+		NewIncreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
+		NewDecreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
+		NewCollectEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
+		NewTransferEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db))
 
 	//v.registerEventHandlers(SwapRouter, "SwapRouter")
-	//
 	//v.registerEventHandlers(V3Migrator, "V3Migrator")
 	return v
 }
@@ -68,7 +67,12 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 	for _, log := range logs {
 		eventHandler, ok := v.eventHandlers[log.Topics[0].String()]
 		if !ok {
-			return fmt.Errorf("event handler not registered")
+			v.logger.
+				Warn("event handler not registered",
+					zap.Uint64("block_number", log.BlockNumber),
+					zap.String("tx_hash", log.TxHash.String()),
+					zap.Uint("event_index", log.Index))
+			continue
 		}
 		err := eventHandler.Save(log)
 		if err != nil {

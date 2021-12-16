@@ -590,7 +590,7 @@ func HasEvent() predicate.UniswapV3IncreaseLiqudity {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(EventTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, EventTable, EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -602,7 +602,7 @@ func HasEventWith(preds ...predicate.Event) predicate.UniswapV3IncreaseLiqudity 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(EventInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, EventTable, EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

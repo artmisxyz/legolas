@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/schema"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 )
@@ -26,22 +27,28 @@ type UniswapV3IncreaseLiqudity struct {
 	Amount1 *schema.BigInt `json:"amount1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3IncreaseLiqudityQuery when eager-loading is set.
-	Edges UniswapV3IncreaseLiqudityEdges `json:"edges"`
+	Edges                    UniswapV3IncreaseLiqudityEdges `json:"edges"`
+	event_increase_liquidity *int
 }
 
 // UniswapV3IncreaseLiqudityEdges holds the relations/edges for other nodes in the graph.
 type UniswapV3IncreaseLiqudityEdges struct {
 	// Event holds the value of the event edge.
-	Event []*Event `json:"event,omitempty"`
+	Event *Event `json:"event,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // EventOrErr returns the Event value or an error if the edge
-// was not loaded in eager-loading.
-func (e UniswapV3IncreaseLiqudityEdges) EventOrErr() ([]*Event, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UniswapV3IncreaseLiqudityEdges) EventOrErr() (*Event, error) {
 	if e.loadedTypes[0] {
+		if e.Event == nil {
+			// The edge event was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: event.Label}
+		}
 		return e.Event, nil
 	}
 	return nil, &NotLoadedError{edge: "event"}
@@ -55,6 +62,8 @@ func (*UniswapV3IncreaseLiqudity) scanValues(columns []string) ([]interface{}, e
 		case uniswapv3increaseliqudity.FieldTokenID, uniswapv3increaseliqudity.FieldLiquidity, uniswapv3increaseliqudity.FieldAmount0, uniswapv3increaseliqudity.FieldAmount1:
 			values[i] = new(schema.BigInt)
 		case uniswapv3increaseliqudity.FieldID:
+			values[i] = new(sql.NullInt64)
+		case uniswapv3increaseliqudity.ForeignKeys[0]: // event_increase_liquidity
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UniswapV3IncreaseLiqudity", columns[i])
@@ -100,6 +109,13 @@ func (uvl *UniswapV3IncreaseLiqudity) assignValues(columns []string, values []in
 				return fmt.Errorf("unexpected type %T for field amount1", values[i])
 			} else if value != nil {
 				uvl.Amount1 = value
+			}
+		case uniswapv3increaseliqudity.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field event_increase_liquidity", value)
+			} else if value.Valid {
+				uvl.event_increase_liquidity = new(int)
+				*uvl.event_increase_liquidity = int(value.Int64)
 			}
 		}
 	}

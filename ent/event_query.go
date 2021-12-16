@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -13,6 +14,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
 // EventQuery is the builder for querying Event entities.
@@ -24,7 +29,11 @@ type EventQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Event
-	withFKs    bool
+	// eager-loading edges.
+	withIncreaseLiquidity *UniswapV3IncreaseLiqudityQuery
+	withDecreaseLiquidity *UniswapV3DecreaseLiqudityQuery
+	withCollect           *UniswapV3CollectQuery
+	withTransfer          *UniswapV3TransferQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,6 +68,94 @@ func (eq *EventQuery) Unique(unique bool) *EventQuery {
 func (eq *EventQuery) Order(o ...OrderFunc) *EventQuery {
 	eq.order = append(eq.order, o...)
 	return eq
+}
+
+// QueryIncreaseLiquidity chains the current query on the "increase_liquidity" edge.
+func (eq *EventQuery) QueryIncreaseLiquidity() *UniswapV3IncreaseLiqudityQuery {
+	query := &UniswapV3IncreaseLiqudityQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.IncreaseLiquidityTable, event.IncreaseLiquidityColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDecreaseLiquidity chains the current query on the "decrease_liquidity" edge.
+func (eq *EventQuery) QueryDecreaseLiquidity() *UniswapV3DecreaseLiqudityQuery {
+	query := &UniswapV3DecreaseLiqudityQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.DecreaseLiquidityTable, event.DecreaseLiquidityColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCollect chains the current query on the "collect" edge.
+func (eq *EventQuery) QueryCollect() *UniswapV3CollectQuery {
+	query := &UniswapV3CollectQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(uniswapv3collect.Table, uniswapv3collect.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.CollectTable, event.CollectColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransfer chains the current query on the "transfer" edge.
+func (eq *EventQuery) QueryTransfer() *UniswapV3TransferQuery {
+	query := &UniswapV3TransferQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(uniswapv3transfer.Table, uniswapv3transfer.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.TransferTable, event.TransferColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Event entity from the query.
@@ -237,15 +334,63 @@ func (eq *EventQuery) Clone() *EventQuery {
 		return nil
 	}
 	return &EventQuery{
-		config:     eq.config,
-		limit:      eq.limit,
-		offset:     eq.offset,
-		order:      append([]OrderFunc{}, eq.order...),
-		predicates: append([]predicate.Event{}, eq.predicates...),
+		config:                eq.config,
+		limit:                 eq.limit,
+		offset:                eq.offset,
+		order:                 append([]OrderFunc{}, eq.order...),
+		predicates:            append([]predicate.Event{}, eq.predicates...),
+		withIncreaseLiquidity: eq.withIncreaseLiquidity.Clone(),
+		withDecreaseLiquidity: eq.withDecreaseLiquidity.Clone(),
+		withCollect:           eq.withCollect.Clone(),
+		withTransfer:          eq.withTransfer.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
 	}
+}
+
+// WithIncreaseLiquidity tells the query-builder to eager-load the nodes that are connected to
+// the "increase_liquidity" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithIncreaseLiquidity(opts ...func(*UniswapV3IncreaseLiqudityQuery)) *EventQuery {
+	query := &UniswapV3IncreaseLiqudityQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withIncreaseLiquidity = query
+	return eq
+}
+
+// WithDecreaseLiquidity tells the query-builder to eager-load the nodes that are connected to
+// the "decrease_liquidity" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithDecreaseLiquidity(opts ...func(*UniswapV3DecreaseLiqudityQuery)) *EventQuery {
+	query := &UniswapV3DecreaseLiqudityQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withDecreaseLiquidity = query
+	return eq
+}
+
+// WithCollect tells the query-builder to eager-load the nodes that are connected to
+// the "collect" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithCollect(opts ...func(*UniswapV3CollectQuery)) *EventQuery {
+	query := &UniswapV3CollectQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withCollect = query
+	return eq
+}
+
+// WithTransfer tells the query-builder to eager-load the nodes that are connected to
+// the "transfer" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithTransfer(opts ...func(*UniswapV3TransferQuery)) *EventQuery {
+	query := &UniswapV3TransferQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withTransfer = query
+	return eq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -311,13 +456,15 @@ func (eq *EventQuery) prepareQuery(ctx context.Context) error {
 
 func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 	var (
-		nodes   = []*Event{}
-		withFKs = eq.withFKs
-		_spec   = eq.querySpec()
+		nodes       = []*Event{}
+		_spec       = eq.querySpec()
+		loadedTypes = [4]bool{
+			eq.withIncreaseLiquidity != nil,
+			eq.withDecreaseLiquidity != nil,
+			eq.withCollect != nil,
+			eq.withTransfer != nil,
+		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, event.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Event{config: eq.config}
 		nodes = append(nodes, node)
@@ -328,6 +475,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, eq.driver, _spec); err != nil {
@@ -336,6 +484,123 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := eq.withIncreaseLiquidity; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Event)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.IncreaseLiquidity = []*UniswapV3IncreaseLiqudity{}
+		}
+		query.withFKs = true
+		query.Where(predicate.UniswapV3IncreaseLiqudity(func(s *sql.Selector) {
+			s.Where(sql.InValues(event.IncreaseLiquidityColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.event_increase_liquidity
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "event_increase_liquidity" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "event_increase_liquidity" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.IncreaseLiquidity = append(node.Edges.IncreaseLiquidity, n)
+		}
+	}
+
+	if query := eq.withDecreaseLiquidity; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Event)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.DecreaseLiquidity = []*UniswapV3DecreaseLiqudity{}
+		}
+		query.withFKs = true
+		query.Where(predicate.UniswapV3DecreaseLiqudity(func(s *sql.Selector) {
+			s.Where(sql.InValues(event.DecreaseLiquidityColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.event_decrease_liquidity
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "event_decrease_liquidity" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "event_decrease_liquidity" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.DecreaseLiquidity = append(node.Edges.DecreaseLiquidity, n)
+		}
+	}
+
+	if query := eq.withCollect; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Event)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Collect = []*UniswapV3Collect{}
+		}
+		query.withFKs = true
+		query.Where(predicate.UniswapV3Collect(func(s *sql.Selector) {
+			s.Where(sql.InValues(event.CollectColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.event_collect
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "event_collect" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "event_collect" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Collect = append(node.Edges.Collect, n)
+		}
+	}
+
+	if query := eq.withTransfer; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Event)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Transfer = []*UniswapV3Transfer{}
+		}
+		query.withFKs = true
+		query.Where(predicate.UniswapV3Transfer(func(s *sql.Selector) {
+			s.Where(sql.InValues(event.TransferColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.event_transfer
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "event_transfer" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "event_transfer" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Transfer = append(node.Edges.Transfer, n)
+		}
+	}
+
 	return nodes, nil
 }
 

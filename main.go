@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/artmisxyz/blockinspector/syncer"
 )
 
@@ -17,7 +16,6 @@ func main() {
 
 	s := &syncer.Syncer{}
 	s.Init(conf)
-	fmt.Println("init successful")
 	for {
 		s.Sync()
 	}

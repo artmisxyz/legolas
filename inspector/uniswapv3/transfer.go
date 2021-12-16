@@ -2,6 +2,7 @@ package uniswapv3
 
 import (
 	"fmt"
+	"github.com/artmisxyz/blockinspector/ent"
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -11,17 +12,22 @@ import (
 
 type transferEventHandler struct {
 	binding *nftpositionmanager.Nftpositionmanager
-	state   State
+	state   Storage
 }
 
-func NewTransferEventHandler(address common.Address, backend bind.ContractBackend) inspector.EventHandler {
+const (
+	TransferEventName      = "UniswapV3_Transfer"
+	TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+)
+
+func NewTransferEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := nftpositionmanager.NewNftpositionmanager(address, backend)
 	if err != nil {
 		panic(err)
 	}
 	return &transferEventHandler{
 		binding: binding,
-		state:   NewMemoryState(),
+		state:   NewPostgres(db),
 	}
 }
 

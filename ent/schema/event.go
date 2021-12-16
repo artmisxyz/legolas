@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -27,5 +28,10 @@ func (Event) Fields() []ent.Field {
 
 // Edges of the Event.
 func (Event) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("increase_liquidity", UniswapV3IncreaseLiqudity.Type),
+		edge.To("decrease_liquidity", UniswapV3DecreaseLiqudity.Type),
+		edge.To("collect", UniswapV3Collect.Type),
+		edge.To("transfer", UniswapV3Transfer.Type),
+	}
 }

@@ -10,6 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/blockinspector/ent/event"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
 // EventCreate is the builder for creating a Event entity.
@@ -71,6 +75,66 @@ func (ec *EventCreate) SetIndex(u uint) *EventCreate {
 func (ec *EventCreate) SetHash(s string) *EventCreate {
 	ec.mutation.SetHash(s)
 	return ec
+}
+
+// AddIncreaseLiquidityIDs adds the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by IDs.
+func (ec *EventCreate) AddIncreaseLiquidityIDs(ids ...int) *EventCreate {
+	ec.mutation.AddIncreaseLiquidityIDs(ids...)
+	return ec
+}
+
+// AddIncreaseLiquidity adds the "increase_liquidity" edges to the UniswapV3IncreaseLiqudity entity.
+func (ec *EventCreate) AddIncreaseLiquidity(u ...*UniswapV3IncreaseLiqudity) *EventCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ec.AddIncreaseLiquidityIDs(ids...)
+}
+
+// AddDecreaseLiquidityIDs adds the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by IDs.
+func (ec *EventCreate) AddDecreaseLiquidityIDs(ids ...int) *EventCreate {
+	ec.mutation.AddDecreaseLiquidityIDs(ids...)
+	return ec
+}
+
+// AddDecreaseLiquidity adds the "decrease_liquidity" edges to the UniswapV3DecreaseLiqudity entity.
+func (ec *EventCreate) AddDecreaseLiquidity(u ...*UniswapV3DecreaseLiqudity) *EventCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ec.AddDecreaseLiquidityIDs(ids...)
+}
+
+// AddCollectIDs adds the "collect" edge to the UniswapV3Collect entity by IDs.
+func (ec *EventCreate) AddCollectIDs(ids ...int) *EventCreate {
+	ec.mutation.AddCollectIDs(ids...)
+	return ec
+}
+
+// AddCollect adds the "collect" edges to the UniswapV3Collect entity.
+func (ec *EventCreate) AddCollect(u ...*UniswapV3Collect) *EventCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ec.AddCollectIDs(ids...)
+}
+
+// AddTransferIDs adds the "transfer" edge to the UniswapV3Transfer entity by IDs.
+func (ec *EventCreate) AddTransferIDs(ids ...int) *EventCreate {
+	ec.mutation.AddTransferIDs(ids...)
+	return ec
+}
+
+// AddTransfer adds the "transfer" edges to the UniswapV3Transfer entity.
+func (ec *EventCreate) AddTransfer(u ...*UniswapV3Transfer) *EventCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ec.AddTransferIDs(ids...)
 }
 
 // Mutation returns the EventMutation object of the builder.
@@ -298,6 +362,82 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			Column: event.FieldHash,
 		})
 		_node.Hash = value
+	}
+	if nodes := ec.mutation.IncreaseLiquidityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.IncreaseLiquidityTable,
+			Columns: []string{event.IncreaseLiquidityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3increaseliqudity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.DecreaseLiquidityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.DecreaseLiquidityTable,
+			Columns: []string{event.DecreaseLiquidityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3decreaseliqudity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.CollectIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.CollectTable,
+			Columns: []string{event.CollectColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3collect.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.TransferIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.TransferTable,
+			Columns: []string{event.TransferColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3transfer.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

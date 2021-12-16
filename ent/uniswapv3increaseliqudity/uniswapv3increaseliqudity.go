@@ -20,12 +20,12 @@ const (
 	// Table holds the table name of the uniswapv3increaseliqudity in the database.
 	Table = "uniswap_v3increase_liqudities"
 	// EventTable is the table that holds the event relation/edge.
-	EventTable = "events"
+	EventTable = "uniswap_v3increase_liqudities"
 	// EventInverseTable is the table name for the Event entity.
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventInverseTable = "events"
 	// EventColumn is the table column denoting the event relation/edge.
-	EventColumn = "uniswap_v3increase_liqudity_event"
+	EventColumn = "event_increase_liquidity"
 )
 
 // Columns holds all SQL columns for uniswapv3increaseliqudity fields.
@@ -37,10 +37,21 @@ var Columns = []string{
 	FieldAmount1,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "uniswap_v3increase_liqudities"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"event_increase_liquidity",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

@@ -4,6 +4,7 @@ package event
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
 )
 
@@ -1044,6 +1045,118 @@ func HashEqualFold(v string) predicate.Event {
 func HashContainsFold(v string) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldHash), v))
+	})
+}
+
+// HasIncreaseLiquidity applies the HasEdge predicate on the "increase_liquidity" edge.
+func HasIncreaseLiquidity() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(IncreaseLiquidityTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncreaseLiquidityWith applies the HasEdge predicate on the "increase_liquidity" edge with a given conditions (other predicates).
+func HasIncreaseLiquidityWith(preds ...predicate.UniswapV3IncreaseLiqudity) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(IncreaseLiquidityInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasDecreaseLiquidity applies the HasEdge predicate on the "decrease_liquidity" edge.
+func HasDecreaseLiquidity() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DecreaseLiquidityTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDecreaseLiquidityWith applies the HasEdge predicate on the "decrease_liquidity" edge with a given conditions (other predicates).
+func HasDecreaseLiquidityWith(preds ...predicate.UniswapV3DecreaseLiqudity) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DecreaseLiquidityInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCollect applies the HasEdge predicate on the "collect" edge.
+func HasCollect() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CollectTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CollectTable, CollectColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCollectWith applies the HasEdge predicate on the "collect" edge with a given conditions (other predicates).
+func HasCollectWith(preds ...predicate.UniswapV3Collect) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CollectInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CollectTable, CollectColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTransfer applies the HasEdge predicate on the "transfer" edge.
+func HasTransfer() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TransferTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransferTable, TransferColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransferWith applies the HasEdge predicate on the "transfer" edge with a given conditions (other predicates).
+func HasTransferWith(preds ...predicate.UniswapV3Transfer) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TransferInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransferTable, TransferColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

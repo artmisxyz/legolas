@@ -45,19 +45,15 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) SetAmount1(si *schema.BigInt) *Unis
 	return uvlc
 }
 
-// AddEventIDs adds the "event" edge to the Event entity by IDs.
-func (uvlc *UniswapV3IncreaseLiqudityCreate) AddEventIDs(ids ...int) *UniswapV3IncreaseLiqudityCreate {
-	uvlc.mutation.AddEventIDs(ids...)
+// SetEventID sets the "event" edge to the Event entity by ID.
+func (uvlc *UniswapV3IncreaseLiqudityCreate) SetEventID(id int) *UniswapV3IncreaseLiqudityCreate {
+	uvlc.mutation.SetEventID(id)
 	return uvlc
 }
 
-// AddEvent adds the "event" edges to the Event entity.
-func (uvlc *UniswapV3IncreaseLiqudityCreate) AddEvent(e ...*Event) *UniswapV3IncreaseLiqudityCreate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return uvlc.AddEventIDs(ids...)
+// SetEvent sets the "event" edge to the Event entity.
+func (uvlc *UniswapV3IncreaseLiqudityCreate) SetEvent(e *Event) *UniswapV3IncreaseLiqudityCreate {
+	return uvlc.SetEventID(e.ID)
 }
 
 // Mutation returns the UniswapV3IncreaseLiqudityMutation object of the builder.
@@ -142,6 +138,9 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) check() error {
 	if _, ok := uvlc.mutation.Amount1(); !ok {
 		return &ValidationError{Name: "amount1", err: errors.New(`ent: missing required field "amount1"`)}
 	}
+	if _, ok := uvlc.mutation.EventID(); !ok {
+		return &ValidationError{Name: "event", err: errors.New("ent: missing required edge \"event\"")}
+	}
 	return nil
 }
 
@@ -203,8 +202,8 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) createSpec() (*UniswapV3IncreaseLiq
 	}
 	if nodes := uvlc.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},
 			Bidi:    false,
@@ -218,6 +217,7 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) createSpec() (*UniswapV3IncreaseLiq
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.event_increase_liquidity = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

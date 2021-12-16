@@ -20,28 +20,12 @@ var (
 		{Name: "block_hash", Type: field.TypeString},
 		{Name: "index", Type: field.TypeUint},
 		{Name: "hash", Type: field.TypeString, Unique: true},
-		{Name: "uniswap_v3decrease_liqudity_event", Type: field.TypeInt, Nullable: true},
-		{Name: "uniswap_v3increase_liqudity_event", Type: field.TypeInt, Nullable: true},
 	}
 	// EventsTable holds the schema information for the "events" table.
 	EventsTable = &schema.Table{
 		Name:       "events",
 		Columns:    EventsColumns,
 		PrimaryKey: []*schema.Column{EventsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "events_uniswap_v3decrease_liqudities_event",
-				Columns:    []*schema.Column{EventsColumns[10]},
-				RefColumns: []*schema.Column{UniswapV3decreaseLiquditiesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "events_uniswap_v3increase_liqudities_event",
-				Columns:    []*schema.Column{EventsColumns[11]},
-				RefColumns: []*schema.Column{UniswapV3increaseLiquditiesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// PositionsColumns holds the columns for the "positions" table.
 	PositionsColumns = []*schema.Column{
@@ -70,6 +54,29 @@ var (
 		Columns:    PositionsColumns,
 		PrimaryKey: []*schema.Column{PositionsColumns[0]},
 	}
+	// UniswapV3collectsColumns holds the columns for the "uniswap_v3collects" table.
+	UniswapV3collectsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "recipient", Type: field.TypeString},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "event_collect", Type: field.TypeInt, Nullable: true},
+	}
+	// UniswapV3collectsTable holds the schema information for the "uniswap_v3collects" table.
+	UniswapV3collectsTable = &schema.Table{
+		Name:       "uniswap_v3collects",
+		Columns:    UniswapV3collectsColumns,
+		PrimaryKey: []*schema.Column{UniswapV3collectsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "uniswap_v3collects_events_collect",
+				Columns:    []*schema.Column{UniswapV3collectsColumns[5]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UniswapV3decreaseLiquditiesColumns holds the columns for the "uniswap_v3decrease_liqudities" table.
 	UniswapV3decreaseLiquditiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -77,12 +84,21 @@ var (
 		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "event_decrease_liquidity", Type: field.TypeInt, Nullable: true},
 	}
 	// UniswapV3decreaseLiquditiesTable holds the schema information for the "uniswap_v3decrease_liqudities" table.
 	UniswapV3decreaseLiquditiesTable = &schema.Table{
 		Name:       "uniswap_v3decrease_liqudities",
 		Columns:    UniswapV3decreaseLiquditiesColumns,
 		PrimaryKey: []*schema.Column{UniswapV3decreaseLiquditiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "uniswap_v3decrease_liqudities_events_decrease_liquidity",
+				Columns:    []*schema.Column{UniswapV3decreaseLiquditiesColumns[5]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UniswapV3increaseLiquditiesColumns holds the columns for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesColumns = []*schema.Column{
@@ -91,23 +107,58 @@ var (
 		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "event_increase_liquidity", Type: field.TypeInt, Nullable: true},
 	}
 	// UniswapV3increaseLiquditiesTable holds the schema information for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesTable = &schema.Table{
 		Name:       "uniswap_v3increase_liqudities",
 		Columns:    UniswapV3increaseLiquditiesColumns,
 		PrimaryKey: []*schema.Column{UniswapV3increaseLiquditiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "uniswap_v3increase_liqudities_events_increase_liquidity",
+				Columns:    []*schema.Column{UniswapV3increaseLiquditiesColumns[5]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// UniswapV3transfersColumns holds the columns for the "uniswap_v3transfers" table.
+	UniswapV3transfersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "from", Type: field.TypeString},
+		{Name: "to", Type: field.TypeString},
+		{Name: "event_transfer", Type: field.TypeInt, Nullable: true},
+	}
+	// UniswapV3transfersTable holds the schema information for the "uniswap_v3transfers" table.
+	UniswapV3transfersTable = &schema.Table{
+		Name:       "uniswap_v3transfers",
+		Columns:    UniswapV3transfersColumns,
+		PrimaryKey: []*schema.Column{UniswapV3transfersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "uniswap_v3transfers_events_transfer",
+				Columns:    []*schema.Column{UniswapV3transfersColumns[4]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EventsTable,
 		PositionsTable,
+		UniswapV3collectsTable,
 		UniswapV3decreaseLiquditiesTable,
 		UniswapV3increaseLiquditiesTable,
+		UniswapV3transfersTable,
 	}
 )
 
 func init() {
-	EventsTable.ForeignKeys[0].RefTable = UniswapV3decreaseLiquditiesTable
-	EventsTable.ForeignKeys[1].RefTable = UniswapV3increaseLiquditiesTable
+	UniswapV3collectsTable.ForeignKeys[0].RefTable = EventsTable
+	UniswapV3decreaseLiquditiesTable.ForeignKeys[0].RefTable = EventsTable
+	UniswapV3increaseLiquditiesTable.ForeignKeys[0].RefTable = EventsTable
+	UniswapV3transfersTable.ForeignKeys[0].RefTable = EventsTable
 }

@@ -32,9 +32,61 @@ type Event struct {
 	// Index holds the value of the "index" field.
 	Index uint `json:"index,omitempty"`
 	// Hash holds the value of the "hash" field.
-	Hash                              string `json:"hash,omitempty"`
-	uniswap_v3decrease_liqudity_event *int
-	uniswap_v3increase_liqudity_event *int
+	Hash string `json:"hash,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the EventQuery when eager-loading is set.
+	Edges EventEdges `json:"edges"`
+}
+
+// EventEdges holds the relations/edges for other nodes in the graph.
+type EventEdges struct {
+	// IncreaseLiquidity holds the value of the increase_liquidity edge.
+	IncreaseLiquidity []*UniswapV3IncreaseLiqudity `json:"increase_liquidity,omitempty"`
+	// DecreaseLiquidity holds the value of the decrease_liquidity edge.
+	DecreaseLiquidity []*UniswapV3DecreaseLiqudity `json:"decrease_liquidity,omitempty"`
+	// Collect holds the value of the collect edge.
+	Collect []*UniswapV3Collect `json:"collect,omitempty"`
+	// Transfer holds the value of the transfer edge.
+	Transfer []*UniswapV3Transfer `json:"transfer,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [4]bool
+}
+
+// IncreaseLiquidityOrErr returns the IncreaseLiquidity value or an error if the edge
+// was not loaded in eager-loading.
+func (e EventEdges) IncreaseLiquidityOrErr() ([]*UniswapV3IncreaseLiqudity, error) {
+	if e.loadedTypes[0] {
+		return e.IncreaseLiquidity, nil
+	}
+	return nil, &NotLoadedError{edge: "increase_liquidity"}
+}
+
+// DecreaseLiquidityOrErr returns the DecreaseLiquidity value or an error if the edge
+// was not loaded in eager-loading.
+func (e EventEdges) DecreaseLiquidityOrErr() ([]*UniswapV3DecreaseLiqudity, error) {
+	if e.loadedTypes[1] {
+		return e.DecreaseLiquidity, nil
+	}
+	return nil, &NotLoadedError{edge: "decrease_liquidity"}
+}
+
+// CollectOrErr returns the Collect value or an error if the edge
+// was not loaded in eager-loading.
+func (e EventEdges) CollectOrErr() ([]*UniswapV3Collect, error) {
+	if e.loadedTypes[2] {
+		return e.Collect, nil
+	}
+	return nil, &NotLoadedError{edge: "collect"}
+}
+
+// TransferOrErr returns the Transfer value or an error if the edge
+// was not loaded in eager-loading.
+func (e EventEdges) TransferOrErr() ([]*UniswapV3Transfer, error) {
+	if e.loadedTypes[3] {
+		return e.Transfer, nil
+	}
+	return nil, &NotLoadedError{edge: "transfer"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -46,10 +98,6 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case event.FieldName, event.FieldSignature, event.FieldAddress, event.FieldTxHash, event.FieldBlockHash, event.FieldHash:
 			values[i] = new(sql.NullString)
-		case event.ForeignKeys[0]: // uniswap_v3decrease_liqudity_event
-			values[i] = new(sql.NullInt64)
-		case event.ForeignKeys[1]: // uniswap_v3increase_liqudity_event
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Event", columns[i])
 		}
@@ -125,23 +173,29 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				e.Hash = value.String
 			}
-		case event.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field uniswap_v3decrease_liqudity_event", value)
-			} else if value.Valid {
-				e.uniswap_v3decrease_liqudity_event = new(int)
-				*e.uniswap_v3decrease_liqudity_event = int(value.Int64)
-			}
-		case event.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field uniswap_v3increase_liqudity_event", value)
-			} else if value.Valid {
-				e.uniswap_v3increase_liqudity_event = new(int)
-				*e.uniswap_v3increase_liqudity_event = int(value.Int64)
-			}
 		}
 	}
 	return nil
+}
+
+// QueryIncreaseLiquidity queries the "increase_liquidity" edge of the Event entity.
+func (e *Event) QueryIncreaseLiquidity() *UniswapV3IncreaseLiqudityQuery {
+	return (&EventClient{config: e.config}).QueryIncreaseLiquidity(e)
+}
+
+// QueryDecreaseLiquidity queries the "decrease_liquidity" edge of the Event entity.
+func (e *Event) QueryDecreaseLiquidity() *UniswapV3DecreaseLiqudityQuery {
+	return (&EventClient{config: e.config}).QueryDecreaseLiquidity(e)
+}
+
+// QueryCollect queries the "collect" edge of the Event entity.
+func (e *Event) QueryCollect() *UniswapV3CollectQuery {
+	return (&EventClient{config: e.config}).QueryCollect(e)
+}
+
+// QueryTransfer queries the "transfer" edge of the Event entity.
+func (e *Event) QueryTransfer() *UniswapV3TransferQuery {
+	return (&EventClient{config: e.config}).QueryTransfer(e)
 }
 
 // Update returns a builder for updating this Event.

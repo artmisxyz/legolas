@@ -5,6 +5,8 @@ package ent
 import (
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -37,4 +39,20 @@ func init() {
 	eventDescHash := eventFields[8].Descriptor()
 	// event.HashValidator is a validator for the "hash" field. It is called by the builders before save.
 	event.HashValidator = eventDescHash.Validators[0].(func(string) error)
+	uniswapv3collectFields := schema.UniswapV3Collect{}.Fields()
+	_ = uniswapv3collectFields
+	// uniswapv3collectDescRecipient is the schema descriptor for recipient field.
+	uniswapv3collectDescRecipient := uniswapv3collectFields[1].Descriptor()
+	// uniswapv3collect.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
+	uniswapv3collect.RecipientValidator = uniswapv3collectDescRecipient.Validators[0].(func(string) error)
+	uniswapv3transferFields := schema.UniswapV3Transfer{}.Fields()
+	_ = uniswapv3transferFields
+	// uniswapv3transferDescFrom is the schema descriptor for from field.
+	uniswapv3transferDescFrom := uniswapv3transferFields[1].Descriptor()
+	// uniswapv3transfer.FromValidator is a validator for the "from" field. It is called by the builders before save.
+	uniswapv3transfer.FromValidator = uniswapv3transferDescFrom.Validators[0].(func(string) error)
+	// uniswapv3transferDescTo is the schema descriptor for to field.
+	uniswapv3transferDescTo := uniswapv3transferFields[2].Descriptor()
+	// uniswapv3transfer.ToValidator is a validator for the "to" field. It is called by the builders before save.
+	uniswapv3transfer.ToValidator = uniswapv3transferDescTo.Validators[0].(func(string) error)
 }

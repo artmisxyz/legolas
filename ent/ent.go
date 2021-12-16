@@ -10,8 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -34,8 +36,10 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		event.Table:                     event.ValidColumn,
 		position.Table:                  position.ValidColumn,
+		uniswapv3collect.Table:          uniswapv3collect.ValidColumn,
 		uniswapv3decreaseliqudity.Table: uniswapv3decreaseliqudity.ValidColumn,
 		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,
+		uniswapv3transfer.Table:         uniswapv3transfer.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

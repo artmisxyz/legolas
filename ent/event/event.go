@@ -25,8 +25,44 @@ const (
 	FieldIndex = "index"
 	// FieldHash holds the string denoting the hash field in the database.
 	FieldHash = "hash"
+	// EdgeIncreaseLiquidity holds the string denoting the increase_liquidity edge name in mutations.
+	EdgeIncreaseLiquidity = "increase_liquidity"
+	// EdgeDecreaseLiquidity holds the string denoting the decrease_liquidity edge name in mutations.
+	EdgeDecreaseLiquidity = "decrease_liquidity"
+	// EdgeCollect holds the string denoting the collect edge name in mutations.
+	EdgeCollect = "collect"
+	// EdgeTransfer holds the string denoting the transfer edge name in mutations.
+	EdgeTransfer = "transfer"
 	// Table holds the table name of the event in the database.
 	Table = "events"
+	// IncreaseLiquidityTable is the table that holds the increase_liquidity relation/edge.
+	IncreaseLiquidityTable = "uniswap_v3increase_liqudities"
+	// IncreaseLiquidityInverseTable is the table name for the UniswapV3IncreaseLiqudity entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3increaseliqudity" package.
+	IncreaseLiquidityInverseTable = "uniswap_v3increase_liqudities"
+	// IncreaseLiquidityColumn is the table column denoting the increase_liquidity relation/edge.
+	IncreaseLiquidityColumn = "event_increase_liquidity"
+	// DecreaseLiquidityTable is the table that holds the decrease_liquidity relation/edge.
+	DecreaseLiquidityTable = "uniswap_v3decrease_liqudities"
+	// DecreaseLiquidityInverseTable is the table name for the UniswapV3DecreaseLiqudity entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3decreaseliqudity" package.
+	DecreaseLiquidityInverseTable = "uniswap_v3decrease_liqudities"
+	// DecreaseLiquidityColumn is the table column denoting the decrease_liquidity relation/edge.
+	DecreaseLiquidityColumn = "event_decrease_liquidity"
+	// CollectTable is the table that holds the collect relation/edge.
+	CollectTable = "uniswap_v3collects"
+	// CollectInverseTable is the table name for the UniswapV3Collect entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3collect" package.
+	CollectInverseTable = "uniswap_v3collects"
+	// CollectColumn is the table column denoting the collect relation/edge.
+	CollectColumn = "event_collect"
+	// TransferTable is the table that holds the transfer relation/edge.
+	TransferTable = "uniswap_v3transfers"
+	// TransferInverseTable is the table name for the UniswapV3Transfer entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3transfer" package.
+	TransferInverseTable = "uniswap_v3transfers"
+	// TransferColumn is the table column denoting the transfer relation/edge.
+	TransferColumn = "event_transfer"
 )
 
 // Columns holds all SQL columns for event fields.
@@ -43,22 +79,10 @@ var Columns = []string{
 	FieldHash,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "events"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"uniswap_v3decrease_liqudity_event",
-	"uniswap_v3increase_liqudity_event",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

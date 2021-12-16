@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -28,6 +27,7 @@ type UniswapV3IncreaseLiqudityQuery struct {
 	predicates []predicate.UniswapV3IncreaseLiqudity
 	// eager-loading edges.
 	withEvent *EventQuery
+	withFKs   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,7 +78,7 @@ func (uvlq *UniswapV3IncreaseLiqudityQuery) QueryEvent() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, uniswapv3increaseliqudity.EventTable, uniswapv3increaseliqudity.EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3increaseliqudity.EventTable, uniswapv3increaseliqudity.EventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uvlq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,11 +349,18 @@ func (uvlq *UniswapV3IncreaseLiqudityQuery) prepareQuery(ctx context.Context) er
 func (uvlq *UniswapV3IncreaseLiqudityQuery) sqlAll(ctx context.Context) ([]*UniswapV3IncreaseLiqudity, error) {
 	var (
 		nodes       = []*UniswapV3IncreaseLiqudity{}
+		withFKs     = uvlq.withFKs
 		_spec       = uvlq.querySpec()
 		loadedTypes = [1]bool{
 			uvlq.withEvent != nil,
 		}
 	)
+	if uvlq.withEvent != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, uniswapv3increaseliqudity.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &UniswapV3IncreaseLiqudity{config: uvlq.config}
 		nodes = append(nodes, node)
@@ -375,31 +382,31 @@ func (uvlq *UniswapV3IncreaseLiqudityQuery) sqlAll(ctx context.Context) ([]*Unis
 	}
 
 	if query := uvlq.withEvent; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*UniswapV3IncreaseLiqudity)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*UniswapV3IncreaseLiqudity)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Event = []*Event{}
+			if nodes[i].event_increase_liquidity == nil {
+				continue
+			}
+			fk := *nodes[i].event_increase_liquidity
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.withFKs = true
-		query.Where(predicate.Event(func(s *sql.Selector) {
-			s.Where(sql.InValues(uniswapv3increaseliqudity.EventColumn, fks...))
-		}))
+		query.Where(event.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.uniswap_v3increase_liqudity_event
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "uniswap_v3increase_liqudity_event" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "uniswap_v3increase_liqudity_event" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_increase_liquidity" returned %v`, n.ID)
 			}
-			node.Edges.Event = append(node.Edges.Event, n)
+			for i := range nodes {
+				nodes[i].Edges.Event = n
+			}
 		}
 	}
 

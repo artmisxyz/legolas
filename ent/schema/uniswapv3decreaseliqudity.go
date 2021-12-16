@@ -41,6 +41,9 @@ func (UniswapV3DecreaseLiqudity) Fields() []ent.Field {
 // Edges of the UniswapV3DecreaseLiqudity.
 func (UniswapV3DecreaseLiqudity) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("event", Event.Type),
+		edge.From("event", Event.Type).
+			Ref("decrease_liquidity").
+			Unique().
+			Required(),
 	}
 }

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -52,19 +53,15 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetAmount1(si *schema.BigInt) *Unis
 	return uvlu
 }
 
-// AddEventIDs adds the "event" edge to the Event entity by IDs.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) AddEventIDs(ids ...int) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.AddEventIDs(ids...)
+// SetEventID sets the "event" edge to the Event entity by ID.
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetEventID(id int) *UniswapV3IncreaseLiqudityUpdate {
+	uvlu.mutation.SetEventID(id)
 	return uvlu
 }
 
-// AddEvent adds the "event" edges to the Event entity.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) AddEvent(e ...*Event) *UniswapV3IncreaseLiqudityUpdate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return uvlu.AddEventIDs(ids...)
+// SetEvent sets the "event" edge to the Event entity.
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetEvent(e *Event) *UniswapV3IncreaseLiqudityUpdate {
+	return uvlu.SetEventID(e.ID)
 }
 
 // Mutation returns the UniswapV3IncreaseLiqudityMutation object of the builder.
@@ -72,25 +69,10 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) Mutation() *UniswapV3IncreaseLiqudi
 	return uvlu.mutation
 }
 
-// ClearEvent clears all "event" edges to the Event entity.
+// ClearEvent clears the "event" edge to the Event entity.
 func (uvlu *UniswapV3IncreaseLiqudityUpdate) ClearEvent() *UniswapV3IncreaseLiqudityUpdate {
 	uvlu.mutation.ClearEvent()
 	return uvlu
-}
-
-// RemoveEventIDs removes the "event" edge to Event entities by IDs.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) RemoveEventIDs(ids ...int) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.RemoveEventIDs(ids...)
-	return uvlu
-}
-
-// RemoveEvent removes "event" edges to Event entities.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) RemoveEvent(e ...*Event) *UniswapV3IncreaseLiqudityUpdate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return uvlu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -100,12 +82,18 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) Save(ctx context.Context) (int, err
 		affected int
 	)
 	if len(uvlu.hooks) == 0 {
+		if err = uvlu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = uvlu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UniswapV3IncreaseLiqudityMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uvlu.check(); err != nil {
+				return 0, err
 			}
 			uvlu.mutation = mutation
 			affected, err = uvlu.sqlSave(ctx)
@@ -145,6 +133,14 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) ExecX(ctx context.Context) {
 	if err := uvlu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) check() error {
+	if _, ok := uvlu.mutation.EventID(); uvlu.mutation.EventCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"event\"")
+	}
+	return nil
 }
 
 func (uvlu *UniswapV3IncreaseLiqudityUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -195,8 +191,8 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) sqlSave(ctx context.Context) (n int
 	}
 	if uvlu.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},
 			Bidi:    false,
@@ -206,32 +202,13 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) sqlSave(ctx context.Context) (n int
 					Column: event.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uvlu.mutation.RemovedEventIDs(); len(nodes) > 0 && !uvlu.mutation.EventCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   uniswapv3increaseliqudity.EventTable,
-			Columns: []string{uniswapv3increaseliqudity.EventColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: event.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uvlu.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},
 			Bidi:    false,
@@ -290,19 +267,15 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetAmount1(si *schema.BigInt) *
 	return uvluo
 }
 
-// AddEventIDs adds the "event" edge to the Event entity by IDs.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) AddEventIDs(ids ...int) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.AddEventIDs(ids...)
+// SetEventID sets the "event" edge to the Event entity by ID.
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetEventID(id int) *UniswapV3IncreaseLiqudityUpdateOne {
+	uvluo.mutation.SetEventID(id)
 	return uvluo
 }
 
-// AddEvent adds the "event" edges to the Event entity.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) AddEvent(e ...*Event) *UniswapV3IncreaseLiqudityUpdateOne {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return uvluo.AddEventIDs(ids...)
+// SetEvent sets the "event" edge to the Event entity.
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetEvent(e *Event) *UniswapV3IncreaseLiqudityUpdateOne {
+	return uvluo.SetEventID(e.ID)
 }
 
 // Mutation returns the UniswapV3IncreaseLiqudityMutation object of the builder.
@@ -310,25 +283,10 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) Mutation() *UniswapV3IncreaseLi
 	return uvluo.mutation
 }
 
-// ClearEvent clears all "event" edges to the Event entity.
+// ClearEvent clears the "event" edge to the Event entity.
 func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) ClearEvent() *UniswapV3IncreaseLiqudityUpdateOne {
 	uvluo.mutation.ClearEvent()
 	return uvluo
-}
-
-// RemoveEventIDs removes the "event" edge to Event entities by IDs.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) RemoveEventIDs(ids ...int) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.RemoveEventIDs(ids...)
-	return uvluo
-}
-
-// RemoveEvent removes "event" edges to Event entities.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) RemoveEvent(e ...*Event) *UniswapV3IncreaseLiqudityUpdateOne {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return uvluo.RemoveEventIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -345,12 +303,18 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) Save(ctx context.Context) (*Uni
 		node *UniswapV3IncreaseLiqudity
 	)
 	if len(uvluo.hooks) == 0 {
+		if err = uvluo.check(); err != nil {
+			return nil, err
+		}
 		node, err = uvluo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UniswapV3IncreaseLiqudityMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uvluo.check(); err != nil {
+				return nil, err
 			}
 			uvluo.mutation = mutation
 			node, err = uvluo.sqlSave(ctx)
@@ -390,6 +354,14 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) ExecX(ctx context.Context) {
 	if err := uvluo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) check() error {
+	if _, ok := uvluo.mutation.EventID(); uvluo.mutation.EventCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"event\"")
+	}
+	return nil
 }
 
 func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) sqlSave(ctx context.Context) (_node *UniswapV3IncreaseLiqudity, err error) {
@@ -457,8 +429,8 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) sqlSave(ctx context.Context) (_
 	}
 	if uvluo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},
 			Bidi:    false,
@@ -468,32 +440,13 @@ func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) sqlSave(ctx context.Context) (_
 					Column: event.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uvluo.mutation.RemovedEventIDs(); len(nodes) > 0 && !uvluo.mutation.EventCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   uniswapv3increaseliqudity.EventTable,
-			Columns: []string{uniswapv3increaseliqudity.EventColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: event.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uvluo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},
 			Bidi:    false,

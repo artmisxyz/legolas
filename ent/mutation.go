@@ -11,8 +11,10 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
 	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 
 	"entgo.io/ent"
 )
@@ -28,32 +30,46 @@ const (
 	// Node types.
 	TypeEvent                     = "Event"
 	TypePosition                  = "Position"
+	TypeUniswapV3Collect          = "UniswapV3Collect"
 	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
+	TypeUniswapV3Transfer         = "UniswapV3Transfer"
 )
 
 // EventMutation represents an operation that mutates the Event nodes in the graph.
 type EventMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	name            *string
-	signature       *string
-	address         *string
-	block_number    *uint64
-	addblock_number *uint64
-	tx_hash         *string
-	tx_index        *uint
-	addtx_index     *uint
-	block_hash      *string
-	index           *uint
-	addindex        *uint
-	hash            *string
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*Event, error)
-	predicates      []predicate.Event
+	op                        Op
+	typ                       string
+	id                        *int
+	name                      *string
+	signature                 *string
+	address                   *string
+	block_number              *uint64
+	addblock_number           *uint64
+	tx_hash                   *string
+	tx_index                  *uint
+	addtx_index               *uint
+	block_hash                *string
+	index                     *uint
+	addindex                  *uint
+	hash                      *string
+	clearedFields             map[string]struct{}
+	increase_liquidity        map[int]struct{}
+	removedincrease_liquidity map[int]struct{}
+	clearedincrease_liquidity bool
+	decrease_liquidity        map[int]struct{}
+	removeddecrease_liquidity map[int]struct{}
+	cleareddecrease_liquidity bool
+	collect                   map[int]struct{}
+	removedcollect            map[int]struct{}
+	clearedcollect            bool
+	transfer                  map[int]struct{}
+	removedtransfer           map[int]struct{}
+	clearedtransfer           bool
+	done                      bool
+	oldValue                  func(context.Context) (*Event, error)
+	predicates                []predicate.Event
 }
 
 var _ ent.Mutation = (*EventMutation)(nil)
@@ -519,6 +535,222 @@ func (m *EventMutation) ResetHash() {
 	m.hash = nil
 }
 
+// AddIncreaseLiquidityIDs adds the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ids.
+func (m *EventMutation) AddIncreaseLiquidityIDs(ids ...int) {
+	if m.increase_liquidity == nil {
+		m.increase_liquidity = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.increase_liquidity[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIncreaseLiquidity clears the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity.
+func (m *EventMutation) ClearIncreaseLiquidity() {
+	m.clearedincrease_liquidity = true
+}
+
+// IncreaseLiquidityCleared reports if the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity was cleared.
+func (m *EventMutation) IncreaseLiquidityCleared() bool {
+	return m.clearedincrease_liquidity
+}
+
+// RemoveIncreaseLiquidityIDs removes the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by IDs.
+func (m *EventMutation) RemoveIncreaseLiquidityIDs(ids ...int) {
+	if m.removedincrease_liquidity == nil {
+		m.removedincrease_liquidity = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.increase_liquidity, ids[i])
+		m.removedincrease_liquidity[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIncreaseLiquidity returns the removed IDs of the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity.
+func (m *EventMutation) RemovedIncreaseLiquidityIDs() (ids []int) {
+	for id := range m.removedincrease_liquidity {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IncreaseLiquidityIDs returns the "increase_liquidity" edge IDs in the mutation.
+func (m *EventMutation) IncreaseLiquidityIDs() (ids []int) {
+	for id := range m.increase_liquidity {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIncreaseLiquidity resets all changes to the "increase_liquidity" edge.
+func (m *EventMutation) ResetIncreaseLiquidity() {
+	m.increase_liquidity = nil
+	m.clearedincrease_liquidity = false
+	m.removedincrease_liquidity = nil
+}
+
+// AddDecreaseLiquidityIDs adds the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by ids.
+func (m *EventMutation) AddDecreaseLiquidityIDs(ids ...int) {
+	if m.decrease_liquidity == nil {
+		m.decrease_liquidity = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.decrease_liquidity[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDecreaseLiquidity clears the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity.
+func (m *EventMutation) ClearDecreaseLiquidity() {
+	m.cleareddecrease_liquidity = true
+}
+
+// DecreaseLiquidityCleared reports if the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity was cleared.
+func (m *EventMutation) DecreaseLiquidityCleared() bool {
+	return m.cleareddecrease_liquidity
+}
+
+// RemoveDecreaseLiquidityIDs removes the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by IDs.
+func (m *EventMutation) RemoveDecreaseLiquidityIDs(ids ...int) {
+	if m.removeddecrease_liquidity == nil {
+		m.removeddecrease_liquidity = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.decrease_liquidity, ids[i])
+		m.removeddecrease_liquidity[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDecreaseLiquidity returns the removed IDs of the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity.
+func (m *EventMutation) RemovedDecreaseLiquidityIDs() (ids []int) {
+	for id := range m.removeddecrease_liquidity {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DecreaseLiquidityIDs returns the "decrease_liquidity" edge IDs in the mutation.
+func (m *EventMutation) DecreaseLiquidityIDs() (ids []int) {
+	for id := range m.decrease_liquidity {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDecreaseLiquidity resets all changes to the "decrease_liquidity" edge.
+func (m *EventMutation) ResetDecreaseLiquidity() {
+	m.decrease_liquidity = nil
+	m.cleareddecrease_liquidity = false
+	m.removeddecrease_liquidity = nil
+}
+
+// AddCollectIDs adds the "collect" edge to the UniswapV3Collect entity by ids.
+func (m *EventMutation) AddCollectIDs(ids ...int) {
+	if m.collect == nil {
+		m.collect = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.collect[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCollect clears the "collect" edge to the UniswapV3Collect entity.
+func (m *EventMutation) ClearCollect() {
+	m.clearedcollect = true
+}
+
+// CollectCleared reports if the "collect" edge to the UniswapV3Collect entity was cleared.
+func (m *EventMutation) CollectCleared() bool {
+	return m.clearedcollect
+}
+
+// RemoveCollectIDs removes the "collect" edge to the UniswapV3Collect entity by IDs.
+func (m *EventMutation) RemoveCollectIDs(ids ...int) {
+	if m.removedcollect == nil {
+		m.removedcollect = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.collect, ids[i])
+		m.removedcollect[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCollect returns the removed IDs of the "collect" edge to the UniswapV3Collect entity.
+func (m *EventMutation) RemovedCollectIDs() (ids []int) {
+	for id := range m.removedcollect {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CollectIDs returns the "collect" edge IDs in the mutation.
+func (m *EventMutation) CollectIDs() (ids []int) {
+	for id := range m.collect {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCollect resets all changes to the "collect" edge.
+func (m *EventMutation) ResetCollect() {
+	m.collect = nil
+	m.clearedcollect = false
+	m.removedcollect = nil
+}
+
+// AddTransferIDs adds the "transfer" edge to the UniswapV3Transfer entity by ids.
+func (m *EventMutation) AddTransferIDs(ids ...int) {
+	if m.transfer == nil {
+		m.transfer = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.transfer[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTransfer clears the "transfer" edge to the UniswapV3Transfer entity.
+func (m *EventMutation) ClearTransfer() {
+	m.clearedtransfer = true
+}
+
+// TransferCleared reports if the "transfer" edge to the UniswapV3Transfer entity was cleared.
+func (m *EventMutation) TransferCleared() bool {
+	return m.clearedtransfer
+}
+
+// RemoveTransferIDs removes the "transfer" edge to the UniswapV3Transfer entity by IDs.
+func (m *EventMutation) RemoveTransferIDs(ids ...int) {
+	if m.removedtransfer == nil {
+		m.removedtransfer = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.transfer, ids[i])
+		m.removedtransfer[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTransfer returns the removed IDs of the "transfer" edge to the UniswapV3Transfer entity.
+func (m *EventMutation) RemovedTransferIDs() (ids []int) {
+	for id := range m.removedtransfer {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TransferIDs returns the "transfer" edge IDs in the mutation.
+func (m *EventMutation) TransferIDs() (ids []int) {
+	for id := range m.transfer {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTransfer resets all changes to the "transfer" edge.
+func (m *EventMutation) ResetTransfer() {
+	m.transfer = nil
+	m.clearedtransfer = false
+	m.removedtransfer = nil
+}
+
 // Where appends a list predicates to the EventMutation builder.
 func (m *EventMutation) Where(ps ...predicate.Event) {
 	m.predicates = append(m.predicates, ps...)
@@ -812,49 +1044,163 @@ func (m *EventMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EventMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 4)
+	if m.increase_liquidity != nil {
+		edges = append(edges, event.EdgeIncreaseLiquidity)
+	}
+	if m.decrease_liquidity != nil {
+		edges = append(edges, event.EdgeDecreaseLiquidity)
+	}
+	if m.collect != nil {
+		edges = append(edges, event.EdgeCollect)
+	}
+	if m.transfer != nil {
+		edges = append(edges, event.EdgeTransfer)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *EventMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case event.EdgeIncreaseLiquidity:
+		ids := make([]ent.Value, 0, len(m.increase_liquidity))
+		for id := range m.increase_liquidity {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeDecreaseLiquidity:
+		ids := make([]ent.Value, 0, len(m.decrease_liquidity))
+		for id := range m.decrease_liquidity {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeCollect:
+		ids := make([]ent.Value, 0, len(m.collect))
+		for id := range m.collect {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeTransfer:
+		ids := make([]ent.Value, 0, len(m.transfer))
+		for id := range m.transfer {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EventMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 4)
+	if m.removedincrease_liquidity != nil {
+		edges = append(edges, event.EdgeIncreaseLiquidity)
+	}
+	if m.removeddecrease_liquidity != nil {
+		edges = append(edges, event.EdgeDecreaseLiquidity)
+	}
+	if m.removedcollect != nil {
+		edges = append(edges, event.EdgeCollect)
+	}
+	if m.removedtransfer != nil {
+		edges = append(edges, event.EdgeTransfer)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *EventMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case event.EdgeIncreaseLiquidity:
+		ids := make([]ent.Value, 0, len(m.removedincrease_liquidity))
+		for id := range m.removedincrease_liquidity {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeDecreaseLiquidity:
+		ids := make([]ent.Value, 0, len(m.removeddecrease_liquidity))
+		for id := range m.removeddecrease_liquidity {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeCollect:
+		ids := make([]ent.Value, 0, len(m.removedcollect))
+		for id := range m.removedcollect {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeTransfer:
+		ids := make([]ent.Value, 0, len(m.removedtransfer))
+		for id := range m.removedtransfer {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EventMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 4)
+	if m.clearedincrease_liquidity {
+		edges = append(edges, event.EdgeIncreaseLiquidity)
+	}
+	if m.cleareddecrease_liquidity {
+		edges = append(edges, event.EdgeDecreaseLiquidity)
+	}
+	if m.clearedcollect {
+		edges = append(edges, event.EdgeCollect)
+	}
+	if m.clearedtransfer {
+		edges = append(edges, event.EdgeTransfer)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *EventMutation) EdgeCleared(name string) bool {
+	switch name {
+	case event.EdgeIncreaseLiquidity:
+		return m.clearedincrease_liquidity
+	case event.EdgeDecreaseLiquidity:
+		return m.cleareddecrease_liquidity
+	case event.EdgeCollect:
+		return m.clearedcollect
+	case event.EdgeTransfer:
+		return m.clearedtransfer
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *EventMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Event unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *EventMutation) ResetEdge(name string) error {
+	switch name {
+	case event.EdgeIncreaseLiquidity:
+		m.ResetIncreaseLiquidity()
+		return nil
+	case event.EdgeDecreaseLiquidity:
+		m.ResetDecreaseLiquidity()
+		return nil
+	case event.EdgeCollect:
+		m.ResetCollect()
+		return nil
+	case event.EdgeTransfer:
+		m.ResetTransfer()
+		return nil
+	}
 	return fmt.Errorf("unknown Event edge %s", name)
 }
 
@@ -2020,6 +2366,529 @@ func (m *PositionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Position edge %s", name)
 }
 
+// UniswapV3CollectMutation represents an operation that mutates the UniswapV3Collect nodes in the graph.
+type UniswapV3CollectMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	token_id      **schema.BigInt
+	recipient     *string
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3Collect, error)
+	predicates    []predicate.UniswapV3Collect
+}
+
+var _ ent.Mutation = (*UniswapV3CollectMutation)(nil)
+
+// uniswapv3collectOption allows management of the mutation configuration using functional options.
+type uniswapv3collectOption func(*UniswapV3CollectMutation)
+
+// newUniswapV3CollectMutation creates new mutation for the UniswapV3Collect entity.
+func newUniswapV3CollectMutation(c config, op Op, opts ...uniswapv3collectOption) *UniswapV3CollectMutation {
+	m := &UniswapV3CollectMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3Collect,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3CollectID sets the ID field of the mutation.
+func withUniswapV3CollectID(id int) uniswapv3collectOption {
+	return func(m *UniswapV3CollectMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3Collect
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3Collect, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3Collect.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3Collect sets the old UniswapV3Collect of the mutation.
+func withUniswapV3Collect(node *UniswapV3Collect) uniswapv3collectOption {
+	return func(m *UniswapV3CollectMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3Collect, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3CollectMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3CollectMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3CollectMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetTokenID sets the "token_id" field.
+func (m *UniswapV3CollectMutation) SetTokenID(si *schema.BigInt) {
+	m.token_id = &si
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *UniswapV3CollectMutation) TokenID() (r *schema.BigInt, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the UniswapV3Collect entity.
+// If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3CollectMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *UniswapV3CollectMutation) ResetTokenID() {
+	m.token_id = nil
+}
+
+// SetRecipient sets the "recipient" field.
+func (m *UniswapV3CollectMutation) SetRecipient(s string) {
+	m.recipient = &s
+}
+
+// Recipient returns the value of the "recipient" field in the mutation.
+func (m *UniswapV3CollectMutation) Recipient() (r string, exists bool) {
+	v := m.recipient
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecipient returns the old "recipient" field's value of the UniswapV3Collect entity.
+// If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3CollectMutation) OldRecipient(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRecipient is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRecipient requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecipient: %w", err)
+	}
+	return oldValue.Recipient, nil
+}
+
+// ResetRecipient resets all changes to the "recipient" field.
+func (m *UniswapV3CollectMutation) ResetRecipient() {
+	m.recipient = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3CollectMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3CollectMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3Collect entity.
+// If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3CollectMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3CollectMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3CollectMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3CollectMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3Collect entity.
+// If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3CollectMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3CollectMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3CollectMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3CollectMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3CollectMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3CollectMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3CollectMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3CollectMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3CollectMutation builder.
+func (m *UniswapV3CollectMutation) Where(ps ...predicate.UniswapV3Collect) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3CollectMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3Collect).
+func (m *UniswapV3CollectMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3CollectMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.token_id != nil {
+		fields = append(fields, uniswapv3collect.FieldTokenID)
+	}
+	if m.recipient != nil {
+		fields = append(fields, uniswapv3collect.FieldRecipient)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3collect.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3collect.FieldAmount1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3CollectMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3collect.FieldTokenID:
+		return m.TokenID()
+	case uniswapv3collect.FieldRecipient:
+		return m.Recipient()
+	case uniswapv3collect.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3collect.FieldAmount1:
+		return m.Amount1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3CollectMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3collect.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case uniswapv3collect.FieldRecipient:
+		return m.OldRecipient(ctx)
+	case uniswapv3collect.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3collect.FieldAmount1:
+		return m.OldAmount1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3Collect field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3CollectMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3collect.FieldTokenID:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case uniswapv3collect.FieldRecipient:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecipient(v)
+		return nil
+	case uniswapv3collect.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3collect.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Collect field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3CollectMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3CollectMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3CollectMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3Collect numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3CollectMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3CollectMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3CollectMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3Collect nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3CollectMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3collect.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case uniswapv3collect.FieldRecipient:
+		m.ResetRecipient()
+		return nil
+	case uniswapv3collect.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3collect.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Collect field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3CollectMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3collect.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3CollectMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3collect.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3CollectMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3CollectMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3CollectMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3collect.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3CollectMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3collect.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3CollectMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3collect.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Collect unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3CollectMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3collect.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Collect edge %s", name)
+}
+
 // UniswapV3DecreaseLiqudityMutation represents an operation that mutates the UniswapV3DecreaseLiqudity nodes in the graph.
 type UniswapV3DecreaseLiqudityMutation struct {
 	config
@@ -2031,8 +2900,7 @@ type UniswapV3DecreaseLiqudityMutation struct {
 	amount0       **schema.BigInt
 	amount1       **schema.BigInt
 	clearedFields map[string]struct{}
-	event         map[int]struct{}
-	removedevent  map[int]struct{}
+	event         *int
 	clearedevent  bool
 	done          bool
 	oldValue      func(context.Context) (*UniswapV3DecreaseLiqudity, error)
@@ -2262,14 +3130,9 @@ func (m *UniswapV3DecreaseLiqudityMutation) ResetAmount1() {
 	m.amount1 = nil
 }
 
-// AddEventIDs adds the "event" edge to the Event entity by ids.
-func (m *UniswapV3DecreaseLiqudityMutation) AddEventIDs(ids ...int) {
-	if m.event == nil {
-		m.event = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.event[ids[i]] = struct{}{}
-	}
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3DecreaseLiqudityMutation) SetEventID(id int) {
+	m.event = &id
 }
 
 // ClearEvent clears the "event" edge to the Event entity.
@@ -2282,29 +3145,20 @@ func (m *UniswapV3DecreaseLiqudityMutation) EventCleared() bool {
 	return m.clearedevent
 }
 
-// RemoveEventIDs removes the "event" edge to the Event entity by IDs.
-func (m *UniswapV3DecreaseLiqudityMutation) RemoveEventIDs(ids ...int) {
-	if m.removedevent == nil {
-		m.removedevent = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.event, ids[i])
-		m.removedevent[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedEvent returns the removed IDs of the "event" edge to the Event entity.
-func (m *UniswapV3DecreaseLiqudityMutation) RemovedEventIDs() (ids []int) {
-	for id := range m.removedevent {
-		ids = append(ids, id)
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
 	}
 	return
 }
 
 // EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
 func (m *UniswapV3DecreaseLiqudityMutation) EventIDs() (ids []int) {
-	for id := range m.event {
-		ids = append(ids, id)
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2313,7 +3167,6 @@ func (m *UniswapV3DecreaseLiqudityMutation) EventIDs() (ids []int) {
 func (m *UniswapV3DecreaseLiqudityMutation) ResetEvent() {
 	m.event = nil
 	m.clearedevent = false
-	m.removedevent = nil
 }
 
 // Where appends a list predicates to the UniswapV3DecreaseLiqudityMutation builder.
@@ -2497,11 +3350,9 @@ func (m *UniswapV3DecreaseLiqudityMutation) AddedEdges() []string {
 func (m *UniswapV3DecreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case uniswapv3decreaseliqudity.EdgeEvent:
-		ids := make([]ent.Value, 0, len(m.event))
-		for id := range m.event {
-			ids = append(ids, id)
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -2509,9 +3360,6 @@ func (m *UniswapV3DecreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UniswapV3DecreaseLiqudityMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedevent != nil {
-		edges = append(edges, uniswapv3decreaseliqudity.EdgeEvent)
-	}
 	return edges
 }
 
@@ -2519,12 +3367,6 @@ func (m *UniswapV3DecreaseLiqudityMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UniswapV3DecreaseLiqudityMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case uniswapv3decreaseliqudity.EdgeEvent:
-		ids := make([]ent.Value, 0, len(m.removedevent))
-		for id := range m.removedevent {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -2552,6 +3394,9 @@ func (m *UniswapV3DecreaseLiqudityMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UniswapV3DecreaseLiqudityMutation) ClearEdge(name string) error {
 	switch name {
+	case uniswapv3decreaseliqudity.EdgeEvent:
+		m.ClearEvent()
+		return nil
 	}
 	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity unique edge %s", name)
 }
@@ -2578,8 +3423,7 @@ type UniswapV3IncreaseLiqudityMutation struct {
 	amount0       **schema.BigInt
 	amount1       **schema.BigInt
 	clearedFields map[string]struct{}
-	event         map[int]struct{}
-	removedevent  map[int]struct{}
+	event         *int
 	clearedevent  bool
 	done          bool
 	oldValue      func(context.Context) (*UniswapV3IncreaseLiqudity, error)
@@ -2809,14 +3653,9 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetAmount1() {
 	m.amount1 = nil
 }
 
-// AddEventIDs adds the "event" edge to the Event entity by ids.
-func (m *UniswapV3IncreaseLiqudityMutation) AddEventIDs(ids ...int) {
-	if m.event == nil {
-		m.event = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.event[ids[i]] = struct{}{}
-	}
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3IncreaseLiqudityMutation) SetEventID(id int) {
+	m.event = &id
 }
 
 // ClearEvent clears the "event" edge to the Event entity.
@@ -2829,29 +3668,20 @@ func (m *UniswapV3IncreaseLiqudityMutation) EventCleared() bool {
 	return m.clearedevent
 }
 
-// RemoveEventIDs removes the "event" edge to the Event entity by IDs.
-func (m *UniswapV3IncreaseLiqudityMutation) RemoveEventIDs(ids ...int) {
-	if m.removedevent == nil {
-		m.removedevent = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.event, ids[i])
-		m.removedevent[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedEvent returns the removed IDs of the "event" edge to the Event entity.
-func (m *UniswapV3IncreaseLiqudityMutation) RemovedEventIDs() (ids []int) {
-	for id := range m.removedevent {
-		ids = append(ids, id)
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3IncreaseLiqudityMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
 	}
 	return
 }
 
 // EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
 func (m *UniswapV3IncreaseLiqudityMutation) EventIDs() (ids []int) {
-	for id := range m.event {
-		ids = append(ids, id)
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2860,7 +3690,6 @@ func (m *UniswapV3IncreaseLiqudityMutation) EventIDs() (ids []int) {
 func (m *UniswapV3IncreaseLiqudityMutation) ResetEvent() {
 	m.event = nil
 	m.clearedevent = false
-	m.removedevent = nil
 }
 
 // Where appends a list predicates to the UniswapV3IncreaseLiqudityMutation builder.
@@ -3044,11 +3873,9 @@ func (m *UniswapV3IncreaseLiqudityMutation) AddedEdges() []string {
 func (m *UniswapV3IncreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case uniswapv3increaseliqudity.EdgeEvent:
-		ids := make([]ent.Value, 0, len(m.event))
-		for id := range m.event {
-			ids = append(ids, id)
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -3056,9 +3883,6 @@ func (m *UniswapV3IncreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UniswapV3IncreaseLiqudityMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedevent != nil {
-		edges = append(edges, uniswapv3increaseliqudity.EdgeEvent)
-	}
 	return edges
 }
 
@@ -3066,12 +3890,6 @@ func (m *UniswapV3IncreaseLiqudityMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UniswapV3IncreaseLiqudityMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case uniswapv3increaseliqudity.EdgeEvent:
-		ids := make([]ent.Value, 0, len(m.removedevent))
-		for id := range m.removedevent {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -3099,6 +3917,9 @@ func (m *UniswapV3IncreaseLiqudityMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UniswapV3IncreaseLiqudityMutation) ClearEdge(name string) error {
 	switch name {
+	case uniswapv3increaseliqudity.EdgeEvent:
+		m.ClearEvent()
+		return nil
 	}
 	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity unique edge %s", name)
 }
@@ -3112,4 +3933,473 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity edge %s", name)
+}
+
+// UniswapV3TransferMutation represents an operation that mutates the UniswapV3Transfer nodes in the graph.
+type UniswapV3TransferMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	token_id      **schema.BigInt
+	from          *string
+	to            *string
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3Transfer, error)
+	predicates    []predicate.UniswapV3Transfer
+}
+
+var _ ent.Mutation = (*UniswapV3TransferMutation)(nil)
+
+// uniswapv3transferOption allows management of the mutation configuration using functional options.
+type uniswapv3transferOption func(*UniswapV3TransferMutation)
+
+// newUniswapV3TransferMutation creates new mutation for the UniswapV3Transfer entity.
+func newUniswapV3TransferMutation(c config, op Op, opts ...uniswapv3transferOption) *UniswapV3TransferMutation {
+	m := &UniswapV3TransferMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3Transfer,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3TransferID sets the ID field of the mutation.
+func withUniswapV3TransferID(id int) uniswapv3transferOption {
+	return func(m *UniswapV3TransferMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3Transfer
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3Transfer, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3Transfer.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3Transfer sets the old UniswapV3Transfer of the mutation.
+func withUniswapV3Transfer(node *UniswapV3Transfer) uniswapv3transferOption {
+	return func(m *UniswapV3TransferMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3Transfer, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3TransferMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3TransferMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3TransferMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetTokenID sets the "token_id" field.
+func (m *UniswapV3TransferMutation) SetTokenID(si *schema.BigInt) {
+	m.token_id = &si
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *UniswapV3TransferMutation) TokenID() (r *schema.BigInt, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the UniswapV3Transfer entity.
+// If the UniswapV3Transfer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3TransferMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *UniswapV3TransferMutation) ResetTokenID() {
+	m.token_id = nil
+}
+
+// SetFrom sets the "from" field.
+func (m *UniswapV3TransferMutation) SetFrom(s string) {
+	m.from = &s
+}
+
+// From returns the value of the "from" field in the mutation.
+func (m *UniswapV3TransferMutation) From() (r string, exists bool) {
+	v := m.from
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFrom returns the old "from" field's value of the UniswapV3Transfer entity.
+// If the UniswapV3Transfer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3TransferMutation) OldFrom(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFrom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFrom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFrom: %w", err)
+	}
+	return oldValue.From, nil
+}
+
+// ResetFrom resets all changes to the "from" field.
+func (m *UniswapV3TransferMutation) ResetFrom() {
+	m.from = nil
+}
+
+// SetTo sets the "to" field.
+func (m *UniswapV3TransferMutation) SetTo(s string) {
+	m.to = &s
+}
+
+// To returns the value of the "to" field in the mutation.
+func (m *UniswapV3TransferMutation) To() (r string, exists bool) {
+	v := m.to
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTo returns the old "to" field's value of the UniswapV3Transfer entity.
+// If the UniswapV3Transfer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3TransferMutation) OldTo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTo: %w", err)
+	}
+	return oldValue.To, nil
+}
+
+// ResetTo resets all changes to the "to" field.
+func (m *UniswapV3TransferMutation) ResetTo() {
+	m.to = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3TransferMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3TransferMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3TransferMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3TransferMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3TransferMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3TransferMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3TransferMutation builder.
+func (m *UniswapV3TransferMutation) Where(ps ...predicate.UniswapV3Transfer) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3TransferMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3Transfer).
+func (m *UniswapV3TransferMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3TransferMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.token_id != nil {
+		fields = append(fields, uniswapv3transfer.FieldTokenID)
+	}
+	if m.from != nil {
+		fields = append(fields, uniswapv3transfer.FieldFrom)
+	}
+	if m.to != nil {
+		fields = append(fields, uniswapv3transfer.FieldTo)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3TransferMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3transfer.FieldTokenID:
+		return m.TokenID()
+	case uniswapv3transfer.FieldFrom:
+		return m.From()
+	case uniswapv3transfer.FieldTo:
+		return m.To()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3TransferMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3transfer.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case uniswapv3transfer.FieldFrom:
+		return m.OldFrom(ctx)
+	case uniswapv3transfer.FieldTo:
+		return m.OldTo(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3Transfer field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3TransferMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3transfer.FieldTokenID:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case uniswapv3transfer.FieldFrom:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFrom(v)
+		return nil
+	case uniswapv3transfer.FieldTo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTo(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Transfer field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3TransferMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3TransferMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3TransferMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3Transfer numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3TransferMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3TransferMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3TransferMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3Transfer nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3TransferMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3transfer.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case uniswapv3transfer.FieldFrom:
+		m.ResetFrom()
+		return nil
+	case uniswapv3transfer.FieldTo:
+		m.ResetTo()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Transfer field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3TransferMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3transfer.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3TransferMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3transfer.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3TransferMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3TransferMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3TransferMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3transfer.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3TransferMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3transfer.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3TransferMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3transfer.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Transfer unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3TransferMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3transfer.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3Transfer edge %s", name)
 }

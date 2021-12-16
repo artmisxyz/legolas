@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.9.1
 	github.com/artmisxyz/uniswap-go v0.0.0-20211215123917-0d22e3b70fde
 	github.com/ethereum/go-ethereum v1.10.13
+	github.com/mattn/go-sqlite3 v1.14.8
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.19.1
 )

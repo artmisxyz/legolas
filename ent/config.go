@@ -26,8 +26,10 @@ type config struct {
 type hooks struct {
 	Event                     []ent.Hook
 	Position                  []ent.Hook
+	UniswapV3Collect          []ent.Hook
 	UniswapV3DecreaseLiqudity []ent.Hook
 	UniswapV3IncreaseLiqudity []ent.Hook
+	UniswapV3Transfer         []ent.Hook
 }
 
 // Options applies the options on the config object.

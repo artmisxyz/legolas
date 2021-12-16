@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/artmisxyz/blockinspector/connections"
+	"github.com/artmisxyz/blockinspector/ent"
 	"github.com/artmisxyz/blockinspector/inspector"
 	"github.com/artmisxyz/blockinspector/inspector/uniswapv3"
 	"github.com/artmisxyz/blockinspector/position"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"math/big"
@@ -37,8 +39,7 @@ func (s *Syncer) Init(conf Config) {
 		fmt.Printf("cannot parse log level %s: %s", conf.Logger.Level, err)
 		lvl = zapcore.WarnLevel
 	}
-
-	encoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
 	defaultCore := zapcore.NewCore(encoder, zapcore.Lock(zapcore.AddSync(os.Stderr)), lvl)
 	cores := []zapcore.Core{
 		defaultCore,
@@ -69,7 +70,15 @@ func (s *Syncer) Init(conf Config) {
 		s.currentBlockPosition = conf.General.StartBlockNumber
 	}
 	s.inspectors = make(map[string]inspector.Inspector)
-	s.registerInspectors(uniswapv3.NewUniswapV3(s.logger, s.ws))
+	db, err := ent.Open("sqlite3", "file:db?cache=shared&_fk=1")
+	if err != nil {
+		s.logger.Fatal("failed opening connection to sqlite.", zap.Error(err))
+	}
+	// Run the auto migration tool.
+	if err := db.Schema.Create(context.Background()); err != nil {
+		s.logger.Fatal("failed creating schema resources", zap.Error(err))
+	}
+	s.registerInspectors(uniswapv3.NewUniswapV3(s.logger, s.ws, db))
 }
 
 func (s *Syncer) Sync() {
@@ -80,22 +89,33 @@ func (s *Syncer) Sync() {
 		if err != nil {
 			s.logger.Error("error getting block", zap.Error(err))
 		}
-		s.Inspect(block)
+		s.logger.
+			Info("processing block",
+				zap.Uint64("current_block", s.currentBlockPosition),
+				zap.Float64("progress", float64(s.currentBlockPosition)/float64(newHeader.Number.Uint64())))
+
+		err = s.Inspect(block)
+		if err != nil {
+			s.logger.Error("error inspecting block", zap.Uint64("block_number", s.currentBlockPosition), zap.Error(err))
+			break
+		}
 		err = s.blockPositionHolder.Update(s.currentBlockPosition)
 		if err != nil {
 			s.logger.Error("error updating block position file", zap.Error(err))
+			break
 		}
 		s.currentBlockPosition++
 	}
 }
 
-func (s *Syncer) Inspect(block *types.Block) {
-	for k, v := range s.inspectors {
+func (s *Syncer) Inspect(block *types.Block) error {
+	for _, v := range s.inspectors {
 		err := v.InspectBlock(block)
 		if err != nil {
-			s.logger.Error("error inspecting", zap.String("inspector", k), zap.Error(err))
+			return err
 		}
 	}
+	return nil
 }
 
 func (s *Syncer) registerInspectors(inspectors ...inspector.Inspector) {
