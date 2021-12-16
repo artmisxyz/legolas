@@ -11,5 +11,5 @@ type Inspector interface {
 
 type EventHandler interface {
 	Signature() string
-	Handle(log types.Log) error
+	Save(log types.Log) error
 }

@@ -25,12 +25,12 @@ func NewCollectEventHandler(address common.Address, backend bind.ContractBackend
 	}
 }
 
-func (c *collectEventHandler) Handle(log types.Log) error {
+func (c *collectEventHandler) Save(log types.Log) error {
 	event, err := c.binding.ParseCollect(log)
 	if err != nil {
 		return fmt.Errorf("error parsing collect. %w", err)
 	}
-	return c.state.Collect(event, log)
+	return c.state.CreateCollect(event)
 }
 
 func (c *collectEventHandler) Signature() string {

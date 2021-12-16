@@ -24,7 +24,7 @@ package uniswapv3
 //	return crypto.Keccak256Hash([]byte("Initialize(uint160,int24)")).String()
 //}
 //
-//func (i *initializeEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+//func (i *initializeEventHandler) Save(abi abi.ABI, topics []common.Hash, data []byte) error {
 //	var v InitializeEvent
 //	err := abi.UnpackIntoInterface(&v, "Initialize", data)
 //	if err != nil {
@@ -53,7 +53,7 @@ package uniswapv3
 //	return crypto.Keccak256Hash([]byte("Swap(address,address,int256,int256,uint160,uint128,int24)")).String()
 //}
 //
-//func (s swapEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+//func (s swapEventHandler) Save(abi abi.ABI, topics []common.Hash, data []byte) error {
 //	var v swapEvent
 //	err := abi.UnpackIntoInterface(&v, "Swap", data)
 //	if err != nil {
@@ -84,7 +84,7 @@ package uniswapv3
 //	return crypto.Keccak256Hash([]byte("Mint(address,address,int24,int24,uint128,uint256,uint256)")).String()
 //}
 //
-//func (m mintEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+//func (m mintEventHandler) Save(abi abi.ABI, topics []common.Hash, data []byte) error {
 //	var v MintEvent
 //	err := abi.UnpackIntoInterface(&v, "Mint", data)
 //	if err != nil {
@@ -115,7 +115,7 @@ package uniswapv3
 //	return crypto.Keccak256Hash([]byte("Burn(address,int24,int24,uint128,uint256,uint256)")).String()
 //}
 //
-//func (b burnEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+//func (b burnEventHandler) Save(abi abi.ABI, topics []common.Hash, data []byte) error {
 //	var v BurnEvent
 //	err := abi.UnpackIntoInterface(&v, "Burn", data)
 //	if err != nil {
@@ -147,7 +147,7 @@ package uniswapv3
 //	return crypto.Keccak256Hash([]byte("Burn(address,int24,int24,uint128,uint256,uint256)")).String()
 //}
 //
-//func (f flashEventHandler) Handle(abi abi.ABI, topics []common.Hash, data []byte) error {
+//func (f flashEventHandler) Save(abi abi.ABI, topics []common.Hash, data []byte) error {
 //	var v FlashEvent
 //	err := abi.UnpackIntoInterface(&v, "Flash", data)
 //	if err != nil {

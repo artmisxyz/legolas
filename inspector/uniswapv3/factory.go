@@ -29,7 +29,7 @@ func NewPoolCreatedEventHandler() inspector.EventHandler {
 	}
 }
 
-func (p *poolCreatedEventHandler) Handle(event types.Log) error {
+func (p *poolCreatedEventHandler) Save(event types.Log) error {
 	panic("implement me")
 }
 

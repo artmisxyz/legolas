@@ -25,12 +25,12 @@ func NewTransferEventHandler(address common.Address, backend bind.ContractBacken
 	}
 }
 
-func (t *transferEventHandler) Handle(log types.Log) error {
+func (t *transferEventHandler) Save(log types.Log) error {
 	event, err := t.binding.ParseTransfer(log)
 	if err != nil {
 		return fmt.Errorf("error parsing transfer. %w", err)
 	}
-	return t.state.Transfer(event, log)
+	return t.state.CreateTransfer(event)
 }
 
 func (t *transferEventHandler) Signature() string {

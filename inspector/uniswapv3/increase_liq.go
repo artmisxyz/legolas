@@ -9,6 +9,11 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
+const (
+	IncreaseLiquidityEventName = "UniswapV3_Increase_Liquidity"
+	IncreaseLiquidityEventSignature = "0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f"
+)
+
 type increaseLiquidityEventHandler struct {
 	binding *nftpositionmanager.Nftpositionmanager
 	state   State
@@ -21,18 +26,18 @@ func NewIncreaseLiquidityEventHandler(address common.Address, backend bind.Contr
 	}
 	return &increaseLiquidityEventHandler{
 		binding: binding,
-		state:   NewMemoryState(),
+		state:   nil,
 	}
 }
 
 func (i *increaseLiquidityEventHandler) Signature() string {
-	return "0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f"
+	return IncreaseLiquidityEventSignature
 }
 
-func (i *increaseLiquidityEventHandler) Handle(log types.Log) error {
+func (i *increaseLiquidityEventHandler) Save(log types.Log) error {
 	event, err := i.binding.ParseIncreaseLiquidity(log)
 	if err != nil {
 		return fmt.Errorf("error parsing increase liquidity. %w", err)
 	}
-	return i.state.IncreaseLiquidity(event, log)
+	return i.state.CreateIncreaseLiquidity(event)
 }

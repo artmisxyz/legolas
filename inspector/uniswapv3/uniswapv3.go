@@ -70,7 +70,7 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 		if !ok {
 			return fmt.Errorf("event handler not registered")
 		}
-		err := eventHandler.Handle(log)
+		err := eventHandler.Save(log)
 		if err != nil {
 			return err
 		}

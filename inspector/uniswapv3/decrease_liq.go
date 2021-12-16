@@ -14,12 +14,12 @@ type decreaseLiquidityEventHandler struct {
 	state   State
 }
 
-func (d *decreaseLiquidityEventHandler) Handle(log types.Log) error {
+func (d *decreaseLiquidityEventHandler) Save(log types.Log) error {
 	event, err := d.binding.ParseDecreaseLiquidity(log)
 	if err != nil {
 		return fmt.Errorf("error parsing decrease liquidty. %w", err)
 	}
-	return d.state.DecreaseLiquidity(event, log)
+	return d.state.CreateDecreaseLiquidity(event)
 }
 
 func (d *decreaseLiquidityEventHandler) Signature() string {
