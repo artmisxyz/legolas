@@ -21,8 +21,8 @@ type uniswapV3 struct {
 const Name = "uniswapV3:inspector"
 
 const (
-	UniswapV3Factory           = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
-	SwapRouter                 = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+	Factory    = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
+	SwapRouter = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
 	NonfungiblePositionManager = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
 	V3Migrator                 = "0xA5644E29708357803b5A882D272c41cC0dF92B34"
 )
@@ -34,16 +34,15 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) insp
 		eventHandlers: make(map[string]inspector.EventHandler),
 	}
 
-	//v.registerEventHandlers(UniswapV3Factory,
-	//	NewPoolCreatedEventHandler())
-
+	v.registerAddress(common.HexToAddress(Factory))
 	v.registerAddress(common.HexToAddress(NonfungiblePositionManager))
 
 	v.registerEventHandlers(
 		NewIncreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
 		NewDecreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
 		NewCollectEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
-		NewTransferEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db))
+		NewTransferEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
+		NewPoolCreatedEventHandler(common.HexToAddress(Factory), ws, db))
 
 	//v.registerEventHandlers(SwapRouter, "SwapRouter")
 	//v.registerEventHandlers(V3Migrator, "V3Migrator")

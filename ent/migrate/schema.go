@@ -29,7 +29,8 @@ var (
 	}
 	// PositionsColumns holds the columns for the "positions" table.
 	PositionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
 		{Name: "owner", Type: field.TypeBytes},
 		{Name: "pool", Type: field.TypeBytes},
 		{Name: "token0", Type: field.TypeBytes},
@@ -45,8 +46,8 @@ var (
 		{Name: "collected_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "collected_fees_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "collected_fees_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
-		{Name: "fee_growth_inside0last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
-		{Name: "fee_growth_inside1last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "fee_growth_inside0_last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "fee_growth_inside1_last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 	}
 	// PositionsTable holds the schema information for the "positions" table.
 	PositionsTable = &schema.Table{
@@ -61,7 +62,7 @@ var (
 		{Name: "recipient", Type: field.TypeString},
 		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
-		{Name: "event_collect", Type: field.TypeInt, Nullable: true},
+		{Name: "event_collect", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3collectsTable holds the schema information for the "uniswap_v3collects" table.
 	UniswapV3collectsTable = &schema.Table{
@@ -84,7 +85,7 @@ var (
 		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
-		{Name: "event_decrease_liquidity", Type: field.TypeInt, Nullable: true},
+		{Name: "event_decrease_liquidity", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3decreaseLiquditiesTable holds the schema information for the "uniswap_v3decrease_liqudities" table.
 	UniswapV3decreaseLiquditiesTable = &schema.Table{
@@ -107,7 +108,7 @@ var (
 		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
-		{Name: "event_increase_liquidity", Type: field.TypeInt, Nullable: true},
+		{Name: "event_increase_liquidity", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3increaseLiquditiesTable holds the schema information for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesTable = &schema.Table{
@@ -123,13 +124,37 @@ var (
 			},
 		},
 	}
+	// UniswapV3poolCreatedsColumns holds the columns for the "uniswap_v3pool_createds" table.
+	UniswapV3poolCreatedsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token0", Type: field.TypeString},
+		{Name: "token1", Type: field.TypeString},
+		{Name: "fee", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "tick_spacing", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "pool", Type: field.TypeString, Unique: true},
+		{Name: "event_pool_created", Type: field.TypeInt, Unique: true, Nullable: true},
+	}
+	// UniswapV3poolCreatedsTable holds the schema information for the "uniswap_v3pool_createds" table.
+	UniswapV3poolCreatedsTable = &schema.Table{
+		Name:       "uniswap_v3pool_createds",
+		Columns:    UniswapV3poolCreatedsColumns,
+		PrimaryKey: []*schema.Column{UniswapV3poolCreatedsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "uniswap_v3pool_createds_events_pool_created",
+				Columns:    []*schema.Column{UniswapV3poolCreatedsColumns[6]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UniswapV3transfersColumns holds the columns for the "uniswap_v3transfers" table.
 	UniswapV3transfersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 		{Name: "from", Type: field.TypeString},
 		{Name: "to", Type: field.TypeString},
-		{Name: "event_transfer", Type: field.TypeInt, Nullable: true},
+		{Name: "event_transfer", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3transfersTable holds the schema information for the "uniswap_v3transfers" table.
 	UniswapV3transfersTable = &schema.Table{
@@ -152,6 +177,7 @@ var (
 		UniswapV3collectsTable,
 		UniswapV3decreaseLiquditiesTable,
 		UniswapV3increaseLiquditiesTable,
+		UniswapV3poolCreatedsTable,
 		UniswapV3transfersTable,
 	}
 )
@@ -160,5 +186,6 @@ func init() {
 	UniswapV3collectsTable.ForeignKeys[0].RefTable = EventsTable
 	UniswapV3decreaseLiquditiesTable.ForeignKeys[0].RefTable = EventsTable
 	UniswapV3increaseLiquditiesTable.ForeignKeys[0].RefTable = EventsTable
+	UniswapV3poolCreatedsTable.ForeignKeys[0].RefTable = EventsTable
 	UniswapV3transfersTable.ForeignKeys[0].RefTable = EventsTable
 }

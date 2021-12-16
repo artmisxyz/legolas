@@ -196,7 +196,7 @@ func (uvu *UniswapV3CollectUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if uvu.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3collect.EventTable,
 			Columns: []string{uniswapv3collect.EventColumn},
@@ -212,7 +212,7 @@ func (uvu *UniswapV3CollectUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if nodes := uvu.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3collect.EventTable,
 			Columns: []string{uniswapv3collect.EventColumn},
@@ -439,7 +439,7 @@ func (uvuo *UniswapV3CollectUpdateOne) sqlSave(ctx context.Context) (_node *Unis
 	}
 	if uvuo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3collect.EventTable,
 			Columns: []string{uniswapv3collect.EventColumn},
@@ -455,7 +455,7 @@ func (uvuo *UniswapV3CollectUpdateOne) sqlSave(ctx context.Context) (_node *Unis
 	}
 	if nodes := uvuo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3collect.EventTable,
 			Columns: []string{uniswapv3collect.EventColumn},

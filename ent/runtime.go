@@ -6,6 +6,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/schema"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -45,6 +46,20 @@ func init() {
 	uniswapv3collectDescRecipient := uniswapv3collectFields[1].Descriptor()
 	// uniswapv3collect.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
 	uniswapv3collect.RecipientValidator = uniswapv3collectDescRecipient.Validators[0].(func(string) error)
+	uniswapv3poolcreatedFields := schema.UniswapV3PoolCreated{}.Fields()
+	_ = uniswapv3poolcreatedFields
+	// uniswapv3poolcreatedDescToken0 is the schema descriptor for token0 field.
+	uniswapv3poolcreatedDescToken0 := uniswapv3poolcreatedFields[0].Descriptor()
+	// uniswapv3poolcreated.Token0Validator is a validator for the "token0" field. It is called by the builders before save.
+	uniswapv3poolcreated.Token0Validator = uniswapv3poolcreatedDescToken0.Validators[0].(func(string) error)
+	// uniswapv3poolcreatedDescToken1 is the schema descriptor for token1 field.
+	uniswapv3poolcreatedDescToken1 := uniswapv3poolcreatedFields[1].Descriptor()
+	// uniswapv3poolcreated.Token1Validator is a validator for the "token1" field. It is called by the builders before save.
+	uniswapv3poolcreated.Token1Validator = uniswapv3poolcreatedDescToken1.Validators[0].(func(string) error)
+	// uniswapv3poolcreatedDescPool is the schema descriptor for pool field.
+	uniswapv3poolcreatedDescPool := uniswapv3poolcreatedFields[4].Descriptor()
+	// uniswapv3poolcreated.PoolValidator is a validator for the "pool" field. It is called by the builders before save.
+	uniswapv3poolcreated.PoolValidator = uniswapv3poolcreatedDescPool.Validators[0].(func(string) error)
 	uniswapv3transferFields := schema.UniswapV3Transfer{}.Fields()
 	_ = uniswapv3transferFields
 	// uniswapv3transferDescFrom is the schema descriptor for from field.

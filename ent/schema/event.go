@@ -29,9 +29,10 @@ func (Event) Fields() []ent.Field {
 // Edges of the Event.
 func (Event) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("increase_liquidity", UniswapV3IncreaseLiqudity.Type),
-		edge.To("decrease_liquidity", UniswapV3DecreaseLiqudity.Type),
-		edge.To("collect", UniswapV3Collect.Type),
-		edge.To("transfer", UniswapV3Transfer.Type),
+		edge.To("increase_liquidity", UniswapV3IncreaseLiqudity.Type).Unique(),
+		edge.To("decrease_liquidity", UniswapV3DecreaseLiqudity.Type).Unique(),
+		edge.To("collect", UniswapV3Collect.Type).Unique(),
+		edge.To("transfer", UniswapV3Transfer.Type).Unique(),
+		edge.To("pool_created", UniswapV3PoolCreated.Type).Unique(),
 	}
 }

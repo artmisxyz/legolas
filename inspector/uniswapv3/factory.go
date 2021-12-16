@@ -1,39 +1,43 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/blockinspector/ent"
 	"github.com/artmisxyz/blockinspector/inspector"
+	"github.com/artmisxyz/uniswap-go/factory"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-type FactoryState struct {
-	poolCount                    int
-	totalVolumeETH               int
-	totalVolumeUSD               int
-	untrackedVolumeUSD           int
-	totalFeesUSD                 int
-	totalFeesETH                 int
-	totalValueLockedETH          int
-	totalValueLockedUSD          int
-	totalValueLockedUSDUntracked int
-	totalValueLockedETHUntracked int
-	txCount                      int
-}
-
 type poolCreatedEventHandler struct {
-	factoryState *FactoryState
+	binding *factory.Factory
+	storage Storage
 }
 
-func NewPoolCreatedEventHandler() inspector.EventHandler {
+const (
+	PoolCreatedEventName      = "UniswapV3_PoolCreated"
+	PoolCreatedEventSignature = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118"
+)
+
+func NewPoolCreatedEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
+	binding, err := factory.NewFactory(address, backend)
+	if err != nil {
+		panic(err)
+	}
 	return &poolCreatedEventHandler{
-		factoryState: &FactoryState{},
+		storage: NewPostgres(db),
+		binding: binding,
 	}
 }
 
-func (p *poolCreatedEventHandler) Save(event types.Log) error {
-	panic("implement me")
+func (p *poolCreatedEventHandler) Save(log types.Log) error {
+	event, err := p.binding.ParsePoolCreated(log)
+	if err != nil {
+		return err
+	}
+	return p.storage.CreatePoolCreated(event)
 }
 
 func (p *poolCreatedEventHandler) Signature() string {
-	// crypto.Keccak256Hash([]byte("PoolCreated(unit256,int64)")).String()
-	return "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118"
+	return PoolCreatedEventSignature
 }

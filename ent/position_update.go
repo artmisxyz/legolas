@@ -27,6 +27,12 @@ func (pu *PositionUpdate) Where(ps ...predicate.Position) *PositionUpdate {
 	return pu
 }
 
+// SetToken sets the "token" field.
+func (pu *PositionUpdate) SetToken(si *schema.BigInt) *PositionUpdate {
+	pu.mutation.SetToken(si)
+	return pu
+}
+
 // SetOwner sets the "owner" field.
 func (pu *PositionUpdate) SetOwner(b []byte) *PositionUpdate {
 	pu.mutation.SetOwner(b)
@@ -51,13 +57,13 @@ func (pu *PositionUpdate) SetToken1(b []byte) *PositionUpdate {
 	return pu
 }
 
-// SetTickLower sets the "tickLower" field.
+// SetTickLower sets the "tick_lower" field.
 func (pu *PositionUpdate) SetTickLower(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetTickLower(si)
 	return pu
 }
 
-// SetTickUpper sets the "tickUpper" field.
+// SetTickUpper sets the "tick_upper" field.
 func (pu *PositionUpdate) SetTickUpper(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetTickUpper(si)
 	return pu
@@ -69,61 +75,61 @@ func (pu *PositionUpdate) SetLiquidity(si *schema.BigInt) *PositionUpdate {
 	return pu
 }
 
-// SetDepositedToken0 sets the "depositedToken0" field.
+// SetDepositedToken0 sets the "deposited_token0" field.
 func (pu *PositionUpdate) SetDepositedToken0(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetDepositedToken0(si)
 	return pu
 }
 
-// SetDepositedToken1 sets the "depositedToken1" field.
+// SetDepositedToken1 sets the "deposited_token1" field.
 func (pu *PositionUpdate) SetDepositedToken1(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetDepositedToken1(si)
 	return pu
 }
 
-// SetWithdrawnToken0 sets the "withdrawnToken0" field.
+// SetWithdrawnToken0 sets the "withdrawn_token0" field.
 func (pu *PositionUpdate) SetWithdrawnToken0(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetWithdrawnToken0(si)
 	return pu
 }
 
-// SetWithdrawnToken1 sets the "withdrawnToken1" field.
+// SetWithdrawnToken1 sets the "withdrawn_token1" field.
 func (pu *PositionUpdate) SetWithdrawnToken1(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetWithdrawnToken1(si)
 	return pu
 }
 
-// SetCollectedToken0 sets the "collectedToken0" field.
+// SetCollectedToken0 sets the "collected_token0" field.
 func (pu *PositionUpdate) SetCollectedToken0(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetCollectedToken0(si)
 	return pu
 }
 
-// SetCollectedToken1 sets the "collectedToken1" field.
+// SetCollectedToken1 sets the "collected_token1" field.
 func (pu *PositionUpdate) SetCollectedToken1(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetCollectedToken1(si)
 	return pu
 }
 
-// SetCollectedFeesToken0 sets the "collectedFeesToken0" field.
+// SetCollectedFeesToken0 sets the "collected_fees_token0" field.
 func (pu *PositionUpdate) SetCollectedFeesToken0(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetCollectedFeesToken0(si)
 	return pu
 }
 
-// SetCollectedFeesToken1 sets the "collectedFeesToken1" field.
+// SetCollectedFeesToken1 sets the "collected_fees_token1" field.
 func (pu *PositionUpdate) SetCollectedFeesToken1(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetCollectedFeesToken1(si)
 	return pu
 }
 
-// SetFeeGrowthInside0LastX128 sets the "feeGrowthInside0LastX128" field.
+// SetFeeGrowthInside0LastX128 sets the "fee_growth_inside0_lastX128" field.
 func (pu *PositionUpdate) SetFeeGrowthInside0LastX128(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetFeeGrowthInside0LastX128(si)
 	return pu
 }
 
-// SetFeeGrowthInside1LastX128 sets the "feeGrowthInside1LastX128" field.
+// SetFeeGrowthInside1LastX128 sets the "fee_growth_inside1_lastX128" field.
 func (pu *PositionUpdate) SetFeeGrowthInside1LastX128(si *schema.BigInt) *PositionUpdate {
 	pu.mutation.SetFeeGrowthInside1LastX128(si)
 	return pu
@@ -194,7 +200,7 @@ func (pu *PositionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   position.Table,
 			Columns: position.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: position.FieldID,
 			},
 		},
@@ -205,6 +211,13 @@ func (pu *PositionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := pu.mutation.Token(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: position.FieldToken,
+		})
 	}
 	if value, ok := pu.mutation.Owner(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -344,6 +357,12 @@ type PositionUpdateOne struct {
 	mutation *PositionMutation
 }
 
+// SetToken sets the "token" field.
+func (puo *PositionUpdateOne) SetToken(si *schema.BigInt) *PositionUpdateOne {
+	puo.mutation.SetToken(si)
+	return puo
+}
+
 // SetOwner sets the "owner" field.
 func (puo *PositionUpdateOne) SetOwner(b []byte) *PositionUpdateOne {
 	puo.mutation.SetOwner(b)
@@ -368,13 +387,13 @@ func (puo *PositionUpdateOne) SetToken1(b []byte) *PositionUpdateOne {
 	return puo
 }
 
-// SetTickLower sets the "tickLower" field.
+// SetTickLower sets the "tick_lower" field.
 func (puo *PositionUpdateOne) SetTickLower(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetTickLower(si)
 	return puo
 }
 
-// SetTickUpper sets the "tickUpper" field.
+// SetTickUpper sets the "tick_upper" field.
 func (puo *PositionUpdateOne) SetTickUpper(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetTickUpper(si)
 	return puo
@@ -386,61 +405,61 @@ func (puo *PositionUpdateOne) SetLiquidity(si *schema.BigInt) *PositionUpdateOne
 	return puo
 }
 
-// SetDepositedToken0 sets the "depositedToken0" field.
+// SetDepositedToken0 sets the "deposited_token0" field.
 func (puo *PositionUpdateOne) SetDepositedToken0(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetDepositedToken0(si)
 	return puo
 }
 
-// SetDepositedToken1 sets the "depositedToken1" field.
+// SetDepositedToken1 sets the "deposited_token1" field.
 func (puo *PositionUpdateOne) SetDepositedToken1(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetDepositedToken1(si)
 	return puo
 }
 
-// SetWithdrawnToken0 sets the "withdrawnToken0" field.
+// SetWithdrawnToken0 sets the "withdrawn_token0" field.
 func (puo *PositionUpdateOne) SetWithdrawnToken0(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetWithdrawnToken0(si)
 	return puo
 }
 
-// SetWithdrawnToken1 sets the "withdrawnToken1" field.
+// SetWithdrawnToken1 sets the "withdrawn_token1" field.
 func (puo *PositionUpdateOne) SetWithdrawnToken1(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetWithdrawnToken1(si)
 	return puo
 }
 
-// SetCollectedToken0 sets the "collectedToken0" field.
+// SetCollectedToken0 sets the "collected_token0" field.
 func (puo *PositionUpdateOne) SetCollectedToken0(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetCollectedToken0(si)
 	return puo
 }
 
-// SetCollectedToken1 sets the "collectedToken1" field.
+// SetCollectedToken1 sets the "collected_token1" field.
 func (puo *PositionUpdateOne) SetCollectedToken1(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetCollectedToken1(si)
 	return puo
 }
 
-// SetCollectedFeesToken0 sets the "collectedFeesToken0" field.
+// SetCollectedFeesToken0 sets the "collected_fees_token0" field.
 func (puo *PositionUpdateOne) SetCollectedFeesToken0(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetCollectedFeesToken0(si)
 	return puo
 }
 
-// SetCollectedFeesToken1 sets the "collectedFeesToken1" field.
+// SetCollectedFeesToken1 sets the "collected_fees_token1" field.
 func (puo *PositionUpdateOne) SetCollectedFeesToken1(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetCollectedFeesToken1(si)
 	return puo
 }
 
-// SetFeeGrowthInside0LastX128 sets the "feeGrowthInside0LastX128" field.
+// SetFeeGrowthInside0LastX128 sets the "fee_growth_inside0_lastX128" field.
 func (puo *PositionUpdateOne) SetFeeGrowthInside0LastX128(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetFeeGrowthInside0LastX128(si)
 	return puo
 }
 
-// SetFeeGrowthInside1LastX128 sets the "feeGrowthInside1LastX128" field.
+// SetFeeGrowthInside1LastX128 sets the "fee_growth_inside1_lastX128" field.
 func (puo *PositionUpdateOne) SetFeeGrowthInside1LastX128(si *schema.BigInt) *PositionUpdateOne {
 	puo.mutation.SetFeeGrowthInside1LastX128(si)
 	return puo
@@ -518,7 +537,7 @@ func (puo *PositionUpdateOne) sqlSave(ctx context.Context) (_node *Position, err
 			Table:   position.Table,
 			Columns: position.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: position.FieldID,
 			},
 		},
@@ -546,6 +565,13 @@ func (puo *PositionUpdateOne) sqlSave(ctx context.Context) (_node *Position, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := puo.mutation.Token(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: position.FieldToken,
+		})
 	}
 	if value, ok := puo.mutation.Owner(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

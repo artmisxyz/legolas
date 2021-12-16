@@ -8,6 +8,11 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/blockinspector/ent/event"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
 // Event is the model entity for the Event schema.
@@ -41,52 +46,88 @@ type Event struct {
 // EventEdges holds the relations/edges for other nodes in the graph.
 type EventEdges struct {
 	// IncreaseLiquidity holds the value of the increase_liquidity edge.
-	IncreaseLiquidity []*UniswapV3IncreaseLiqudity `json:"increase_liquidity,omitempty"`
+	IncreaseLiquidity *UniswapV3IncreaseLiqudity `json:"increase_liquidity,omitempty"`
 	// DecreaseLiquidity holds the value of the decrease_liquidity edge.
-	DecreaseLiquidity []*UniswapV3DecreaseLiqudity `json:"decrease_liquidity,omitempty"`
+	DecreaseLiquidity *UniswapV3DecreaseLiqudity `json:"decrease_liquidity,omitempty"`
 	// Collect holds the value of the collect edge.
-	Collect []*UniswapV3Collect `json:"collect,omitempty"`
+	Collect *UniswapV3Collect `json:"collect,omitempty"`
 	// Transfer holds the value of the transfer edge.
-	Transfer []*UniswapV3Transfer `json:"transfer,omitempty"`
+	Transfer *UniswapV3Transfer `json:"transfer,omitempty"`
+	// PoolCreated holds the value of the pool_created edge.
+	PoolCreated *UniswapV3PoolCreated `json:"pool_created,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // IncreaseLiquidityOrErr returns the IncreaseLiquidity value or an error if the edge
-// was not loaded in eager-loading.
-func (e EventEdges) IncreaseLiquidityOrErr() ([]*UniswapV3IncreaseLiqudity, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) IncreaseLiquidityOrErr() (*UniswapV3IncreaseLiqudity, error) {
 	if e.loadedTypes[0] {
+		if e.IncreaseLiquidity == nil {
+			// The edge increase_liquidity was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3increaseliqudity.Label}
+		}
 		return e.IncreaseLiquidity, nil
 	}
 	return nil, &NotLoadedError{edge: "increase_liquidity"}
 }
 
 // DecreaseLiquidityOrErr returns the DecreaseLiquidity value or an error if the edge
-// was not loaded in eager-loading.
-func (e EventEdges) DecreaseLiquidityOrErr() ([]*UniswapV3DecreaseLiqudity, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) DecreaseLiquidityOrErr() (*UniswapV3DecreaseLiqudity, error) {
 	if e.loadedTypes[1] {
+		if e.DecreaseLiquidity == nil {
+			// The edge decrease_liquidity was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3decreaseliqudity.Label}
+		}
 		return e.DecreaseLiquidity, nil
 	}
 	return nil, &NotLoadedError{edge: "decrease_liquidity"}
 }
 
 // CollectOrErr returns the Collect value or an error if the edge
-// was not loaded in eager-loading.
-func (e EventEdges) CollectOrErr() ([]*UniswapV3Collect, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) CollectOrErr() (*UniswapV3Collect, error) {
 	if e.loadedTypes[2] {
+		if e.Collect == nil {
+			// The edge collect was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3collect.Label}
+		}
 		return e.Collect, nil
 	}
 	return nil, &NotLoadedError{edge: "collect"}
 }
 
 // TransferOrErr returns the Transfer value or an error if the edge
-// was not loaded in eager-loading.
-func (e EventEdges) TransferOrErr() ([]*UniswapV3Transfer, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) TransferOrErr() (*UniswapV3Transfer, error) {
 	if e.loadedTypes[3] {
+		if e.Transfer == nil {
+			// The edge transfer was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3transfer.Label}
+		}
 		return e.Transfer, nil
 	}
 	return nil, &NotLoadedError{edge: "transfer"}
+}
+
+// PoolCreatedOrErr returns the PoolCreated value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolCreatedOrErr() (*UniswapV3PoolCreated, error) {
+	if e.loadedTypes[4] {
+		if e.PoolCreated == nil {
+			// The edge pool_created was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolcreated.Label}
+		}
+		return e.PoolCreated, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_created"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -196,6 +237,11 @@ func (e *Event) QueryCollect() *UniswapV3CollectQuery {
 // QueryTransfer queries the "transfer" edge of the Event entity.
 func (e *Event) QueryTransfer() *UniswapV3TransferQuery {
 	return (&EventClient{config: e.config}).QueryTransfer(e)
+}
+
+// QueryPoolCreated queries the "pool_created" edge of the Event entity.
+func (e *Event) QueryPoolCreated() *UniswapV3PoolCreatedQuery {
+	return (&EventClient{config: e.config}).QueryPoolCreated(e)
 }
 
 // Update returns a builder for updating this Event.

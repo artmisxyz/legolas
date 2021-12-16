@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
-	"github.com/artmisxyz/blockinspector/ent/schema"
 )
 
 // PositionQuery is the builder for querying Position entities.
@@ -85,8 +84,8 @@ func (pq *PositionQuery) FirstX(ctx context.Context) *Position {
 
 // FirstID returns the first Position ID from the query.
 // Returns a *NotFoundError when no Position ID was found.
-func (pq *PositionQuery) FirstID(ctx context.Context) (id *schema.BigInt, err error) {
-	var ids []*schema.BigInt
+func (pq *PositionQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -98,7 +97,7 @@ func (pq *PositionQuery) FirstID(ctx context.Context) (id *schema.BigInt, err er
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pq *PositionQuery) FirstIDX(ctx context.Context) *schema.BigInt {
+func (pq *PositionQuery) FirstIDX(ctx context.Context) int {
 	id, err := pq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +135,8 @@ func (pq *PositionQuery) OnlyX(ctx context.Context) *Position {
 // OnlyID is like Only, but returns the only Position ID in the query.
 // Returns a *NotSingularError when exactly one Position ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (pq *PositionQuery) OnlyID(ctx context.Context) (id *schema.BigInt, err error) {
-	var ids []*schema.BigInt
+func (pq *PositionQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -153,7 +152,7 @@ func (pq *PositionQuery) OnlyID(ctx context.Context) (id *schema.BigInt, err err
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pq *PositionQuery) OnlyIDX(ctx context.Context) *schema.BigInt {
+func (pq *PositionQuery) OnlyIDX(ctx context.Context) int {
 	id, err := pq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -179,8 +178,8 @@ func (pq *PositionQuery) AllX(ctx context.Context) []*Position {
 }
 
 // IDs executes the query and returns a list of Position IDs.
-func (pq *PositionQuery) IDs(ctx context.Context) ([]*schema.BigInt, error) {
-	var ids []*schema.BigInt
+func (pq *PositionQuery) IDs(ctx context.Context) ([]int, error) {
+	var ids []int
 	if err := pq.Select(position.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -188,7 +187,7 @@ func (pq *PositionQuery) IDs(ctx context.Context) ([]*schema.BigInt, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pq *PositionQuery) IDsX(ctx context.Context) []*schema.BigInt {
+func (pq *PositionQuery) IDsX(ctx context.Context) []int {
 	ids, err := pq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -254,12 +253,12 @@ func (pq *PositionQuery) Clone() *PositionQuery {
 // Example:
 //
 //	var v []struct {
-//		Owner []byte `json:"owner,omitempty"`
+//		Token *schema.BigInt `json:"token,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Position.Query().
-//		GroupBy(position.FieldOwner).
+//		GroupBy(position.FieldToken).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -281,11 +280,11 @@ func (pq *PositionQuery) GroupBy(field string, fields ...string) *PositionGroupB
 // Example:
 //
 //	var v []struct {
-//		Owner []byte `json:"owner,omitempty"`
+//		Token *schema.BigInt `json:"token,omitempty"`
 //	}
 //
 //	client.Position.Query().
-//		Select(position.FieldOwner).
+//		Select(position.FieldToken).
 //		Scan(ctx, &v)
 //
 func (pq *PositionQuery) Select(fields ...string) *PositionSelect {
@@ -354,7 +353,7 @@ func (pq *PositionQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   position.Table,
 			Columns: position.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: position.FieldID,
 			},
 		},

@@ -78,7 +78,7 @@ func (uvq *UniswapV3TransferQuery) QueryEvent() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3transfer.Table, uniswapv3transfer.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3transfer.EventTable, uniswapv3transfer.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3transfer.EventTable, uniswapv3transfer.EventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uvq.driver.Dialect(), step)
 		return fromU, nil

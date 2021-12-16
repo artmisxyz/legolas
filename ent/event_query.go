@@ -17,6 +17,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -34,6 +35,7 @@ type EventQuery struct {
 	withDecreaseLiquidity *UniswapV3DecreaseLiqudityQuery
 	withCollect           *UniswapV3CollectQuery
 	withTransfer          *UniswapV3TransferQuery
+	withPoolCreated       *UniswapV3PoolCreatedQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -84,7 +86,7 @@ func (eq *EventQuery) QueryIncreaseLiquidity() *UniswapV3IncreaseLiqudityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.IncreaseLiquidityTable, event.IncreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.IncreaseLiquidityTable, event.IncreaseLiquidityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -106,7 +108,7 @@ func (eq *EventQuery) QueryDecreaseLiquidity() *UniswapV3DecreaseLiqudityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.DecreaseLiquidityTable, event.DecreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.DecreaseLiquidityTable, event.DecreaseLiquidityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -128,7 +130,7 @@ func (eq *EventQuery) QueryCollect() *UniswapV3CollectQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(uniswapv3collect.Table, uniswapv3collect.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.CollectTable, event.CollectColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.CollectTable, event.CollectColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -150,7 +152,29 @@ func (eq *EventQuery) QueryTransfer() *UniswapV3TransferQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(uniswapv3transfer.Table, uniswapv3transfer.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.TransferTable, event.TransferColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.TransferTable, event.TransferColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPoolCreated chains the current query on the "pool_created" edge.
+func (eq *EventQuery) QueryPoolCreated() *UniswapV3PoolCreatedQuery {
+	query := &UniswapV3PoolCreatedQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(uniswapv3poolcreated.Table, uniswapv3poolcreated.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolCreatedTable, event.PoolCreatedColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,6 +367,7 @@ func (eq *EventQuery) Clone() *EventQuery {
 		withDecreaseLiquidity: eq.withDecreaseLiquidity.Clone(),
 		withCollect:           eq.withCollect.Clone(),
 		withTransfer:          eq.withTransfer.Clone(),
+		withPoolCreated:       eq.withPoolCreated.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
@@ -390,6 +415,17 @@ func (eq *EventQuery) WithTransfer(opts ...func(*UniswapV3TransferQuery)) *Event
 		opt(query)
 	}
 	eq.withTransfer = query
+	return eq
+}
+
+// WithPoolCreated tells the query-builder to eager-load the nodes that are connected to
+// the "pool_created" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithPoolCreated(opts ...func(*UniswapV3PoolCreatedQuery)) *EventQuery {
+	query := &UniswapV3PoolCreatedQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withPoolCreated = query
 	return eq
 }
 
@@ -458,11 +494,12 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 	var (
 		nodes       = []*Event{}
 		_spec       = eq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			eq.withIncreaseLiquidity != nil,
 			eq.withDecreaseLiquidity != nil,
 			eq.withCollect != nil,
 			eq.withTransfer != nil,
+			eq.withPoolCreated != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -491,7 +528,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.IncreaseLiquidity = []*UniswapV3IncreaseLiqudity{}
 		}
 		query.withFKs = true
 		query.Where(predicate.UniswapV3IncreaseLiqudity(func(s *sql.Selector) {
@@ -510,7 +546,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "event_increase_liquidity" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.IncreaseLiquidity = append(node.Edges.IncreaseLiquidity, n)
+			node.Edges.IncreaseLiquidity = n
 		}
 	}
 
@@ -520,7 +556,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.DecreaseLiquidity = []*UniswapV3DecreaseLiqudity{}
 		}
 		query.withFKs = true
 		query.Where(predicate.UniswapV3DecreaseLiqudity(func(s *sql.Selector) {
@@ -539,7 +574,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "event_decrease_liquidity" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.DecreaseLiquidity = append(node.Edges.DecreaseLiquidity, n)
+			node.Edges.DecreaseLiquidity = n
 		}
 	}
 
@@ -549,7 +584,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Collect = []*UniswapV3Collect{}
 		}
 		query.withFKs = true
 		query.Where(predicate.UniswapV3Collect(func(s *sql.Selector) {
@@ -568,7 +602,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "event_collect" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Collect = append(node.Edges.Collect, n)
+			node.Edges.Collect = n
 		}
 	}
 
@@ -578,7 +612,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Transfer = []*UniswapV3Transfer{}
 		}
 		query.withFKs = true
 		query.Where(predicate.UniswapV3Transfer(func(s *sql.Selector) {
@@ -597,7 +630,35 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "event_transfer" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Transfer = append(node.Edges.Transfer, n)
+			node.Edges.Transfer = n
+		}
+	}
+
+	if query := eq.withPoolCreated; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Event)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
+			s.Where(sql.InValues(event.PoolCreatedColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.event_pool_created
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "event_pool_created" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "event_pool_created" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PoolCreated = n
 		}
 	}
 

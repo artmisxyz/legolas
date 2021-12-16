@@ -7,6 +7,8 @@ const (
 	Label = "position"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldToken holds the string denoting the token field in the database.
+	FieldToken = "token"
 	// FieldOwner holds the string denoting the owner field in the database.
 	FieldOwner = "owner"
 	// FieldPool holds the string denoting the pool field in the database.
@@ -15,32 +17,32 @@ const (
 	FieldToken0 = "token0"
 	// FieldToken1 holds the string denoting the token1 field in the database.
 	FieldToken1 = "token1"
-	// FieldTickLower holds the string denoting the ticklower field in the database.
+	// FieldTickLower holds the string denoting the tick_lower field in the database.
 	FieldTickLower = "tick_lower"
-	// FieldTickUpper holds the string denoting the tickupper field in the database.
+	// FieldTickUpper holds the string denoting the tick_upper field in the database.
 	FieldTickUpper = "tick_upper"
 	// FieldLiquidity holds the string denoting the liquidity field in the database.
 	FieldLiquidity = "liquidity"
-	// FieldDepositedToken0 holds the string denoting the depositedtoken0 field in the database.
+	// FieldDepositedToken0 holds the string denoting the deposited_token0 field in the database.
 	FieldDepositedToken0 = "deposited_token0"
-	// FieldDepositedToken1 holds the string denoting the depositedtoken1 field in the database.
+	// FieldDepositedToken1 holds the string denoting the deposited_token1 field in the database.
 	FieldDepositedToken1 = "deposited_token1"
-	// FieldWithdrawnToken0 holds the string denoting the withdrawntoken0 field in the database.
+	// FieldWithdrawnToken0 holds the string denoting the withdrawn_token0 field in the database.
 	FieldWithdrawnToken0 = "withdrawn_token0"
-	// FieldWithdrawnToken1 holds the string denoting the withdrawntoken1 field in the database.
+	// FieldWithdrawnToken1 holds the string denoting the withdrawn_token1 field in the database.
 	FieldWithdrawnToken1 = "withdrawn_token1"
-	// FieldCollectedToken0 holds the string denoting the collectedtoken0 field in the database.
+	// FieldCollectedToken0 holds the string denoting the collected_token0 field in the database.
 	FieldCollectedToken0 = "collected_token0"
-	// FieldCollectedToken1 holds the string denoting the collectedtoken1 field in the database.
+	// FieldCollectedToken1 holds the string denoting the collected_token1 field in the database.
 	FieldCollectedToken1 = "collected_token1"
-	// FieldCollectedFeesToken0 holds the string denoting the collectedfeestoken0 field in the database.
+	// FieldCollectedFeesToken0 holds the string denoting the collected_fees_token0 field in the database.
 	FieldCollectedFeesToken0 = "collected_fees_token0"
-	// FieldCollectedFeesToken1 holds the string denoting the collectedfeestoken1 field in the database.
+	// FieldCollectedFeesToken1 holds the string denoting the collected_fees_token1 field in the database.
 	FieldCollectedFeesToken1 = "collected_fees_token1"
-	// FieldFeeGrowthInside0LastX128 holds the string denoting the feegrowthinside0lastx128 field in the database.
-	FieldFeeGrowthInside0LastX128 = "fee_growth_inside0last_x128"
-	// FieldFeeGrowthInside1LastX128 holds the string denoting the feegrowthinside1lastx128 field in the database.
-	FieldFeeGrowthInside1LastX128 = "fee_growth_inside1last_x128"
+	// FieldFeeGrowthInside0LastX128 holds the string denoting the fee_growth_inside0_lastx128 field in the database.
+	FieldFeeGrowthInside0LastX128 = "fee_growth_inside0_last_x128"
+	// FieldFeeGrowthInside1LastX128 holds the string denoting the fee_growth_inside1_lastx128 field in the database.
+	FieldFeeGrowthInside1LastX128 = "fee_growth_inside1_last_x128"
 	// Table holds the table name of the position in the database.
 	Table = "positions"
 )
@@ -48,6 +50,7 @@ const (
 // Columns holds all SQL columns for position fields.
 var Columns = []string{
 	FieldID,
+	FieldToken,
 	FieldOwner,
 	FieldPool,
 	FieldToken0,

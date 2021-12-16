@@ -191,7 +191,7 @@ func (uvlu *UniswapV3DecreaseLiqudityUpdate) sqlSave(ctx context.Context) (n int
 	}
 	if uvlu.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3decreaseliqudity.EventTable,
 			Columns: []string{uniswapv3decreaseliqudity.EventColumn},
@@ -207,7 +207,7 @@ func (uvlu *UniswapV3DecreaseLiqudityUpdate) sqlSave(ctx context.Context) (n int
 	}
 	if nodes := uvlu.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3decreaseliqudity.EventTable,
 			Columns: []string{uniswapv3decreaseliqudity.EventColumn},
@@ -429,7 +429,7 @@ func (uvluo *UniswapV3DecreaseLiqudityUpdateOne) sqlSave(ctx context.Context) (_
 	}
 	if uvluo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3decreaseliqudity.EventTable,
 			Columns: []string{uniswapv3decreaseliqudity.EventColumn},
@@ -445,7 +445,7 @@ func (uvluo *UniswapV3DecreaseLiqudityUpdateOne) sqlSave(ctx context.Context) (_
 	}
 	if nodes := uvluo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3decreaseliqudity.EventTable,
 			Columns: []string{uniswapv3decreaseliqudity.EventColumn},

@@ -14,6 +14,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 
 	"entgo.io/ent"
@@ -33,6 +34,7 @@ const (
 	TypeUniswapV3Collect          = "UniswapV3Collect"
 	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
+	TypeUniswapV3PoolCreated      = "UniswapV3PoolCreated"
 	TypeUniswapV3Transfer         = "UniswapV3Transfer"
 )
 
@@ -55,18 +57,16 @@ type EventMutation struct {
 	addindex                  *uint
 	hash                      *string
 	clearedFields             map[string]struct{}
-	increase_liquidity        map[int]struct{}
-	removedincrease_liquidity map[int]struct{}
+	increase_liquidity        *int
 	clearedincrease_liquidity bool
-	decrease_liquidity        map[int]struct{}
-	removeddecrease_liquidity map[int]struct{}
+	decrease_liquidity        *int
 	cleareddecrease_liquidity bool
-	collect                   map[int]struct{}
-	removedcollect            map[int]struct{}
+	collect                   *int
 	clearedcollect            bool
-	transfer                  map[int]struct{}
-	removedtransfer           map[int]struct{}
+	transfer                  *int
 	clearedtransfer           bool
+	pool_created              *int
+	clearedpool_created       bool
 	done                      bool
 	oldValue                  func(context.Context) (*Event, error)
 	predicates                []predicate.Event
@@ -535,14 +535,9 @@ func (m *EventMutation) ResetHash() {
 	m.hash = nil
 }
 
-// AddIncreaseLiquidityIDs adds the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ids.
-func (m *EventMutation) AddIncreaseLiquidityIDs(ids ...int) {
-	if m.increase_liquidity == nil {
-		m.increase_liquidity = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.increase_liquidity[ids[i]] = struct{}{}
-	}
+// SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by id.
+func (m *EventMutation) SetIncreaseLiquidityID(id int) {
+	m.increase_liquidity = &id
 }
 
 // ClearIncreaseLiquidity clears the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity.
@@ -555,29 +550,20 @@ func (m *EventMutation) IncreaseLiquidityCleared() bool {
 	return m.clearedincrease_liquidity
 }
 
-// RemoveIncreaseLiquidityIDs removes the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by IDs.
-func (m *EventMutation) RemoveIncreaseLiquidityIDs(ids ...int) {
-	if m.removedincrease_liquidity == nil {
-		m.removedincrease_liquidity = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.increase_liquidity, ids[i])
-		m.removedincrease_liquidity[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedIncreaseLiquidity returns the removed IDs of the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity.
-func (m *EventMutation) RemovedIncreaseLiquidityIDs() (ids []int) {
-	for id := range m.removedincrease_liquidity {
-		ids = append(ids, id)
+// IncreaseLiquidityID returns the "increase_liquidity" edge ID in the mutation.
+func (m *EventMutation) IncreaseLiquidityID() (id int, exists bool) {
+	if m.increase_liquidity != nil {
+		return *m.increase_liquidity, true
 	}
 	return
 }
 
 // IncreaseLiquidityIDs returns the "increase_liquidity" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// IncreaseLiquidityID instead. It exists only for internal usage by the builders.
 func (m *EventMutation) IncreaseLiquidityIDs() (ids []int) {
-	for id := range m.increase_liquidity {
-		ids = append(ids, id)
+	if id := m.increase_liquidity; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -586,17 +572,11 @@ func (m *EventMutation) IncreaseLiquidityIDs() (ids []int) {
 func (m *EventMutation) ResetIncreaseLiquidity() {
 	m.increase_liquidity = nil
 	m.clearedincrease_liquidity = false
-	m.removedincrease_liquidity = nil
 }
 
-// AddDecreaseLiquidityIDs adds the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by ids.
-func (m *EventMutation) AddDecreaseLiquidityIDs(ids ...int) {
-	if m.decrease_liquidity == nil {
-		m.decrease_liquidity = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.decrease_liquidity[ids[i]] = struct{}{}
-	}
+// SetDecreaseLiquidityID sets the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by id.
+func (m *EventMutation) SetDecreaseLiquidityID(id int) {
+	m.decrease_liquidity = &id
 }
 
 // ClearDecreaseLiquidity clears the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity.
@@ -609,29 +589,20 @@ func (m *EventMutation) DecreaseLiquidityCleared() bool {
 	return m.cleareddecrease_liquidity
 }
 
-// RemoveDecreaseLiquidityIDs removes the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by IDs.
-func (m *EventMutation) RemoveDecreaseLiquidityIDs(ids ...int) {
-	if m.removeddecrease_liquidity == nil {
-		m.removeddecrease_liquidity = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.decrease_liquidity, ids[i])
-		m.removeddecrease_liquidity[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedDecreaseLiquidity returns the removed IDs of the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity.
-func (m *EventMutation) RemovedDecreaseLiquidityIDs() (ids []int) {
-	for id := range m.removeddecrease_liquidity {
-		ids = append(ids, id)
+// DecreaseLiquidityID returns the "decrease_liquidity" edge ID in the mutation.
+func (m *EventMutation) DecreaseLiquidityID() (id int, exists bool) {
+	if m.decrease_liquidity != nil {
+		return *m.decrease_liquidity, true
 	}
 	return
 }
 
 // DecreaseLiquidityIDs returns the "decrease_liquidity" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DecreaseLiquidityID instead. It exists only for internal usage by the builders.
 func (m *EventMutation) DecreaseLiquidityIDs() (ids []int) {
-	for id := range m.decrease_liquidity {
-		ids = append(ids, id)
+	if id := m.decrease_liquidity; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -640,17 +611,11 @@ func (m *EventMutation) DecreaseLiquidityIDs() (ids []int) {
 func (m *EventMutation) ResetDecreaseLiquidity() {
 	m.decrease_liquidity = nil
 	m.cleareddecrease_liquidity = false
-	m.removeddecrease_liquidity = nil
 }
 
-// AddCollectIDs adds the "collect" edge to the UniswapV3Collect entity by ids.
-func (m *EventMutation) AddCollectIDs(ids ...int) {
-	if m.collect == nil {
-		m.collect = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.collect[ids[i]] = struct{}{}
-	}
+// SetCollectID sets the "collect" edge to the UniswapV3Collect entity by id.
+func (m *EventMutation) SetCollectID(id int) {
+	m.collect = &id
 }
 
 // ClearCollect clears the "collect" edge to the UniswapV3Collect entity.
@@ -663,29 +628,20 @@ func (m *EventMutation) CollectCleared() bool {
 	return m.clearedcollect
 }
 
-// RemoveCollectIDs removes the "collect" edge to the UniswapV3Collect entity by IDs.
-func (m *EventMutation) RemoveCollectIDs(ids ...int) {
-	if m.removedcollect == nil {
-		m.removedcollect = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.collect, ids[i])
-		m.removedcollect[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedCollect returns the removed IDs of the "collect" edge to the UniswapV3Collect entity.
-func (m *EventMutation) RemovedCollectIDs() (ids []int) {
-	for id := range m.removedcollect {
-		ids = append(ids, id)
+// CollectID returns the "collect" edge ID in the mutation.
+func (m *EventMutation) CollectID() (id int, exists bool) {
+	if m.collect != nil {
+		return *m.collect, true
 	}
 	return
 }
 
 // CollectIDs returns the "collect" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CollectID instead. It exists only for internal usage by the builders.
 func (m *EventMutation) CollectIDs() (ids []int) {
-	for id := range m.collect {
-		ids = append(ids, id)
+	if id := m.collect; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -694,17 +650,11 @@ func (m *EventMutation) CollectIDs() (ids []int) {
 func (m *EventMutation) ResetCollect() {
 	m.collect = nil
 	m.clearedcollect = false
-	m.removedcollect = nil
 }
 
-// AddTransferIDs adds the "transfer" edge to the UniswapV3Transfer entity by ids.
-func (m *EventMutation) AddTransferIDs(ids ...int) {
-	if m.transfer == nil {
-		m.transfer = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.transfer[ids[i]] = struct{}{}
-	}
+// SetTransferID sets the "transfer" edge to the UniswapV3Transfer entity by id.
+func (m *EventMutation) SetTransferID(id int) {
+	m.transfer = &id
 }
 
 // ClearTransfer clears the "transfer" edge to the UniswapV3Transfer entity.
@@ -717,29 +667,20 @@ func (m *EventMutation) TransferCleared() bool {
 	return m.clearedtransfer
 }
 
-// RemoveTransferIDs removes the "transfer" edge to the UniswapV3Transfer entity by IDs.
-func (m *EventMutation) RemoveTransferIDs(ids ...int) {
-	if m.removedtransfer == nil {
-		m.removedtransfer = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.transfer, ids[i])
-		m.removedtransfer[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTransfer returns the removed IDs of the "transfer" edge to the UniswapV3Transfer entity.
-func (m *EventMutation) RemovedTransferIDs() (ids []int) {
-	for id := range m.removedtransfer {
-		ids = append(ids, id)
+// TransferID returns the "transfer" edge ID in the mutation.
+func (m *EventMutation) TransferID() (id int, exists bool) {
+	if m.transfer != nil {
+		return *m.transfer, true
 	}
 	return
 }
 
 // TransferIDs returns the "transfer" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TransferID instead. It exists only for internal usage by the builders.
 func (m *EventMutation) TransferIDs() (ids []int) {
-	for id := range m.transfer {
-		ids = append(ids, id)
+	if id := m.transfer; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -748,7 +689,45 @@ func (m *EventMutation) TransferIDs() (ids []int) {
 func (m *EventMutation) ResetTransfer() {
 	m.transfer = nil
 	m.clearedtransfer = false
-	m.removedtransfer = nil
+}
+
+// SetPoolCreatedID sets the "pool_created" edge to the UniswapV3PoolCreated entity by id.
+func (m *EventMutation) SetPoolCreatedID(id int) {
+	m.pool_created = &id
+}
+
+// ClearPoolCreated clears the "pool_created" edge to the UniswapV3PoolCreated entity.
+func (m *EventMutation) ClearPoolCreated() {
+	m.clearedpool_created = true
+}
+
+// PoolCreatedCleared reports if the "pool_created" edge to the UniswapV3PoolCreated entity was cleared.
+func (m *EventMutation) PoolCreatedCleared() bool {
+	return m.clearedpool_created
+}
+
+// PoolCreatedID returns the "pool_created" edge ID in the mutation.
+func (m *EventMutation) PoolCreatedID() (id int, exists bool) {
+	if m.pool_created != nil {
+		return *m.pool_created, true
+	}
+	return
+}
+
+// PoolCreatedIDs returns the "pool_created" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolCreatedID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolCreatedIDs() (ids []int) {
+	if id := m.pool_created; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolCreated resets all changes to the "pool_created" edge.
+func (m *EventMutation) ResetPoolCreated() {
+	m.pool_created = nil
+	m.clearedpool_created = false
 }
 
 // Where appends a list predicates to the EventMutation builder.
@@ -1044,7 +1023,7 @@ func (m *EventMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EventMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.increase_liquidity != nil {
 		edges = append(edges, event.EdgeIncreaseLiquidity)
 	}
@@ -1057,6 +1036,9 @@ func (m *EventMutation) AddedEdges() []string {
 	if m.transfer != nil {
 		edges = append(edges, event.EdgeTransfer)
 	}
+	if m.pool_created != nil {
+		edges = append(edges, event.EdgePoolCreated)
+	}
 	return edges
 }
 
@@ -1065,48 +1047,32 @@ func (m *EventMutation) AddedEdges() []string {
 func (m *EventMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case event.EdgeIncreaseLiquidity:
-		ids := make([]ent.Value, 0, len(m.increase_liquidity))
-		for id := range m.increase_liquidity {
-			ids = append(ids, id)
+		if id := m.increase_liquidity; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case event.EdgeDecreaseLiquidity:
-		ids := make([]ent.Value, 0, len(m.decrease_liquidity))
-		for id := range m.decrease_liquidity {
-			ids = append(ids, id)
+		if id := m.decrease_liquidity; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case event.EdgeCollect:
-		ids := make([]ent.Value, 0, len(m.collect))
-		for id := range m.collect {
-			ids = append(ids, id)
+		if id := m.collect; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case event.EdgeTransfer:
-		ids := make([]ent.Value, 0, len(m.transfer))
-		for id := range m.transfer {
-			ids = append(ids, id)
+		if id := m.transfer; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
+	case event.EdgePoolCreated:
+		if id := m.pool_created; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EventMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
-	if m.removedincrease_liquidity != nil {
-		edges = append(edges, event.EdgeIncreaseLiquidity)
-	}
-	if m.removeddecrease_liquidity != nil {
-		edges = append(edges, event.EdgeDecreaseLiquidity)
-	}
-	if m.removedcollect != nil {
-		edges = append(edges, event.EdgeCollect)
-	}
-	if m.removedtransfer != nil {
-		edges = append(edges, event.EdgeTransfer)
-	}
+	edges := make([]string, 0, 5)
 	return edges
 }
 
@@ -1114,37 +1080,13 @@ func (m *EventMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *EventMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case event.EdgeIncreaseLiquidity:
-		ids := make([]ent.Value, 0, len(m.removedincrease_liquidity))
-		for id := range m.removedincrease_liquidity {
-			ids = append(ids, id)
-		}
-		return ids
-	case event.EdgeDecreaseLiquidity:
-		ids := make([]ent.Value, 0, len(m.removeddecrease_liquidity))
-		for id := range m.removeddecrease_liquidity {
-			ids = append(ids, id)
-		}
-		return ids
-	case event.EdgeCollect:
-		ids := make([]ent.Value, 0, len(m.removedcollect))
-		for id := range m.removedcollect {
-			ids = append(ids, id)
-		}
-		return ids
-	case event.EdgeTransfer:
-		ids := make([]ent.Value, 0, len(m.removedtransfer))
-		for id := range m.removedtransfer {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EventMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedincrease_liquidity {
 		edges = append(edges, event.EdgeIncreaseLiquidity)
 	}
@@ -1156,6 +1098,9 @@ func (m *EventMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransfer {
 		edges = append(edges, event.EdgeTransfer)
+	}
+	if m.clearedpool_created {
+		edges = append(edges, event.EdgePoolCreated)
 	}
 	return edges
 }
@@ -1172,6 +1117,8 @@ func (m *EventMutation) EdgeCleared(name string) bool {
 		return m.clearedcollect
 	case event.EdgeTransfer:
 		return m.clearedtransfer
+	case event.EdgePoolCreated:
+		return m.clearedpool_created
 	}
 	return false
 }
@@ -1180,6 +1127,21 @@ func (m *EventMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *EventMutation) ClearEdge(name string) error {
 	switch name {
+	case event.EdgeIncreaseLiquidity:
+		m.ClearIncreaseLiquidity()
+		return nil
+	case event.EdgeDecreaseLiquidity:
+		m.ClearDecreaseLiquidity()
+		return nil
+	case event.EdgeCollect:
+		m.ClearCollect()
+		return nil
+	case event.EdgeTransfer:
+		m.ClearTransfer()
+		return nil
+	case event.EdgePoolCreated:
+		m.ClearPoolCreated()
+		return nil
 	}
 	return fmt.Errorf("unknown Event unique edge %s", name)
 }
@@ -1200,6 +1162,9 @@ func (m *EventMutation) ResetEdge(name string) error {
 	case event.EdgeTransfer:
 		m.ResetTransfer()
 		return nil
+	case event.EdgePoolCreated:
+		m.ResetPoolCreated()
+		return nil
 	}
 	return fmt.Errorf("unknown Event edge %s", name)
 }
@@ -1207,30 +1172,31 @@ func (m *EventMutation) ResetEdge(name string) error {
 // PositionMutation represents an operation that mutates the Position nodes in the graph.
 type PositionMutation struct {
 	config
-	op                       Op
-	typ                      string
-	id                       **schema.BigInt
-	owner                    *[]byte
-	pool                     *[]byte
-	token0                   *[]byte
-	token1                   *[]byte
-	tickLower                **schema.BigInt
-	tickUpper                **schema.BigInt
-	liquidity                **schema.BigInt
-	depositedToken0          **schema.BigInt
-	depositedToken1          **schema.BigInt
-	withdrawnToken0          **schema.BigInt
-	withdrawnToken1          **schema.BigInt
-	collectedToken0          **schema.BigInt
-	collectedToken1          **schema.BigInt
-	collectedFeesToken0      **schema.BigInt
-	collectedFeesToken1      **schema.BigInt
-	feeGrowthInside0LastX128 **schema.BigInt
-	feeGrowthInside1LastX128 **schema.BigInt
-	clearedFields            map[string]struct{}
-	done                     bool
-	oldValue                 func(context.Context) (*Position, error)
-	predicates               []predicate.Position
+	op                          Op
+	typ                         string
+	id                          *int
+	token                       **schema.BigInt
+	owner                       *[]byte
+	pool                        *[]byte
+	token0                      *[]byte
+	token1                      *[]byte
+	tick_lower                  **schema.BigInt
+	tick_upper                  **schema.BigInt
+	liquidity                   **schema.BigInt
+	deposited_token0            **schema.BigInt
+	deposited_token1            **schema.BigInt
+	withdrawn_token0            **schema.BigInt
+	withdrawn_token1            **schema.BigInt
+	collected_token0            **schema.BigInt
+	collected_token1            **schema.BigInt
+	collected_fees_token0       **schema.BigInt
+	collected_fees_token1       **schema.BigInt
+	fee_growth_inside0_lastX128 **schema.BigInt
+	fee_growth_inside1_lastX128 **schema.BigInt
+	clearedFields               map[string]struct{}
+	done                        bool
+	oldValue                    func(context.Context) (*Position, error)
+	predicates                  []predicate.Position
 }
 
 var _ ent.Mutation = (*PositionMutation)(nil)
@@ -1253,7 +1219,7 @@ func newPositionMutation(c config, op Op, opts ...positionOption) *PositionMutat
 }
 
 // withPositionID sets the ID field of the mutation.
-func withPositionID(id *schema.BigInt) positionOption {
+func withPositionID(id int) positionOption {
 	return func(m *PositionMutation) {
 		var (
 			err   error
@@ -1303,19 +1269,49 @@ func (m PositionMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Position entities.
-func (m *PositionMutation) SetID(id *schema.BigInt) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PositionMutation) ID() (id *schema.BigInt, exists bool) {
+func (m *PositionMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
 	return *m.id, true
+}
+
+// SetToken sets the "token" field.
+func (m *PositionMutation) SetToken(si *schema.BigInt) {
+	m.token = &si
+}
+
+// Token returns the value of the "token" field in the mutation.
+func (m *PositionMutation) Token() (r *schema.BigInt, exists bool) {
+	v := m.token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken returns the old "token" field's value of the Position entity.
+// If the Position object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PositionMutation) OldToken(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken: %w", err)
+	}
+	return oldValue.Token, nil
+}
+
+// ResetToken resets all changes to the "token" field.
+func (m *PositionMutation) ResetToken() {
+	m.token = nil
 }
 
 // SetOwner sets the "owner" field.
@@ -1462,21 +1458,21 @@ func (m *PositionMutation) ResetToken1() {
 	m.token1 = nil
 }
 
-// SetTickLower sets the "tickLower" field.
+// SetTickLower sets the "tick_lower" field.
 func (m *PositionMutation) SetTickLower(si *schema.BigInt) {
-	m.tickLower = &si
+	m.tick_lower = &si
 }
 
-// TickLower returns the value of the "tickLower" field in the mutation.
+// TickLower returns the value of the "tick_lower" field in the mutation.
 func (m *PositionMutation) TickLower() (r *schema.BigInt, exists bool) {
-	v := m.tickLower
+	v := m.tick_lower
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTickLower returns the old "tickLower" field's value of the Position entity.
+// OldTickLower returns the old "tick_lower" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1493,26 +1489,26 @@ func (m *PositionMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, 
 	return oldValue.TickLower, nil
 }
 
-// ResetTickLower resets all changes to the "tickLower" field.
+// ResetTickLower resets all changes to the "tick_lower" field.
 func (m *PositionMutation) ResetTickLower() {
-	m.tickLower = nil
+	m.tick_lower = nil
 }
 
-// SetTickUpper sets the "tickUpper" field.
+// SetTickUpper sets the "tick_upper" field.
 func (m *PositionMutation) SetTickUpper(si *schema.BigInt) {
-	m.tickUpper = &si
+	m.tick_upper = &si
 }
 
-// TickUpper returns the value of the "tickUpper" field in the mutation.
+// TickUpper returns the value of the "tick_upper" field in the mutation.
 func (m *PositionMutation) TickUpper() (r *schema.BigInt, exists bool) {
-	v := m.tickUpper
+	v := m.tick_upper
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTickUpper returns the old "tickUpper" field's value of the Position entity.
+// OldTickUpper returns the old "tick_upper" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1529,9 +1525,9 @@ func (m *PositionMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, 
 	return oldValue.TickUpper, nil
 }
 
-// ResetTickUpper resets all changes to the "tickUpper" field.
+// ResetTickUpper resets all changes to the "tick_upper" field.
 func (m *PositionMutation) ResetTickUpper() {
-	m.tickUpper = nil
+	m.tick_upper = nil
 }
 
 // SetLiquidity sets the "liquidity" field.
@@ -1570,21 +1566,21 @@ func (m *PositionMutation) ResetLiquidity() {
 	m.liquidity = nil
 }
 
-// SetDepositedToken0 sets the "depositedToken0" field.
+// SetDepositedToken0 sets the "deposited_token0" field.
 func (m *PositionMutation) SetDepositedToken0(si *schema.BigInt) {
-	m.depositedToken0 = &si
+	m.deposited_token0 = &si
 }
 
-// DepositedToken0 returns the value of the "depositedToken0" field in the mutation.
+// DepositedToken0 returns the value of the "deposited_token0" field in the mutation.
 func (m *PositionMutation) DepositedToken0() (r *schema.BigInt, exists bool) {
-	v := m.depositedToken0
+	v := m.deposited_token0
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDepositedToken0 returns the old "depositedToken0" field's value of the Position entity.
+// OldDepositedToken0 returns the old "deposited_token0" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldDepositedToken0(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1601,26 +1597,26 @@ func (m *PositionMutation) OldDepositedToken0(ctx context.Context) (v *schema.Bi
 	return oldValue.DepositedToken0, nil
 }
 
-// ResetDepositedToken0 resets all changes to the "depositedToken0" field.
+// ResetDepositedToken0 resets all changes to the "deposited_token0" field.
 func (m *PositionMutation) ResetDepositedToken0() {
-	m.depositedToken0 = nil
+	m.deposited_token0 = nil
 }
 
-// SetDepositedToken1 sets the "depositedToken1" field.
+// SetDepositedToken1 sets the "deposited_token1" field.
 func (m *PositionMutation) SetDepositedToken1(si *schema.BigInt) {
-	m.depositedToken1 = &si
+	m.deposited_token1 = &si
 }
 
-// DepositedToken1 returns the value of the "depositedToken1" field in the mutation.
+// DepositedToken1 returns the value of the "deposited_token1" field in the mutation.
 func (m *PositionMutation) DepositedToken1() (r *schema.BigInt, exists bool) {
-	v := m.depositedToken1
+	v := m.deposited_token1
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDepositedToken1 returns the old "depositedToken1" field's value of the Position entity.
+// OldDepositedToken1 returns the old "deposited_token1" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldDepositedToken1(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1637,26 +1633,26 @@ func (m *PositionMutation) OldDepositedToken1(ctx context.Context) (v *schema.Bi
 	return oldValue.DepositedToken1, nil
 }
 
-// ResetDepositedToken1 resets all changes to the "depositedToken1" field.
+// ResetDepositedToken1 resets all changes to the "deposited_token1" field.
 func (m *PositionMutation) ResetDepositedToken1() {
-	m.depositedToken1 = nil
+	m.deposited_token1 = nil
 }
 
-// SetWithdrawnToken0 sets the "withdrawnToken0" field.
+// SetWithdrawnToken0 sets the "withdrawn_token0" field.
 func (m *PositionMutation) SetWithdrawnToken0(si *schema.BigInt) {
-	m.withdrawnToken0 = &si
+	m.withdrawn_token0 = &si
 }
 
-// WithdrawnToken0 returns the value of the "withdrawnToken0" field in the mutation.
+// WithdrawnToken0 returns the value of the "withdrawn_token0" field in the mutation.
 func (m *PositionMutation) WithdrawnToken0() (r *schema.BigInt, exists bool) {
-	v := m.withdrawnToken0
+	v := m.withdrawn_token0
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldWithdrawnToken0 returns the old "withdrawnToken0" field's value of the Position entity.
+// OldWithdrawnToken0 returns the old "withdrawn_token0" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldWithdrawnToken0(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1673,26 +1669,26 @@ func (m *PositionMutation) OldWithdrawnToken0(ctx context.Context) (v *schema.Bi
 	return oldValue.WithdrawnToken0, nil
 }
 
-// ResetWithdrawnToken0 resets all changes to the "withdrawnToken0" field.
+// ResetWithdrawnToken0 resets all changes to the "withdrawn_token0" field.
 func (m *PositionMutation) ResetWithdrawnToken0() {
-	m.withdrawnToken0 = nil
+	m.withdrawn_token0 = nil
 }
 
-// SetWithdrawnToken1 sets the "withdrawnToken1" field.
+// SetWithdrawnToken1 sets the "withdrawn_token1" field.
 func (m *PositionMutation) SetWithdrawnToken1(si *schema.BigInt) {
-	m.withdrawnToken1 = &si
+	m.withdrawn_token1 = &si
 }
 
-// WithdrawnToken1 returns the value of the "withdrawnToken1" field in the mutation.
+// WithdrawnToken1 returns the value of the "withdrawn_token1" field in the mutation.
 func (m *PositionMutation) WithdrawnToken1() (r *schema.BigInt, exists bool) {
-	v := m.withdrawnToken1
+	v := m.withdrawn_token1
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldWithdrawnToken1 returns the old "withdrawnToken1" field's value of the Position entity.
+// OldWithdrawnToken1 returns the old "withdrawn_token1" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldWithdrawnToken1(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1709,26 +1705,26 @@ func (m *PositionMutation) OldWithdrawnToken1(ctx context.Context) (v *schema.Bi
 	return oldValue.WithdrawnToken1, nil
 }
 
-// ResetWithdrawnToken1 resets all changes to the "withdrawnToken1" field.
+// ResetWithdrawnToken1 resets all changes to the "withdrawn_token1" field.
 func (m *PositionMutation) ResetWithdrawnToken1() {
-	m.withdrawnToken1 = nil
+	m.withdrawn_token1 = nil
 }
 
-// SetCollectedToken0 sets the "collectedToken0" field.
+// SetCollectedToken0 sets the "collected_token0" field.
 func (m *PositionMutation) SetCollectedToken0(si *schema.BigInt) {
-	m.collectedToken0 = &si
+	m.collected_token0 = &si
 }
 
-// CollectedToken0 returns the value of the "collectedToken0" field in the mutation.
+// CollectedToken0 returns the value of the "collected_token0" field in the mutation.
 func (m *PositionMutation) CollectedToken0() (r *schema.BigInt, exists bool) {
-	v := m.collectedToken0
+	v := m.collected_token0
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCollectedToken0 returns the old "collectedToken0" field's value of the Position entity.
+// OldCollectedToken0 returns the old "collected_token0" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldCollectedToken0(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1745,26 +1741,26 @@ func (m *PositionMutation) OldCollectedToken0(ctx context.Context) (v *schema.Bi
 	return oldValue.CollectedToken0, nil
 }
 
-// ResetCollectedToken0 resets all changes to the "collectedToken0" field.
+// ResetCollectedToken0 resets all changes to the "collected_token0" field.
 func (m *PositionMutation) ResetCollectedToken0() {
-	m.collectedToken0 = nil
+	m.collected_token0 = nil
 }
 
-// SetCollectedToken1 sets the "collectedToken1" field.
+// SetCollectedToken1 sets the "collected_token1" field.
 func (m *PositionMutation) SetCollectedToken1(si *schema.BigInt) {
-	m.collectedToken1 = &si
+	m.collected_token1 = &si
 }
 
-// CollectedToken1 returns the value of the "collectedToken1" field in the mutation.
+// CollectedToken1 returns the value of the "collected_token1" field in the mutation.
 func (m *PositionMutation) CollectedToken1() (r *schema.BigInt, exists bool) {
-	v := m.collectedToken1
+	v := m.collected_token1
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCollectedToken1 returns the old "collectedToken1" field's value of the Position entity.
+// OldCollectedToken1 returns the old "collected_token1" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldCollectedToken1(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1781,26 +1777,26 @@ func (m *PositionMutation) OldCollectedToken1(ctx context.Context) (v *schema.Bi
 	return oldValue.CollectedToken1, nil
 }
 
-// ResetCollectedToken1 resets all changes to the "collectedToken1" field.
+// ResetCollectedToken1 resets all changes to the "collected_token1" field.
 func (m *PositionMutation) ResetCollectedToken1() {
-	m.collectedToken1 = nil
+	m.collected_token1 = nil
 }
 
-// SetCollectedFeesToken0 sets the "collectedFeesToken0" field.
+// SetCollectedFeesToken0 sets the "collected_fees_token0" field.
 func (m *PositionMutation) SetCollectedFeesToken0(si *schema.BigInt) {
-	m.collectedFeesToken0 = &si
+	m.collected_fees_token0 = &si
 }
 
-// CollectedFeesToken0 returns the value of the "collectedFeesToken0" field in the mutation.
+// CollectedFeesToken0 returns the value of the "collected_fees_token0" field in the mutation.
 func (m *PositionMutation) CollectedFeesToken0() (r *schema.BigInt, exists bool) {
-	v := m.collectedFeesToken0
+	v := m.collected_fees_token0
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCollectedFeesToken0 returns the old "collectedFeesToken0" field's value of the Position entity.
+// OldCollectedFeesToken0 returns the old "collected_fees_token0" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldCollectedFeesToken0(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1817,26 +1813,26 @@ func (m *PositionMutation) OldCollectedFeesToken0(ctx context.Context) (v *schem
 	return oldValue.CollectedFeesToken0, nil
 }
 
-// ResetCollectedFeesToken0 resets all changes to the "collectedFeesToken0" field.
+// ResetCollectedFeesToken0 resets all changes to the "collected_fees_token0" field.
 func (m *PositionMutation) ResetCollectedFeesToken0() {
-	m.collectedFeesToken0 = nil
+	m.collected_fees_token0 = nil
 }
 
-// SetCollectedFeesToken1 sets the "collectedFeesToken1" field.
+// SetCollectedFeesToken1 sets the "collected_fees_token1" field.
 func (m *PositionMutation) SetCollectedFeesToken1(si *schema.BigInt) {
-	m.collectedFeesToken1 = &si
+	m.collected_fees_token1 = &si
 }
 
-// CollectedFeesToken1 returns the value of the "collectedFeesToken1" field in the mutation.
+// CollectedFeesToken1 returns the value of the "collected_fees_token1" field in the mutation.
 func (m *PositionMutation) CollectedFeesToken1() (r *schema.BigInt, exists bool) {
-	v := m.collectedFeesToken1
+	v := m.collected_fees_token1
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCollectedFeesToken1 returns the old "collectedFeesToken1" field's value of the Position entity.
+// OldCollectedFeesToken1 returns the old "collected_fees_token1" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldCollectedFeesToken1(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1853,26 +1849,26 @@ func (m *PositionMutation) OldCollectedFeesToken1(ctx context.Context) (v *schem
 	return oldValue.CollectedFeesToken1, nil
 }
 
-// ResetCollectedFeesToken1 resets all changes to the "collectedFeesToken1" field.
+// ResetCollectedFeesToken1 resets all changes to the "collected_fees_token1" field.
 func (m *PositionMutation) ResetCollectedFeesToken1() {
-	m.collectedFeesToken1 = nil
+	m.collected_fees_token1 = nil
 }
 
-// SetFeeGrowthInside0LastX128 sets the "feeGrowthInside0LastX128" field.
+// SetFeeGrowthInside0LastX128 sets the "fee_growth_inside0_lastX128" field.
 func (m *PositionMutation) SetFeeGrowthInside0LastX128(si *schema.BigInt) {
-	m.feeGrowthInside0LastX128 = &si
+	m.fee_growth_inside0_lastX128 = &si
 }
 
-// FeeGrowthInside0LastX128 returns the value of the "feeGrowthInside0LastX128" field in the mutation.
+// FeeGrowthInside0LastX128 returns the value of the "fee_growth_inside0_lastX128" field in the mutation.
 func (m *PositionMutation) FeeGrowthInside0LastX128() (r *schema.BigInt, exists bool) {
-	v := m.feeGrowthInside0LastX128
+	v := m.fee_growth_inside0_lastX128
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFeeGrowthInside0LastX128 returns the old "feeGrowthInside0LastX128" field's value of the Position entity.
+// OldFeeGrowthInside0LastX128 returns the old "fee_growth_inside0_lastX128" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldFeeGrowthInside0LastX128(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1889,26 +1885,26 @@ func (m *PositionMutation) OldFeeGrowthInside0LastX128(ctx context.Context) (v *
 	return oldValue.FeeGrowthInside0LastX128, nil
 }
 
-// ResetFeeGrowthInside0LastX128 resets all changes to the "feeGrowthInside0LastX128" field.
+// ResetFeeGrowthInside0LastX128 resets all changes to the "fee_growth_inside0_lastX128" field.
 func (m *PositionMutation) ResetFeeGrowthInside0LastX128() {
-	m.feeGrowthInside0LastX128 = nil
+	m.fee_growth_inside0_lastX128 = nil
 }
 
-// SetFeeGrowthInside1LastX128 sets the "feeGrowthInside1LastX128" field.
+// SetFeeGrowthInside1LastX128 sets the "fee_growth_inside1_lastX128" field.
 func (m *PositionMutation) SetFeeGrowthInside1LastX128(si *schema.BigInt) {
-	m.feeGrowthInside1LastX128 = &si
+	m.fee_growth_inside1_lastX128 = &si
 }
 
-// FeeGrowthInside1LastX128 returns the value of the "feeGrowthInside1LastX128" field in the mutation.
+// FeeGrowthInside1LastX128 returns the value of the "fee_growth_inside1_lastX128" field in the mutation.
 func (m *PositionMutation) FeeGrowthInside1LastX128() (r *schema.BigInt, exists bool) {
-	v := m.feeGrowthInside1LastX128
+	v := m.fee_growth_inside1_lastX128
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFeeGrowthInside1LastX128 returns the old "feeGrowthInside1LastX128" field's value of the Position entity.
+// OldFeeGrowthInside1LastX128 returns the old "fee_growth_inside1_lastX128" field's value of the Position entity.
 // If the Position object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *PositionMutation) OldFeeGrowthInside1LastX128(ctx context.Context) (v *schema.BigInt, err error) {
@@ -1925,9 +1921,9 @@ func (m *PositionMutation) OldFeeGrowthInside1LastX128(ctx context.Context) (v *
 	return oldValue.FeeGrowthInside1LastX128, nil
 }
 
-// ResetFeeGrowthInside1LastX128 resets all changes to the "feeGrowthInside1LastX128" field.
+// ResetFeeGrowthInside1LastX128 resets all changes to the "fee_growth_inside1_lastX128" field.
 func (m *PositionMutation) ResetFeeGrowthInside1LastX128() {
-	m.feeGrowthInside1LastX128 = nil
+	m.fee_growth_inside1_lastX128 = nil
 }
 
 // Where appends a list predicates to the PositionMutation builder.
@@ -1949,7 +1945,10 @@ func (m *PositionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PositionMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
+	if m.token != nil {
+		fields = append(fields, position.FieldToken)
+	}
 	if m.owner != nil {
 		fields = append(fields, position.FieldOwner)
 	}
@@ -1962,43 +1961,43 @@ func (m *PositionMutation) Fields() []string {
 	if m.token1 != nil {
 		fields = append(fields, position.FieldToken1)
 	}
-	if m.tickLower != nil {
+	if m.tick_lower != nil {
 		fields = append(fields, position.FieldTickLower)
 	}
-	if m.tickUpper != nil {
+	if m.tick_upper != nil {
 		fields = append(fields, position.FieldTickUpper)
 	}
 	if m.liquidity != nil {
 		fields = append(fields, position.FieldLiquidity)
 	}
-	if m.depositedToken0 != nil {
+	if m.deposited_token0 != nil {
 		fields = append(fields, position.FieldDepositedToken0)
 	}
-	if m.depositedToken1 != nil {
+	if m.deposited_token1 != nil {
 		fields = append(fields, position.FieldDepositedToken1)
 	}
-	if m.withdrawnToken0 != nil {
+	if m.withdrawn_token0 != nil {
 		fields = append(fields, position.FieldWithdrawnToken0)
 	}
-	if m.withdrawnToken1 != nil {
+	if m.withdrawn_token1 != nil {
 		fields = append(fields, position.FieldWithdrawnToken1)
 	}
-	if m.collectedToken0 != nil {
+	if m.collected_token0 != nil {
 		fields = append(fields, position.FieldCollectedToken0)
 	}
-	if m.collectedToken1 != nil {
+	if m.collected_token1 != nil {
 		fields = append(fields, position.FieldCollectedToken1)
 	}
-	if m.collectedFeesToken0 != nil {
+	if m.collected_fees_token0 != nil {
 		fields = append(fields, position.FieldCollectedFeesToken0)
 	}
-	if m.collectedFeesToken1 != nil {
+	if m.collected_fees_token1 != nil {
 		fields = append(fields, position.FieldCollectedFeesToken1)
 	}
-	if m.feeGrowthInside0LastX128 != nil {
+	if m.fee_growth_inside0_lastX128 != nil {
 		fields = append(fields, position.FieldFeeGrowthInside0LastX128)
 	}
-	if m.feeGrowthInside1LastX128 != nil {
+	if m.fee_growth_inside1_lastX128 != nil {
 		fields = append(fields, position.FieldFeeGrowthInside1LastX128)
 	}
 	return fields
@@ -2009,6 +2008,8 @@ func (m *PositionMutation) Fields() []string {
 // schema.
 func (m *PositionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case position.FieldToken:
+		return m.Token()
 	case position.FieldOwner:
 		return m.Owner()
 	case position.FieldPool:
@@ -2052,6 +2053,8 @@ func (m *PositionMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PositionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case position.FieldToken:
+		return m.OldToken(ctx)
 	case position.FieldOwner:
 		return m.OldOwner(ctx)
 	case position.FieldPool:
@@ -2095,6 +2098,13 @@ func (m *PositionMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *PositionMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case position.FieldToken:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken(v)
+		return nil
 	case position.FieldOwner:
 		v, ok := value.([]byte)
 		if !ok {
@@ -2263,6 +2273,9 @@ func (m *PositionMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PositionMutation) ResetField(name string) error {
 	switch name {
+	case position.FieldToken:
+		m.ResetToken()
+		return nil
 	case position.FieldOwner:
 		m.ResetOwner()
 		return nil
@@ -3933,6 +3946,583 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity edge %s", name)
+}
+
+// UniswapV3PoolCreatedMutation represents an operation that mutates the UniswapV3PoolCreated nodes in the graph.
+type UniswapV3PoolCreatedMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	token0        *string
+	token1        *string
+	fee           **schema.BigInt
+	tick_spacing  **schema.BigInt
+	pool          *string
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3PoolCreated, error)
+	predicates    []predicate.UniswapV3PoolCreated
+}
+
+var _ ent.Mutation = (*UniswapV3PoolCreatedMutation)(nil)
+
+// uniswapv3poolcreatedOption allows management of the mutation configuration using functional options.
+type uniswapv3poolcreatedOption func(*UniswapV3PoolCreatedMutation)
+
+// newUniswapV3PoolCreatedMutation creates new mutation for the UniswapV3PoolCreated entity.
+func newUniswapV3PoolCreatedMutation(c config, op Op, opts ...uniswapv3poolcreatedOption) *UniswapV3PoolCreatedMutation {
+	m := &UniswapV3PoolCreatedMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolCreated,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolCreatedID sets the ID field of the mutation.
+func withUniswapV3PoolCreatedID(id int) uniswapv3poolcreatedOption {
+	return func(m *UniswapV3PoolCreatedMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolCreated
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolCreated, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolCreated.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolCreated sets the old UniswapV3PoolCreated of the mutation.
+func withUniswapV3PoolCreated(node *UniswapV3PoolCreated) uniswapv3poolcreatedOption {
+	return func(m *UniswapV3PoolCreatedMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolCreated, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolCreatedMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolCreatedMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolCreatedMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetToken0 sets the "token0" field.
+func (m *UniswapV3PoolCreatedMutation) SetToken0(s string) {
+	m.token0 = &s
+}
+
+// Token0 returns the value of the "token0" field in the mutation.
+func (m *UniswapV3PoolCreatedMutation) Token0() (r string, exists bool) {
+	v := m.token0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken0 returns the old "token0" field's value of the UniswapV3PoolCreated entity.
+// If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolCreatedMutation) OldToken0(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldToken0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldToken0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken0: %w", err)
+	}
+	return oldValue.Token0, nil
+}
+
+// ResetToken0 resets all changes to the "token0" field.
+func (m *UniswapV3PoolCreatedMutation) ResetToken0() {
+	m.token0 = nil
+}
+
+// SetToken1 sets the "token1" field.
+func (m *UniswapV3PoolCreatedMutation) SetToken1(s string) {
+	m.token1 = &s
+}
+
+// Token1 returns the value of the "token1" field in the mutation.
+func (m *UniswapV3PoolCreatedMutation) Token1() (r string, exists bool) {
+	v := m.token1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken1 returns the old "token1" field's value of the UniswapV3PoolCreated entity.
+// If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolCreatedMutation) OldToken1(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldToken1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldToken1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken1: %w", err)
+	}
+	return oldValue.Token1, nil
+}
+
+// ResetToken1 resets all changes to the "token1" field.
+func (m *UniswapV3PoolCreatedMutation) ResetToken1() {
+	m.token1 = nil
+}
+
+// SetFee sets the "fee" field.
+func (m *UniswapV3PoolCreatedMutation) SetFee(si *schema.BigInt) {
+	m.fee = &si
+}
+
+// Fee returns the value of the "fee" field in the mutation.
+func (m *UniswapV3PoolCreatedMutation) Fee() (r *schema.BigInt, exists bool) {
+	v := m.fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFee returns the old "fee" field's value of the UniswapV3PoolCreated entity.
+// If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolCreatedMutation) OldFee(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFee: %w", err)
+	}
+	return oldValue.Fee, nil
+}
+
+// ResetFee resets all changes to the "fee" field.
+func (m *UniswapV3PoolCreatedMutation) ResetFee() {
+	m.fee = nil
+}
+
+// SetTickSpacing sets the "tick_spacing" field.
+func (m *UniswapV3PoolCreatedMutation) SetTickSpacing(si *schema.BigInt) {
+	m.tick_spacing = &si
+}
+
+// TickSpacing returns the value of the "tick_spacing" field in the mutation.
+func (m *UniswapV3PoolCreatedMutation) TickSpacing() (r *schema.BigInt, exists bool) {
+	v := m.tick_spacing
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickSpacing returns the old "tick_spacing" field's value of the UniswapV3PoolCreated entity.
+// If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolCreatedMutation) OldTickSpacing(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTickSpacing is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTickSpacing requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickSpacing: %w", err)
+	}
+	return oldValue.TickSpacing, nil
+}
+
+// ResetTickSpacing resets all changes to the "tick_spacing" field.
+func (m *UniswapV3PoolCreatedMutation) ResetTickSpacing() {
+	m.tick_spacing = nil
+}
+
+// SetPool sets the "pool" field.
+func (m *UniswapV3PoolCreatedMutation) SetPool(s string) {
+	m.pool = &s
+}
+
+// Pool returns the value of the "pool" field in the mutation.
+func (m *UniswapV3PoolCreatedMutation) Pool() (r string, exists bool) {
+	v := m.pool
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPool returns the old "pool" field's value of the UniswapV3PoolCreated entity.
+// If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolCreatedMutation) OldPool(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPool is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPool requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPool: %w", err)
+	}
+	return oldValue.Pool, nil
+}
+
+// ResetPool resets all changes to the "pool" field.
+func (m *UniswapV3PoolCreatedMutation) ResetPool() {
+	m.pool = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolCreatedMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolCreatedMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolCreatedMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolCreatedMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolCreatedMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolCreatedMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolCreatedMutation builder.
+func (m *UniswapV3PoolCreatedMutation) Where(ps ...predicate.UniswapV3PoolCreated) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolCreatedMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolCreated).
+func (m *UniswapV3PoolCreatedMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolCreatedMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.token0 != nil {
+		fields = append(fields, uniswapv3poolcreated.FieldToken0)
+	}
+	if m.token1 != nil {
+		fields = append(fields, uniswapv3poolcreated.FieldToken1)
+	}
+	if m.fee != nil {
+		fields = append(fields, uniswapv3poolcreated.FieldFee)
+	}
+	if m.tick_spacing != nil {
+		fields = append(fields, uniswapv3poolcreated.FieldTickSpacing)
+	}
+	if m.pool != nil {
+		fields = append(fields, uniswapv3poolcreated.FieldPool)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolCreatedMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolcreated.FieldToken0:
+		return m.Token0()
+	case uniswapv3poolcreated.FieldToken1:
+		return m.Token1()
+	case uniswapv3poolcreated.FieldFee:
+		return m.Fee()
+	case uniswapv3poolcreated.FieldTickSpacing:
+		return m.TickSpacing()
+	case uniswapv3poolcreated.FieldPool:
+		return m.Pool()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolCreatedMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolcreated.FieldToken0:
+		return m.OldToken0(ctx)
+	case uniswapv3poolcreated.FieldToken1:
+		return m.OldToken1(ctx)
+	case uniswapv3poolcreated.FieldFee:
+		return m.OldFee(ctx)
+	case uniswapv3poolcreated.FieldTickSpacing:
+		return m.OldTickSpacing(ctx)
+	case uniswapv3poolcreated.FieldPool:
+		return m.OldPool(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolCreated field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolCreatedMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolcreated.FieldToken0:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken0(v)
+		return nil
+	case uniswapv3poolcreated.FieldToken1:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken1(v)
+		return nil
+	case uniswapv3poolcreated.FieldFee:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFee(v)
+		return nil
+	case uniswapv3poolcreated.FieldTickSpacing:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickSpacing(v)
+		return nil
+	case uniswapv3poolcreated.FieldPool:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPool(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolCreated field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolCreatedMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolCreatedMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolCreatedMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolCreated numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolCreatedMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolCreatedMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolCreatedMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolCreated nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolCreatedMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolcreated.FieldToken0:
+		m.ResetToken0()
+		return nil
+	case uniswapv3poolcreated.FieldToken1:
+		m.ResetToken1()
+		return nil
+	case uniswapv3poolcreated.FieldFee:
+		m.ResetFee()
+		return nil
+	case uniswapv3poolcreated.FieldTickSpacing:
+		m.ResetTickSpacing()
+		return nil
+	case uniswapv3poolcreated.FieldPool:
+		m.ResetPool()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolCreated field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolCreatedMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolcreated.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolCreatedMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolcreated.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolCreatedMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolCreatedMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolCreatedMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolcreated.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolCreatedMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolcreated.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolCreatedMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolcreated.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolCreated unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolCreatedMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolcreated.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolCreated edge %s", name)
 }
 
 // UniswapV3TransferMutation represents an operation that mutates the UniswapV3Transfer nodes in the graph.

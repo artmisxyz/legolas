@@ -13,6 +13,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -39,6 +40,7 @@ func columnChecker(table string) func(string) error {
 		uniswapv3collect.Table:          uniswapv3collect.ValidColumn,
 		uniswapv3decreaseliqudity.Table: uniswapv3decreaseliqudity.ValidColumn,
 		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,
+		uniswapv3poolcreated.Table:      uniswapv3poolcreated.ValidColumn,
 		uniswapv3transfer.Table:         uniswapv3transfer.ValidColumn,
 	}
 	check, ok := checks[table]

@@ -202,7 +202,7 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) createSpec() (*UniswapV3IncreaseLiq
 	}
 	if nodes := uvlc.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3increaseliqudity.EventTable,
 			Columns: []string{uniswapv3increaseliqudity.EventColumn},

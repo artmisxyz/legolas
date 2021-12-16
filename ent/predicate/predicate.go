@@ -21,5 +21,8 @@ type UniswapV3DecreaseLiqudity func(*sql.Selector)
 // UniswapV3IncreaseLiqudity is the predicate function for uniswapv3increaseliqudity builders.
 type UniswapV3IncreaseLiqudity func(*sql.Selector)
 
+// UniswapV3PoolCreated is the predicate function for uniswapv3poolcreated builders.
+type UniswapV3PoolCreated func(*sql.Selector)
+
 // UniswapV3Transfer is the predicate function for uniswapv3transfer builders.
 type UniswapV3Transfer func(*sql.Selector)

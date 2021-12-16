@@ -22,6 +22,8 @@ type Tx struct {
 	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
+	// UniswapV3PoolCreated is the client for interacting with the UniswapV3PoolCreated builders.
+	UniswapV3PoolCreated *UniswapV3PoolCreatedClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
 
@@ -164,6 +166,7 @@ func (tx *Tx) init() {
 	tx.UniswapV3Collect = NewUniswapV3CollectClient(tx.config)
 	tx.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(tx.config)
 	tx.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(tx.config)
+	tx.UniswapV3PoolCreated = NewUniswapV3PoolCreatedClient(tx.config)
 	tx.UniswapV3Transfer = NewUniswapV3TransferClient(tx.config)
 }
 

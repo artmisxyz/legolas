@@ -1054,7 +1054,7 @@ func HasIncreaseLiquidity() predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(IncreaseLiquidityTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1066,7 +1066,7 @@ func HasIncreaseLiquidityWith(preds ...predicate.UniswapV3IncreaseLiqudity) pred
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(IncreaseLiquidityInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, IncreaseLiquidityTable, IncreaseLiquidityColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -1082,7 +1082,7 @@ func HasDecreaseLiquidity() predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DecreaseLiquidityTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1094,7 +1094,7 @@ func HasDecreaseLiquidityWith(preds ...predicate.UniswapV3DecreaseLiqudity) pred
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DecreaseLiquidityInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, DecreaseLiquidityTable, DecreaseLiquidityColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -1110,7 +1110,7 @@ func HasCollect() predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CollectTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, CollectTable, CollectColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, CollectTable, CollectColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1122,7 +1122,7 @@ func HasCollectWith(preds ...predicate.UniswapV3Collect) predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CollectInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, CollectTable, CollectColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, CollectTable, CollectColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -1138,7 +1138,7 @@ func HasTransfer() predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(TransferTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TransferTable, TransferColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, TransferTable, TransferColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1150,7 +1150,35 @@ func HasTransferWith(preds ...predicate.UniswapV3Transfer) predicate.Event {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(TransferInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TransferTable, TransferColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, TransferTable, TransferColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPoolCreated applies the HasEdge predicate on the "pool_created" edge.
+func HasPoolCreated() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolCreatedTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolCreatedTable, PoolCreatedColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolCreatedWith applies the HasEdge predicate on the "pool_created" edge with a given conditions (other predicates).
+func HasPoolCreatedWith(preds ...predicate.UniswapV3PoolCreated) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolCreatedInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolCreatedTable, PoolCreatedColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -33,6 +33,8 @@ const (
 	EdgeCollect = "collect"
 	// EdgeTransfer holds the string denoting the transfer edge name in mutations.
 	EdgeTransfer = "transfer"
+	// EdgePoolCreated holds the string denoting the pool_created edge name in mutations.
+	EdgePoolCreated = "pool_created"
 	// Table holds the table name of the event in the database.
 	Table = "events"
 	// IncreaseLiquidityTable is the table that holds the increase_liquidity relation/edge.
@@ -63,6 +65,13 @@ const (
 	TransferInverseTable = "uniswap_v3transfers"
 	// TransferColumn is the table column denoting the transfer relation/edge.
 	TransferColumn = "event_transfer"
+	// PoolCreatedTable is the table that holds the pool_created relation/edge.
+	PoolCreatedTable = "uniswap_v3pool_createds"
+	// PoolCreatedInverseTable is the table name for the UniswapV3PoolCreated entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolcreated" package.
+	PoolCreatedInverseTable = "uniswap_v3pool_createds"
+	// PoolCreatedColumn is the table column denoting the pool_created relation/edge.
+	PoolCreatedColumn = "event_pool_created"
 )
 
 // Columns holds all SQL columns for event fields.

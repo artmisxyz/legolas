@@ -585,7 +585,7 @@ func HasEvent() predicate.UniswapV3Collect {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(EventTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -597,7 +597,7 @@ func HasEventWith(preds ...predicate.Event) predicate.UniswapV3Collect {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(EventInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

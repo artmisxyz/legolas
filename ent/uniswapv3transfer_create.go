@@ -195,7 +195,7 @@ func (uvc *UniswapV3TransferCreate) createSpec() (*UniswapV3Transfer, *sqlgraph.
 	}
 	if nodes := uvc.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   uniswapv3transfer.EventTable,
 			Columns: []string{uniswapv3transfer.EventColumn},

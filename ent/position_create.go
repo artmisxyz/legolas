@@ -20,6 +20,12 @@ type PositionCreate struct {
 	hooks    []Hook
 }
 
+// SetToken sets the "token" field.
+func (pc *PositionCreate) SetToken(si *schema.BigInt) *PositionCreate {
+	pc.mutation.SetToken(si)
+	return pc
+}
+
 // SetOwner sets the "owner" field.
 func (pc *PositionCreate) SetOwner(b []byte) *PositionCreate {
 	pc.mutation.SetOwner(b)
@@ -44,13 +50,13 @@ func (pc *PositionCreate) SetToken1(b []byte) *PositionCreate {
 	return pc
 }
 
-// SetTickLower sets the "tickLower" field.
+// SetTickLower sets the "tick_lower" field.
 func (pc *PositionCreate) SetTickLower(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetTickLower(si)
 	return pc
 }
 
-// SetTickUpper sets the "tickUpper" field.
+// SetTickUpper sets the "tick_upper" field.
 func (pc *PositionCreate) SetTickUpper(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetTickUpper(si)
 	return pc
@@ -62,69 +68,63 @@ func (pc *PositionCreate) SetLiquidity(si *schema.BigInt) *PositionCreate {
 	return pc
 }
 
-// SetDepositedToken0 sets the "depositedToken0" field.
+// SetDepositedToken0 sets the "deposited_token0" field.
 func (pc *PositionCreate) SetDepositedToken0(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetDepositedToken0(si)
 	return pc
 }
 
-// SetDepositedToken1 sets the "depositedToken1" field.
+// SetDepositedToken1 sets the "deposited_token1" field.
 func (pc *PositionCreate) SetDepositedToken1(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetDepositedToken1(si)
 	return pc
 }
 
-// SetWithdrawnToken0 sets the "withdrawnToken0" field.
+// SetWithdrawnToken0 sets the "withdrawn_token0" field.
 func (pc *PositionCreate) SetWithdrawnToken0(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetWithdrawnToken0(si)
 	return pc
 }
 
-// SetWithdrawnToken1 sets the "withdrawnToken1" field.
+// SetWithdrawnToken1 sets the "withdrawn_token1" field.
 func (pc *PositionCreate) SetWithdrawnToken1(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetWithdrawnToken1(si)
 	return pc
 }
 
-// SetCollectedToken0 sets the "collectedToken0" field.
+// SetCollectedToken0 sets the "collected_token0" field.
 func (pc *PositionCreate) SetCollectedToken0(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetCollectedToken0(si)
 	return pc
 }
 
-// SetCollectedToken1 sets the "collectedToken1" field.
+// SetCollectedToken1 sets the "collected_token1" field.
 func (pc *PositionCreate) SetCollectedToken1(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetCollectedToken1(si)
 	return pc
 }
 
-// SetCollectedFeesToken0 sets the "collectedFeesToken0" field.
+// SetCollectedFeesToken0 sets the "collected_fees_token0" field.
 func (pc *PositionCreate) SetCollectedFeesToken0(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetCollectedFeesToken0(si)
 	return pc
 }
 
-// SetCollectedFeesToken1 sets the "collectedFeesToken1" field.
+// SetCollectedFeesToken1 sets the "collected_fees_token1" field.
 func (pc *PositionCreate) SetCollectedFeesToken1(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetCollectedFeesToken1(si)
 	return pc
 }
 
-// SetFeeGrowthInside0LastX128 sets the "feeGrowthInside0LastX128" field.
+// SetFeeGrowthInside0LastX128 sets the "fee_growth_inside0_lastX128" field.
 func (pc *PositionCreate) SetFeeGrowthInside0LastX128(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetFeeGrowthInside0LastX128(si)
 	return pc
 }
 
-// SetFeeGrowthInside1LastX128 sets the "feeGrowthInside1LastX128" field.
+// SetFeeGrowthInside1LastX128 sets the "fee_growth_inside1_lastX128" field.
 func (pc *PositionCreate) SetFeeGrowthInside1LastX128(si *schema.BigInt) *PositionCreate {
 	pc.mutation.SetFeeGrowthInside1LastX128(si)
-	return pc
-}
-
-// SetID sets the "id" field.
-func (pc *PositionCreate) SetID(si *schema.BigInt) *PositionCreate {
-	pc.mutation.SetID(si)
 	return pc
 }
 
@@ -198,6 +198,9 @@ func (pc *PositionCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *PositionCreate) check() error {
+	if _, ok := pc.mutation.Token(); !ok {
+		return &ValidationError{Name: "token", err: errors.New(`ent: missing required field "token"`)}
+	}
 	if _, ok := pc.mutation.Owner(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "owner"`)}
 	}
@@ -211,43 +214,43 @@ func (pc *PositionCreate) check() error {
 		return &ValidationError{Name: "token1", err: errors.New(`ent: missing required field "token1"`)}
 	}
 	if _, ok := pc.mutation.TickLower(); !ok {
-		return &ValidationError{Name: "tickLower", err: errors.New(`ent: missing required field "tickLower"`)}
+		return &ValidationError{Name: "tick_lower", err: errors.New(`ent: missing required field "tick_lower"`)}
 	}
 	if _, ok := pc.mutation.TickUpper(); !ok {
-		return &ValidationError{Name: "tickUpper", err: errors.New(`ent: missing required field "tickUpper"`)}
+		return &ValidationError{Name: "tick_upper", err: errors.New(`ent: missing required field "tick_upper"`)}
 	}
 	if _, ok := pc.mutation.Liquidity(); !ok {
 		return &ValidationError{Name: "liquidity", err: errors.New(`ent: missing required field "liquidity"`)}
 	}
 	if _, ok := pc.mutation.DepositedToken0(); !ok {
-		return &ValidationError{Name: "depositedToken0", err: errors.New(`ent: missing required field "depositedToken0"`)}
+		return &ValidationError{Name: "deposited_token0", err: errors.New(`ent: missing required field "deposited_token0"`)}
 	}
 	if _, ok := pc.mutation.DepositedToken1(); !ok {
-		return &ValidationError{Name: "depositedToken1", err: errors.New(`ent: missing required field "depositedToken1"`)}
+		return &ValidationError{Name: "deposited_token1", err: errors.New(`ent: missing required field "deposited_token1"`)}
 	}
 	if _, ok := pc.mutation.WithdrawnToken0(); !ok {
-		return &ValidationError{Name: "withdrawnToken0", err: errors.New(`ent: missing required field "withdrawnToken0"`)}
+		return &ValidationError{Name: "withdrawn_token0", err: errors.New(`ent: missing required field "withdrawn_token0"`)}
 	}
 	if _, ok := pc.mutation.WithdrawnToken1(); !ok {
-		return &ValidationError{Name: "withdrawnToken1", err: errors.New(`ent: missing required field "withdrawnToken1"`)}
+		return &ValidationError{Name: "withdrawn_token1", err: errors.New(`ent: missing required field "withdrawn_token1"`)}
 	}
 	if _, ok := pc.mutation.CollectedToken0(); !ok {
-		return &ValidationError{Name: "collectedToken0", err: errors.New(`ent: missing required field "collectedToken0"`)}
+		return &ValidationError{Name: "collected_token0", err: errors.New(`ent: missing required field "collected_token0"`)}
 	}
 	if _, ok := pc.mutation.CollectedToken1(); !ok {
-		return &ValidationError{Name: "collectedToken1", err: errors.New(`ent: missing required field "collectedToken1"`)}
+		return &ValidationError{Name: "collected_token1", err: errors.New(`ent: missing required field "collected_token1"`)}
 	}
 	if _, ok := pc.mutation.CollectedFeesToken0(); !ok {
-		return &ValidationError{Name: "collectedFeesToken0", err: errors.New(`ent: missing required field "collectedFeesToken0"`)}
+		return &ValidationError{Name: "collected_fees_token0", err: errors.New(`ent: missing required field "collected_fees_token0"`)}
 	}
 	if _, ok := pc.mutation.CollectedFeesToken1(); !ok {
-		return &ValidationError{Name: "collectedFeesToken1", err: errors.New(`ent: missing required field "collectedFeesToken1"`)}
+		return &ValidationError{Name: "collected_fees_token1", err: errors.New(`ent: missing required field "collected_fees_token1"`)}
 	}
 	if _, ok := pc.mutation.FeeGrowthInside0LastX128(); !ok {
-		return &ValidationError{Name: "feeGrowthInside0LastX128", err: errors.New(`ent: missing required field "feeGrowthInside0LastX128"`)}
+		return &ValidationError{Name: "fee_growth_inside0_lastX128", err: errors.New(`ent: missing required field "fee_growth_inside0_lastX128"`)}
 	}
 	if _, ok := pc.mutation.FeeGrowthInside1LastX128(); !ok {
-		return &ValidationError{Name: "feeGrowthInside1LastX128", err: errors.New(`ent: missing required field "feeGrowthInside1LastX128"`)}
+		return &ValidationError{Name: "fee_growth_inside1_lastX128", err: errors.New(`ent: missing required field "fee_growth_inside1_lastX128"`)}
 	}
 	return nil
 }
@@ -260,9 +263,8 @@ func (pc *PositionCreate) sqlSave(ctx context.Context) (*Position, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(*schema.BigInt)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	return _node, nil
 }
 
@@ -272,14 +274,18 @@ func (pc *PositionCreate) createSpec() (*Position, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: position.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: position.FieldID,
 			},
 		}
 	)
-	if id, ok := pc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
+	if value, ok := pc.mutation.Token(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: position.FieldToken,
+		})
+		_node.Token = value
 	}
 	if value, ok := pc.mutation.Owner(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -461,6 +467,10 @@ func (pcb *PositionCreateBulk) Save(ctx context.Context) ([]*Position, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

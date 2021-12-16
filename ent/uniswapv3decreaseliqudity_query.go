@@ -78,7 +78,7 @@ func (uvlq *UniswapV3DecreaseLiqudityQuery) QueryEvent() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3decreaseliqudity.EventTable, uniswapv3decreaseliqudity.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3decreaseliqudity.EventTable, uniswapv3decreaseliqudity.EventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uvlq.driver.Dialect(), step)
 		return fromU, nil

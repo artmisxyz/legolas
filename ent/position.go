@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/schema"
 )
@@ -14,7 +15,9 @@ import (
 type Position struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID *schema.BigInt `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Token holds the value of the "token" field.
+	Token *schema.BigInt `json:"token,omitempty"`
 	// Owner holds the value of the "owner" field.
 	Owner []byte `json:"owner,omitempty"`
 	// Pool holds the value of the "pool" field.
@@ -23,32 +26,32 @@ type Position struct {
 	Token0 []byte `json:"token0,omitempty"`
 	// Token1 holds the value of the "token1" field.
 	Token1 []byte `json:"token1,omitempty"`
-	// TickLower holds the value of the "tickLower" field.
-	TickLower *schema.BigInt `json:"tickLower,omitempty"`
-	// TickUpper holds the value of the "tickUpper" field.
-	TickUpper *schema.BigInt `json:"tickUpper,omitempty"`
+	// TickLower holds the value of the "tick_lower" field.
+	TickLower *schema.BigInt `json:"tick_lower,omitempty"`
+	// TickUpper holds the value of the "tick_upper" field.
+	TickUpper *schema.BigInt `json:"tick_upper,omitempty"`
 	// Liquidity holds the value of the "liquidity" field.
 	Liquidity *schema.BigInt `json:"liquidity,omitempty"`
-	// DepositedToken0 holds the value of the "depositedToken0" field.
-	DepositedToken0 *schema.BigInt `json:"depositedToken0,omitempty"`
-	// DepositedToken1 holds the value of the "depositedToken1" field.
-	DepositedToken1 *schema.BigInt `json:"depositedToken1,omitempty"`
-	// WithdrawnToken0 holds the value of the "withdrawnToken0" field.
-	WithdrawnToken0 *schema.BigInt `json:"withdrawnToken0,omitempty"`
-	// WithdrawnToken1 holds the value of the "withdrawnToken1" field.
-	WithdrawnToken1 *schema.BigInt `json:"withdrawnToken1,omitempty"`
-	// CollectedToken0 holds the value of the "collectedToken0" field.
-	CollectedToken0 *schema.BigInt `json:"collectedToken0,omitempty"`
-	// CollectedToken1 holds the value of the "collectedToken1" field.
-	CollectedToken1 *schema.BigInt `json:"collectedToken1,omitempty"`
-	// CollectedFeesToken0 holds the value of the "collectedFeesToken0" field.
-	CollectedFeesToken0 *schema.BigInt `json:"collectedFeesToken0,omitempty"`
-	// CollectedFeesToken1 holds the value of the "collectedFeesToken1" field.
-	CollectedFeesToken1 *schema.BigInt `json:"collectedFeesToken1,omitempty"`
-	// FeeGrowthInside0LastX128 holds the value of the "feeGrowthInside0LastX128" field.
-	FeeGrowthInside0LastX128 *schema.BigInt `json:"feeGrowthInside0LastX128,omitempty"`
-	// FeeGrowthInside1LastX128 holds the value of the "feeGrowthInside1LastX128" field.
-	FeeGrowthInside1LastX128 *schema.BigInt `json:"feeGrowthInside1LastX128,omitempty"`
+	// DepositedToken0 holds the value of the "deposited_token0" field.
+	DepositedToken0 *schema.BigInt `json:"deposited_token0,omitempty"`
+	// DepositedToken1 holds the value of the "deposited_token1" field.
+	DepositedToken1 *schema.BigInt `json:"deposited_token1,omitempty"`
+	// WithdrawnToken0 holds the value of the "withdrawn_token0" field.
+	WithdrawnToken0 *schema.BigInt `json:"withdrawn_token0,omitempty"`
+	// WithdrawnToken1 holds the value of the "withdrawn_token1" field.
+	WithdrawnToken1 *schema.BigInt `json:"withdrawn_token1,omitempty"`
+	// CollectedToken0 holds the value of the "collected_token0" field.
+	CollectedToken0 *schema.BigInt `json:"collected_token0,omitempty"`
+	// CollectedToken1 holds the value of the "collected_token1" field.
+	CollectedToken1 *schema.BigInt `json:"collected_token1,omitempty"`
+	// CollectedFeesToken0 holds the value of the "collected_fees_token0" field.
+	CollectedFeesToken0 *schema.BigInt `json:"collected_fees_token0,omitempty"`
+	// CollectedFeesToken1 holds the value of the "collected_fees_token1" field.
+	CollectedFeesToken1 *schema.BigInt `json:"collected_fees_token1,omitempty"`
+	// FeeGrowthInside0LastX128 holds the value of the "fee_growth_inside0_lastX128" field.
+	FeeGrowthInside0LastX128 *schema.BigInt `json:"fee_growth_inside0_lastX128,omitempty"`
+	// FeeGrowthInside1LastX128 holds the value of the "fee_growth_inside1_lastX128" field.
+	FeeGrowthInside1LastX128 *schema.BigInt `json:"fee_growth_inside1_lastX128,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -58,8 +61,10 @@ func (*Position) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case position.FieldOwner, position.FieldPool, position.FieldToken0, position.FieldToken1:
 			values[i] = new([]byte)
-		case position.FieldID, position.FieldTickLower, position.FieldTickUpper, position.FieldLiquidity, position.FieldDepositedToken0, position.FieldDepositedToken1, position.FieldWithdrawnToken0, position.FieldWithdrawnToken1, position.FieldCollectedToken0, position.FieldCollectedToken1, position.FieldCollectedFeesToken0, position.FieldCollectedFeesToken1, position.FieldFeeGrowthInside0LastX128, position.FieldFeeGrowthInside1LastX128:
+		case position.FieldToken, position.FieldTickLower, position.FieldTickUpper, position.FieldLiquidity, position.FieldDepositedToken0, position.FieldDepositedToken1, position.FieldWithdrawnToken0, position.FieldWithdrawnToken1, position.FieldCollectedToken0, position.FieldCollectedToken1, position.FieldCollectedFeesToken0, position.FieldCollectedFeesToken1, position.FieldFeeGrowthInside0LastX128, position.FieldFeeGrowthInside1LastX128:
 			values[i] = new(schema.BigInt)
+		case position.FieldID:
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Position", columns[i])
 		}
@@ -76,10 +81,16 @@ func (po *Position) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case position.FieldID:
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
+			}
+			po.ID = int(value.Int64)
+		case position.FieldToken:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
+				return fmt.Errorf("unexpected type %T for field token", values[i])
 			} else if value != nil {
-				po.ID = value
+				po.Token = value
 			}
 		case position.FieldOwner:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -107,13 +118,13 @@ func (po *Position) assignValues(columns []string, values []interface{}) error {
 			}
 		case position.FieldTickLower:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field tickLower", values[i])
+				return fmt.Errorf("unexpected type %T for field tick_lower", values[i])
 			} else if value != nil {
 				po.TickLower = value
 			}
 		case position.FieldTickUpper:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field tickUpper", values[i])
+				return fmt.Errorf("unexpected type %T for field tick_upper", values[i])
 			} else if value != nil {
 				po.TickUpper = value
 			}
@@ -125,61 +136,61 @@ func (po *Position) assignValues(columns []string, values []interface{}) error {
 			}
 		case position.FieldDepositedToken0:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field depositedToken0", values[i])
+				return fmt.Errorf("unexpected type %T for field deposited_token0", values[i])
 			} else if value != nil {
 				po.DepositedToken0 = value
 			}
 		case position.FieldDepositedToken1:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field depositedToken1", values[i])
+				return fmt.Errorf("unexpected type %T for field deposited_token1", values[i])
 			} else if value != nil {
 				po.DepositedToken1 = value
 			}
 		case position.FieldWithdrawnToken0:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field withdrawnToken0", values[i])
+				return fmt.Errorf("unexpected type %T for field withdrawn_token0", values[i])
 			} else if value != nil {
 				po.WithdrawnToken0 = value
 			}
 		case position.FieldWithdrawnToken1:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field withdrawnToken1", values[i])
+				return fmt.Errorf("unexpected type %T for field withdrawn_token1", values[i])
 			} else if value != nil {
 				po.WithdrawnToken1 = value
 			}
 		case position.FieldCollectedToken0:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field collectedToken0", values[i])
+				return fmt.Errorf("unexpected type %T for field collected_token0", values[i])
 			} else if value != nil {
 				po.CollectedToken0 = value
 			}
 		case position.FieldCollectedToken1:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field collectedToken1", values[i])
+				return fmt.Errorf("unexpected type %T for field collected_token1", values[i])
 			} else if value != nil {
 				po.CollectedToken1 = value
 			}
 		case position.FieldCollectedFeesToken0:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field collectedFeesToken0", values[i])
+				return fmt.Errorf("unexpected type %T for field collected_fees_token0", values[i])
 			} else if value != nil {
 				po.CollectedFeesToken0 = value
 			}
 		case position.FieldCollectedFeesToken1:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field collectedFeesToken1", values[i])
+				return fmt.Errorf("unexpected type %T for field collected_fees_token1", values[i])
 			} else if value != nil {
 				po.CollectedFeesToken1 = value
 			}
 		case position.FieldFeeGrowthInside0LastX128:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field feeGrowthInside0LastX128", values[i])
+				return fmt.Errorf("unexpected type %T for field fee_growth_inside0_lastX128", values[i])
 			} else if value != nil {
 				po.FeeGrowthInside0LastX128 = value
 			}
 		case position.FieldFeeGrowthInside1LastX128:
 			if value, ok := values[i].(*schema.BigInt); !ok {
-				return fmt.Errorf("unexpected type %T for field feeGrowthInside1LastX128", values[i])
+				return fmt.Errorf("unexpected type %T for field fee_growth_inside1_lastX128", values[i])
 			} else if value != nil {
 				po.FeeGrowthInside1LastX128 = value
 			}
@@ -211,6 +222,8 @@ func (po *Position) String() string {
 	var builder strings.Builder
 	builder.WriteString("Position(")
 	builder.WriteString(fmt.Sprintf("id=%v", po.ID))
+	builder.WriteString(", token=")
+	builder.WriteString(fmt.Sprintf("%v", po.Token))
 	builder.WriteString(", owner=")
 	builder.WriteString(fmt.Sprintf("%v", po.Owner))
 	builder.WriteString(", pool=")
@@ -219,31 +232,31 @@ func (po *Position) String() string {
 	builder.WriteString(fmt.Sprintf("%v", po.Token0))
 	builder.WriteString(", token1=")
 	builder.WriteString(fmt.Sprintf("%v", po.Token1))
-	builder.WriteString(", tickLower=")
+	builder.WriteString(", tick_lower=")
 	builder.WriteString(fmt.Sprintf("%v", po.TickLower))
-	builder.WriteString(", tickUpper=")
+	builder.WriteString(", tick_upper=")
 	builder.WriteString(fmt.Sprintf("%v", po.TickUpper))
 	builder.WriteString(", liquidity=")
 	builder.WriteString(fmt.Sprintf("%v", po.Liquidity))
-	builder.WriteString(", depositedToken0=")
+	builder.WriteString(", deposited_token0=")
 	builder.WriteString(fmt.Sprintf("%v", po.DepositedToken0))
-	builder.WriteString(", depositedToken1=")
+	builder.WriteString(", deposited_token1=")
 	builder.WriteString(fmt.Sprintf("%v", po.DepositedToken1))
-	builder.WriteString(", withdrawnToken0=")
+	builder.WriteString(", withdrawn_token0=")
 	builder.WriteString(fmt.Sprintf("%v", po.WithdrawnToken0))
-	builder.WriteString(", withdrawnToken1=")
+	builder.WriteString(", withdrawn_token1=")
 	builder.WriteString(fmt.Sprintf("%v", po.WithdrawnToken1))
-	builder.WriteString(", collectedToken0=")
+	builder.WriteString(", collected_token0=")
 	builder.WriteString(fmt.Sprintf("%v", po.CollectedToken0))
-	builder.WriteString(", collectedToken1=")
+	builder.WriteString(", collected_token1=")
 	builder.WriteString(fmt.Sprintf("%v", po.CollectedToken1))
-	builder.WriteString(", collectedFeesToken0=")
+	builder.WriteString(", collected_fees_token0=")
 	builder.WriteString(fmt.Sprintf("%v", po.CollectedFeesToken0))
-	builder.WriteString(", collectedFeesToken1=")
+	builder.WriteString(", collected_fees_token1=")
 	builder.WriteString(fmt.Sprintf("%v", po.CollectedFeesToken1))
-	builder.WriteString(", feeGrowthInside0LastX128=")
+	builder.WriteString(", fee_growth_inside0_lastX128=")
 	builder.WriteString(fmt.Sprintf("%v", po.FeeGrowthInside0LastX128))
-	builder.WriteString(", feeGrowthInside1LastX128=")
+	builder.WriteString(", fee_growth_inside1_lastX128=")
 	builder.WriteString(fmt.Sprintf("%v", po.FeeGrowthInside1LastX128))
 	builder.WriteByte(')')
 	return builder.String()

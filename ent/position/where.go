@@ -9,28 +9,28 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id *schema.BigInt) predicate.Position {
+func ID(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id *schema.BigInt) predicate.Position {
+func IDEQ(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id *schema.BigInt) predicate.Position {
+func IDNEQ(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...*schema.BigInt) predicate.Position {
+func IDIn(ids ...int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -47,7 +47,7 @@ func IDIn(ids ...*schema.BigInt) predicate.Position {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...*schema.BigInt) predicate.Position {
+func IDNotIn(ids ...int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -64,30 +64,37 @@ func IDNotIn(ids ...*schema.BigInt) predicate.Position {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id *schema.BigInt) predicate.Position {
+func IDGT(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id *schema.BigInt) predicate.Position {
+func IDGTE(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id *schema.BigInt) predicate.Position {
+func IDLT(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id *schema.BigInt) predicate.Position {
+func IDLTE(id int) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
+	})
+}
+
+// Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
+func Token(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldToken), v))
 	})
 }
 
@@ -119,14 +126,14 @@ func Token1(v []byte) predicate.Position {
 	})
 }
 
-// TickLower applies equality check predicate on the "tickLower" field. It's identical to TickLowerEQ.
+// TickLower applies equality check predicate on the "tick_lower" field. It's identical to TickLowerEQ.
 func TickLower(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickLower), v))
 	})
 }
 
-// TickUpper applies equality check predicate on the "tickUpper" field. It's identical to TickUpperEQ.
+// TickUpper applies equality check predicate on the "tick_upper" field. It's identical to TickUpperEQ.
 func TickUpper(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickUpper), v))
@@ -140,73 +147,189 @@ func Liquidity(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0 applies equality check predicate on the "depositedToken0" field. It's identical to DepositedToken0EQ.
+// DepositedToken0 applies equality check predicate on the "deposited_token0" field. It's identical to DepositedToken0EQ.
 func DepositedToken0(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken1 applies equality check predicate on the "depositedToken1" field. It's identical to DepositedToken1EQ.
+// DepositedToken1 applies equality check predicate on the "deposited_token1" field. It's identical to DepositedToken1EQ.
 func DepositedToken1(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// WithdrawnToken0 applies equality check predicate on the "withdrawnToken0" field. It's identical to WithdrawnToken0EQ.
+// WithdrawnToken0 applies equality check predicate on the "withdrawn_token0" field. It's identical to WithdrawnToken0EQ.
 func WithdrawnToken0(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken1 applies equality check predicate on the "withdrawnToken1" field. It's identical to WithdrawnToken1EQ.
+// WithdrawnToken1 applies equality check predicate on the "withdrawn_token1" field. It's identical to WithdrawnToken1EQ.
 func WithdrawnToken1(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// CollectedToken0 applies equality check predicate on the "collectedToken0" field. It's identical to CollectedToken0EQ.
+// CollectedToken0 applies equality check predicate on the "collected_token0" field. It's identical to CollectedToken0EQ.
 func CollectedToken0(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken1 applies equality check predicate on the "collectedToken1" field. It's identical to CollectedToken1EQ.
+// CollectedToken1 applies equality check predicate on the "collected_token1" field. It's identical to CollectedToken1EQ.
 func CollectedToken1(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedFeesToken0 applies equality check predicate on the "collectedFeesToken0" field. It's identical to CollectedFeesToken0EQ.
+// CollectedFeesToken0 applies equality check predicate on the "collected_fees_token0" field. It's identical to CollectedFeesToken0EQ.
 func CollectedFeesToken0(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken1 applies equality check predicate on the "collectedFeesToken1" field. It's identical to CollectedFeesToken1EQ.
+// CollectedFeesToken1 applies equality check predicate on the "collected_fees_token1" field. It's identical to CollectedFeesToken1EQ.
 func CollectedFeesToken1(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// FeeGrowthInside0LastX128 applies equality check predicate on the "feeGrowthInside0LastX128" field. It's identical to FeeGrowthInside0LastX128EQ.
+// FeeGrowthInside0LastX128 applies equality check predicate on the "fee_growth_inside0_lastX128" field. It's identical to FeeGrowthInside0LastX128EQ.
 func FeeGrowthInside0LastX128(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128 applies equality check predicate on the "feeGrowthInside1LastX128" field. It's identical to FeeGrowthInside1LastX128EQ.
+// FeeGrowthInside1LastX128 applies equality check predicate on the "fee_growth_inside1_lastX128" field. It's identical to FeeGrowthInside1LastX128EQ.
 func FeeGrowthInside1LastX128(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFeeGrowthInside1LastX128), v))
+	})
+}
+
+// TokenEQ applies the EQ predicate on the "token" field.
+func TokenEQ(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldToken), v))
+	})
+}
+
+// TokenNEQ applies the NEQ predicate on the "token" field.
+func TokenNEQ(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldToken), v))
+	})
+}
+
+// TokenIn applies the In predicate on the "token" field.
+func TokenIn(vs ...*schema.BigInt) predicate.Position {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Position(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldToken), v...))
+	})
+}
+
+// TokenNotIn applies the NotIn predicate on the "token" field.
+func TokenNotIn(vs ...*schema.BigInt) predicate.Position {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Position(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldToken), v...))
+	})
+}
+
+// TokenGT applies the GT predicate on the "token" field.
+func TokenGT(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldToken), v))
+	})
+}
+
+// TokenGTE applies the GTE predicate on the "token" field.
+func TokenGTE(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldToken), v))
+	})
+}
+
+// TokenLT applies the LT predicate on the "token" field.
+func TokenLT(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldToken), v))
+	})
+}
+
+// TokenLTE applies the LTE predicate on the "token" field.
+func TokenLTE(v *schema.BigInt) predicate.Position {
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldToken), v))
+	})
+}
+
+// TokenContains applies the Contains predicate on the "token" field.
+func TokenContains(v *schema.BigInt) predicate.Position {
+	vc := v.String()
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldToken), vc))
+	})
+}
+
+// TokenHasPrefix applies the HasPrefix predicate on the "token" field.
+func TokenHasPrefix(v *schema.BigInt) predicate.Position {
+	vc := v.String()
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldToken), vc))
+	})
+}
+
+// TokenHasSuffix applies the HasSuffix predicate on the "token" field.
+func TokenHasSuffix(v *schema.BigInt) predicate.Position {
+	vc := v.String()
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldToken), vc))
+	})
+}
+
+// TokenEqualFold applies the EqualFold predicate on the "token" field.
+func TokenEqualFold(v *schema.BigInt) predicate.Position {
+	vc := v.String()
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldToken), vc))
+	})
+}
+
+// TokenContainsFold applies the ContainsFold predicate on the "token" field.
+func TokenContainsFold(v *schema.BigInt) predicate.Position {
+	vc := v.String()
+	return predicate.Position(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldToken), vc))
 	})
 }
 
@@ -514,21 +637,21 @@ func Token1LTE(v []byte) predicate.Position {
 	})
 }
 
-// TickLowerEQ applies the EQ predicate on the "tickLower" field.
+// TickLowerEQ applies the EQ predicate on the "tick_lower" field.
 func TickLowerEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerNEQ applies the NEQ predicate on the "tickLower" field.
+// TickLowerNEQ applies the NEQ predicate on the "tick_lower" field.
 func TickLowerNEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerIn applies the In predicate on the "tickLower" field.
+// TickLowerIn applies the In predicate on the "tick_lower" field.
 func TickLowerIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -545,7 +668,7 @@ func TickLowerIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerNotIn applies the NotIn predicate on the "tickLower" field.
+// TickLowerNotIn applies the NotIn predicate on the "tick_lower" field.
 func TickLowerNotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -562,35 +685,35 @@ func TickLowerNotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerGT applies the GT predicate on the "tickLower" field.
+// TickLowerGT applies the GT predicate on the "tick_lower" field.
 func TickLowerGT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerGTE applies the GTE predicate on the "tickLower" field.
+// TickLowerGTE applies the GTE predicate on the "tick_lower" field.
 func TickLowerGTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerLT applies the LT predicate on the "tickLower" field.
+// TickLowerLT applies the LT predicate on the "tick_lower" field.
 func TickLowerLT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerLTE applies the LTE predicate on the "tickLower" field.
+// TickLowerLTE applies the LTE predicate on the "tick_lower" field.
 func TickLowerLTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTickLower), v))
 	})
 }
 
-// TickLowerContains applies the Contains predicate on the "tickLower" field.
+// TickLowerContains applies the Contains predicate on the "tick_lower" field.
 func TickLowerContains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -598,7 +721,7 @@ func TickLowerContains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerHasPrefix applies the HasPrefix predicate on the "tickLower" field.
+// TickLowerHasPrefix applies the HasPrefix predicate on the "tick_lower" field.
 func TickLowerHasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -606,7 +729,7 @@ func TickLowerHasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerHasSuffix applies the HasSuffix predicate on the "tickLower" field.
+// TickLowerHasSuffix applies the HasSuffix predicate on the "tick_lower" field.
 func TickLowerHasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -614,7 +737,7 @@ func TickLowerHasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerEqualFold applies the EqualFold predicate on the "tickLower" field.
+// TickLowerEqualFold applies the EqualFold predicate on the "tick_lower" field.
 func TickLowerEqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -622,7 +745,7 @@ func TickLowerEqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickLowerContainsFold applies the ContainsFold predicate on the "tickLower" field.
+// TickLowerContainsFold applies the ContainsFold predicate on the "tick_lower" field.
 func TickLowerContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -630,21 +753,21 @@ func TickLowerContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperEQ applies the EQ predicate on the "tickUpper" field.
+// TickUpperEQ applies the EQ predicate on the "tick_upper" field.
 func TickUpperEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperNEQ applies the NEQ predicate on the "tickUpper" field.
+// TickUpperNEQ applies the NEQ predicate on the "tick_upper" field.
 func TickUpperNEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperIn applies the In predicate on the "tickUpper" field.
+// TickUpperIn applies the In predicate on the "tick_upper" field.
 func TickUpperIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -661,7 +784,7 @@ func TickUpperIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperNotIn applies the NotIn predicate on the "tickUpper" field.
+// TickUpperNotIn applies the NotIn predicate on the "tick_upper" field.
 func TickUpperNotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -678,35 +801,35 @@ func TickUpperNotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperGT applies the GT predicate on the "tickUpper" field.
+// TickUpperGT applies the GT predicate on the "tick_upper" field.
 func TickUpperGT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperGTE applies the GTE predicate on the "tickUpper" field.
+// TickUpperGTE applies the GTE predicate on the "tick_upper" field.
 func TickUpperGTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperLT applies the LT predicate on the "tickUpper" field.
+// TickUpperLT applies the LT predicate on the "tick_upper" field.
 func TickUpperLT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperLTE applies the LTE predicate on the "tickUpper" field.
+// TickUpperLTE applies the LTE predicate on the "tick_upper" field.
 func TickUpperLTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTickUpper), v))
 	})
 }
 
-// TickUpperContains applies the Contains predicate on the "tickUpper" field.
+// TickUpperContains applies the Contains predicate on the "tick_upper" field.
 func TickUpperContains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -714,7 +837,7 @@ func TickUpperContains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperHasPrefix applies the HasPrefix predicate on the "tickUpper" field.
+// TickUpperHasPrefix applies the HasPrefix predicate on the "tick_upper" field.
 func TickUpperHasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -722,7 +845,7 @@ func TickUpperHasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperHasSuffix applies the HasSuffix predicate on the "tickUpper" field.
+// TickUpperHasSuffix applies the HasSuffix predicate on the "tick_upper" field.
 func TickUpperHasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -730,7 +853,7 @@ func TickUpperHasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperEqualFold applies the EqualFold predicate on the "tickUpper" field.
+// TickUpperEqualFold applies the EqualFold predicate on the "tick_upper" field.
 func TickUpperEqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -738,7 +861,7 @@ func TickUpperEqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// TickUpperContainsFold applies the ContainsFold predicate on the "tickUpper" field.
+// TickUpperContainsFold applies the ContainsFold predicate on the "tick_upper" field.
 func TickUpperContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -862,21 +985,21 @@ func LiquidityContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0EQ applies the EQ predicate on the "depositedToken0" field.
+// DepositedToken0EQ applies the EQ predicate on the "deposited_token0" field.
 func DepositedToken0EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0NEQ applies the NEQ predicate on the "depositedToken0" field.
+// DepositedToken0NEQ applies the NEQ predicate on the "deposited_token0" field.
 func DepositedToken0NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0In applies the In predicate on the "depositedToken0" field.
+// DepositedToken0In applies the In predicate on the "deposited_token0" field.
 func DepositedToken0In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -893,7 +1016,7 @@ func DepositedToken0In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0NotIn applies the NotIn predicate on the "depositedToken0" field.
+// DepositedToken0NotIn applies the NotIn predicate on the "deposited_token0" field.
 func DepositedToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -910,35 +1033,35 @@ func DepositedToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0GT applies the GT predicate on the "depositedToken0" field.
+// DepositedToken0GT applies the GT predicate on the "deposited_token0" field.
 func DepositedToken0GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0GTE applies the GTE predicate on the "depositedToken0" field.
+// DepositedToken0GTE applies the GTE predicate on the "deposited_token0" field.
 func DepositedToken0GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0LT applies the LT predicate on the "depositedToken0" field.
+// DepositedToken0LT applies the LT predicate on the "deposited_token0" field.
 func DepositedToken0LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0LTE applies the LTE predicate on the "depositedToken0" field.
+// DepositedToken0LTE applies the LTE predicate on the "deposited_token0" field.
 func DepositedToken0LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDepositedToken0), v))
 	})
 }
 
-// DepositedToken0Contains applies the Contains predicate on the "depositedToken0" field.
+// DepositedToken0Contains applies the Contains predicate on the "deposited_token0" field.
 func DepositedToken0Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -946,7 +1069,7 @@ func DepositedToken0Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0HasPrefix applies the HasPrefix predicate on the "depositedToken0" field.
+// DepositedToken0HasPrefix applies the HasPrefix predicate on the "deposited_token0" field.
 func DepositedToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -954,7 +1077,7 @@ func DepositedToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0HasSuffix applies the HasSuffix predicate on the "depositedToken0" field.
+// DepositedToken0HasSuffix applies the HasSuffix predicate on the "deposited_token0" field.
 func DepositedToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -962,7 +1085,7 @@ func DepositedToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0EqualFold applies the EqualFold predicate on the "depositedToken0" field.
+// DepositedToken0EqualFold applies the EqualFold predicate on the "deposited_token0" field.
 func DepositedToken0EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -970,7 +1093,7 @@ func DepositedToken0EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken0ContainsFold applies the ContainsFold predicate on the "depositedToken0" field.
+// DepositedToken0ContainsFold applies the ContainsFold predicate on the "deposited_token0" field.
 func DepositedToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -978,21 +1101,21 @@ func DepositedToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1EQ applies the EQ predicate on the "depositedToken1" field.
+// DepositedToken1EQ applies the EQ predicate on the "deposited_token1" field.
 func DepositedToken1EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1NEQ applies the NEQ predicate on the "depositedToken1" field.
+// DepositedToken1NEQ applies the NEQ predicate on the "deposited_token1" field.
 func DepositedToken1NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1In applies the In predicate on the "depositedToken1" field.
+// DepositedToken1In applies the In predicate on the "deposited_token1" field.
 func DepositedToken1In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1009,7 +1132,7 @@ func DepositedToken1In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1NotIn applies the NotIn predicate on the "depositedToken1" field.
+// DepositedToken1NotIn applies the NotIn predicate on the "deposited_token1" field.
 func DepositedToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1026,35 +1149,35 @@ func DepositedToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1GT applies the GT predicate on the "depositedToken1" field.
+// DepositedToken1GT applies the GT predicate on the "deposited_token1" field.
 func DepositedToken1GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1GTE applies the GTE predicate on the "depositedToken1" field.
+// DepositedToken1GTE applies the GTE predicate on the "deposited_token1" field.
 func DepositedToken1GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1LT applies the LT predicate on the "depositedToken1" field.
+// DepositedToken1LT applies the LT predicate on the "deposited_token1" field.
 func DepositedToken1LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1LTE applies the LTE predicate on the "depositedToken1" field.
+// DepositedToken1LTE applies the LTE predicate on the "deposited_token1" field.
 func DepositedToken1LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDepositedToken1), v))
 	})
 }
 
-// DepositedToken1Contains applies the Contains predicate on the "depositedToken1" field.
+// DepositedToken1Contains applies the Contains predicate on the "deposited_token1" field.
 func DepositedToken1Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1062,7 +1185,7 @@ func DepositedToken1Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1HasPrefix applies the HasPrefix predicate on the "depositedToken1" field.
+// DepositedToken1HasPrefix applies the HasPrefix predicate on the "deposited_token1" field.
 func DepositedToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1070,7 +1193,7 @@ func DepositedToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1HasSuffix applies the HasSuffix predicate on the "depositedToken1" field.
+// DepositedToken1HasSuffix applies the HasSuffix predicate on the "deposited_token1" field.
 func DepositedToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1078,7 +1201,7 @@ func DepositedToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1EqualFold applies the EqualFold predicate on the "depositedToken1" field.
+// DepositedToken1EqualFold applies the EqualFold predicate on the "deposited_token1" field.
 func DepositedToken1EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1086,7 +1209,7 @@ func DepositedToken1EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// DepositedToken1ContainsFold applies the ContainsFold predicate on the "depositedToken1" field.
+// DepositedToken1ContainsFold applies the ContainsFold predicate on the "deposited_token1" field.
 func DepositedToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1094,21 +1217,21 @@ func DepositedToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0EQ applies the EQ predicate on the "withdrawnToken0" field.
+// WithdrawnToken0EQ applies the EQ predicate on the "withdrawn_token0" field.
 func WithdrawnToken0EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0NEQ applies the NEQ predicate on the "withdrawnToken0" field.
+// WithdrawnToken0NEQ applies the NEQ predicate on the "withdrawn_token0" field.
 func WithdrawnToken0NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0In applies the In predicate on the "withdrawnToken0" field.
+// WithdrawnToken0In applies the In predicate on the "withdrawn_token0" field.
 func WithdrawnToken0In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1125,7 +1248,7 @@ func WithdrawnToken0In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0NotIn applies the NotIn predicate on the "withdrawnToken0" field.
+// WithdrawnToken0NotIn applies the NotIn predicate on the "withdrawn_token0" field.
 func WithdrawnToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1142,35 +1265,35 @@ func WithdrawnToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0GT applies the GT predicate on the "withdrawnToken0" field.
+// WithdrawnToken0GT applies the GT predicate on the "withdrawn_token0" field.
 func WithdrawnToken0GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0GTE applies the GTE predicate on the "withdrawnToken0" field.
+// WithdrawnToken0GTE applies the GTE predicate on the "withdrawn_token0" field.
 func WithdrawnToken0GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0LT applies the LT predicate on the "withdrawnToken0" field.
+// WithdrawnToken0LT applies the LT predicate on the "withdrawn_token0" field.
 func WithdrawnToken0LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0LTE applies the LTE predicate on the "withdrawnToken0" field.
+// WithdrawnToken0LTE applies the LTE predicate on the "withdrawn_token0" field.
 func WithdrawnToken0LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldWithdrawnToken0), v))
 	})
 }
 
-// WithdrawnToken0Contains applies the Contains predicate on the "withdrawnToken0" field.
+// WithdrawnToken0Contains applies the Contains predicate on the "withdrawn_token0" field.
 func WithdrawnToken0Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1178,7 +1301,7 @@ func WithdrawnToken0Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0HasPrefix applies the HasPrefix predicate on the "withdrawnToken0" field.
+// WithdrawnToken0HasPrefix applies the HasPrefix predicate on the "withdrawn_token0" field.
 func WithdrawnToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1186,7 +1309,7 @@ func WithdrawnToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0HasSuffix applies the HasSuffix predicate on the "withdrawnToken0" field.
+// WithdrawnToken0HasSuffix applies the HasSuffix predicate on the "withdrawn_token0" field.
 func WithdrawnToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1194,7 +1317,7 @@ func WithdrawnToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0EqualFold applies the EqualFold predicate on the "withdrawnToken0" field.
+// WithdrawnToken0EqualFold applies the EqualFold predicate on the "withdrawn_token0" field.
 func WithdrawnToken0EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1202,7 +1325,7 @@ func WithdrawnToken0EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken0ContainsFold applies the ContainsFold predicate on the "withdrawnToken0" field.
+// WithdrawnToken0ContainsFold applies the ContainsFold predicate on the "withdrawn_token0" field.
 func WithdrawnToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1210,21 +1333,21 @@ func WithdrawnToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1EQ applies the EQ predicate on the "withdrawnToken1" field.
+// WithdrawnToken1EQ applies the EQ predicate on the "withdrawn_token1" field.
 func WithdrawnToken1EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1NEQ applies the NEQ predicate on the "withdrawnToken1" field.
+// WithdrawnToken1NEQ applies the NEQ predicate on the "withdrawn_token1" field.
 func WithdrawnToken1NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1In applies the In predicate on the "withdrawnToken1" field.
+// WithdrawnToken1In applies the In predicate on the "withdrawn_token1" field.
 func WithdrawnToken1In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1241,7 +1364,7 @@ func WithdrawnToken1In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1NotIn applies the NotIn predicate on the "withdrawnToken1" field.
+// WithdrawnToken1NotIn applies the NotIn predicate on the "withdrawn_token1" field.
 func WithdrawnToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1258,35 +1381,35 @@ func WithdrawnToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1GT applies the GT predicate on the "withdrawnToken1" field.
+// WithdrawnToken1GT applies the GT predicate on the "withdrawn_token1" field.
 func WithdrawnToken1GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1GTE applies the GTE predicate on the "withdrawnToken1" field.
+// WithdrawnToken1GTE applies the GTE predicate on the "withdrawn_token1" field.
 func WithdrawnToken1GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1LT applies the LT predicate on the "withdrawnToken1" field.
+// WithdrawnToken1LT applies the LT predicate on the "withdrawn_token1" field.
 func WithdrawnToken1LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1LTE applies the LTE predicate on the "withdrawnToken1" field.
+// WithdrawnToken1LTE applies the LTE predicate on the "withdrawn_token1" field.
 func WithdrawnToken1LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldWithdrawnToken1), v))
 	})
 }
 
-// WithdrawnToken1Contains applies the Contains predicate on the "withdrawnToken1" field.
+// WithdrawnToken1Contains applies the Contains predicate on the "withdrawn_token1" field.
 func WithdrawnToken1Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1294,7 +1417,7 @@ func WithdrawnToken1Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1HasPrefix applies the HasPrefix predicate on the "withdrawnToken1" field.
+// WithdrawnToken1HasPrefix applies the HasPrefix predicate on the "withdrawn_token1" field.
 func WithdrawnToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1302,7 +1425,7 @@ func WithdrawnToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1HasSuffix applies the HasSuffix predicate on the "withdrawnToken1" field.
+// WithdrawnToken1HasSuffix applies the HasSuffix predicate on the "withdrawn_token1" field.
 func WithdrawnToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1310,7 +1433,7 @@ func WithdrawnToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1EqualFold applies the EqualFold predicate on the "withdrawnToken1" field.
+// WithdrawnToken1EqualFold applies the EqualFold predicate on the "withdrawn_token1" field.
 func WithdrawnToken1EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1318,7 +1441,7 @@ func WithdrawnToken1EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// WithdrawnToken1ContainsFold applies the ContainsFold predicate on the "withdrawnToken1" field.
+// WithdrawnToken1ContainsFold applies the ContainsFold predicate on the "withdrawn_token1" field.
 func WithdrawnToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1326,21 +1449,21 @@ func WithdrawnToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0EQ applies the EQ predicate on the "collectedToken0" field.
+// CollectedToken0EQ applies the EQ predicate on the "collected_token0" field.
 func CollectedToken0EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0NEQ applies the NEQ predicate on the "collectedToken0" field.
+// CollectedToken0NEQ applies the NEQ predicate on the "collected_token0" field.
 func CollectedToken0NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0In applies the In predicate on the "collectedToken0" field.
+// CollectedToken0In applies the In predicate on the "collected_token0" field.
 func CollectedToken0In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1357,7 +1480,7 @@ func CollectedToken0In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0NotIn applies the NotIn predicate on the "collectedToken0" field.
+// CollectedToken0NotIn applies the NotIn predicate on the "collected_token0" field.
 func CollectedToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1374,35 +1497,35 @@ func CollectedToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0GT applies the GT predicate on the "collectedToken0" field.
+// CollectedToken0GT applies the GT predicate on the "collected_token0" field.
 func CollectedToken0GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0GTE applies the GTE predicate on the "collectedToken0" field.
+// CollectedToken0GTE applies the GTE predicate on the "collected_token0" field.
 func CollectedToken0GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0LT applies the LT predicate on the "collectedToken0" field.
+// CollectedToken0LT applies the LT predicate on the "collected_token0" field.
 func CollectedToken0LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0LTE applies the LTE predicate on the "collectedToken0" field.
+// CollectedToken0LTE applies the LTE predicate on the "collected_token0" field.
 func CollectedToken0LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCollectedToken0), v))
 	})
 }
 
-// CollectedToken0Contains applies the Contains predicate on the "collectedToken0" field.
+// CollectedToken0Contains applies the Contains predicate on the "collected_token0" field.
 func CollectedToken0Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1410,7 +1533,7 @@ func CollectedToken0Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0HasPrefix applies the HasPrefix predicate on the "collectedToken0" field.
+// CollectedToken0HasPrefix applies the HasPrefix predicate on the "collected_token0" field.
 func CollectedToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1418,7 +1541,7 @@ func CollectedToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0HasSuffix applies the HasSuffix predicate on the "collectedToken0" field.
+// CollectedToken0HasSuffix applies the HasSuffix predicate on the "collected_token0" field.
 func CollectedToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1426,7 +1549,7 @@ func CollectedToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0EqualFold applies the EqualFold predicate on the "collectedToken0" field.
+// CollectedToken0EqualFold applies the EqualFold predicate on the "collected_token0" field.
 func CollectedToken0EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1434,7 +1557,7 @@ func CollectedToken0EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken0ContainsFold applies the ContainsFold predicate on the "collectedToken0" field.
+// CollectedToken0ContainsFold applies the ContainsFold predicate on the "collected_token0" field.
 func CollectedToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1442,21 +1565,21 @@ func CollectedToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1EQ applies the EQ predicate on the "collectedToken1" field.
+// CollectedToken1EQ applies the EQ predicate on the "collected_token1" field.
 func CollectedToken1EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1NEQ applies the NEQ predicate on the "collectedToken1" field.
+// CollectedToken1NEQ applies the NEQ predicate on the "collected_token1" field.
 func CollectedToken1NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1In applies the In predicate on the "collectedToken1" field.
+// CollectedToken1In applies the In predicate on the "collected_token1" field.
 func CollectedToken1In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1473,7 +1596,7 @@ func CollectedToken1In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1NotIn applies the NotIn predicate on the "collectedToken1" field.
+// CollectedToken1NotIn applies the NotIn predicate on the "collected_token1" field.
 func CollectedToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1490,35 +1613,35 @@ func CollectedToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1GT applies the GT predicate on the "collectedToken1" field.
+// CollectedToken1GT applies the GT predicate on the "collected_token1" field.
 func CollectedToken1GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1GTE applies the GTE predicate on the "collectedToken1" field.
+// CollectedToken1GTE applies the GTE predicate on the "collected_token1" field.
 func CollectedToken1GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1LT applies the LT predicate on the "collectedToken1" field.
+// CollectedToken1LT applies the LT predicate on the "collected_token1" field.
 func CollectedToken1LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1LTE applies the LTE predicate on the "collectedToken1" field.
+// CollectedToken1LTE applies the LTE predicate on the "collected_token1" field.
 func CollectedToken1LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCollectedToken1), v))
 	})
 }
 
-// CollectedToken1Contains applies the Contains predicate on the "collectedToken1" field.
+// CollectedToken1Contains applies the Contains predicate on the "collected_token1" field.
 func CollectedToken1Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1526,7 +1649,7 @@ func CollectedToken1Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1HasPrefix applies the HasPrefix predicate on the "collectedToken1" field.
+// CollectedToken1HasPrefix applies the HasPrefix predicate on the "collected_token1" field.
 func CollectedToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1534,7 +1657,7 @@ func CollectedToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1HasSuffix applies the HasSuffix predicate on the "collectedToken1" field.
+// CollectedToken1HasSuffix applies the HasSuffix predicate on the "collected_token1" field.
 func CollectedToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1542,7 +1665,7 @@ func CollectedToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1EqualFold applies the EqualFold predicate on the "collectedToken1" field.
+// CollectedToken1EqualFold applies the EqualFold predicate on the "collected_token1" field.
 func CollectedToken1EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1550,7 +1673,7 @@ func CollectedToken1EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedToken1ContainsFold applies the ContainsFold predicate on the "collectedToken1" field.
+// CollectedToken1ContainsFold applies the ContainsFold predicate on the "collected_token1" field.
 func CollectedToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1558,21 +1681,21 @@ func CollectedToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0EQ applies the EQ predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0EQ applies the EQ predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0NEQ applies the NEQ predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0NEQ applies the NEQ predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0In applies the In predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0In applies the In predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1589,7 +1712,7 @@ func CollectedFeesToken0In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0NotIn applies the NotIn predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0NotIn applies the NotIn predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1606,35 +1729,35 @@ func CollectedFeesToken0NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0GT applies the GT predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0GT applies the GT predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0GTE applies the GTE predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0GTE applies the GTE predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0LT applies the LT predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0LT applies the LT predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0LTE applies the LTE predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0LTE applies the LTE predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCollectedFeesToken0), v))
 	})
 }
 
-// CollectedFeesToken0Contains applies the Contains predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0Contains applies the Contains predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1642,7 +1765,7 @@ func CollectedFeesToken0Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0HasPrefix applies the HasPrefix predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0HasPrefix applies the HasPrefix predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1650,7 +1773,7 @@ func CollectedFeesToken0HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0HasSuffix applies the HasSuffix predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0HasSuffix applies the HasSuffix predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1658,7 +1781,7 @@ func CollectedFeesToken0HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0EqualFold applies the EqualFold predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0EqualFold applies the EqualFold predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1666,7 +1789,7 @@ func CollectedFeesToken0EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken0ContainsFold applies the ContainsFold predicate on the "collectedFeesToken0" field.
+// CollectedFeesToken0ContainsFold applies the ContainsFold predicate on the "collected_fees_token0" field.
 func CollectedFeesToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1674,21 +1797,21 @@ func CollectedFeesToken0ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1EQ applies the EQ predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1EQ applies the EQ predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1NEQ applies the NEQ predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1NEQ applies the NEQ predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1In applies the In predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1In applies the In predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1705,7 +1828,7 @@ func CollectedFeesToken1In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1NotIn applies the NotIn predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1NotIn applies the NotIn predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1722,35 +1845,35 @@ func CollectedFeesToken1NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1GT applies the GT predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1GT applies the GT predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1GTE applies the GTE predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1GTE applies the GTE predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1LT applies the LT predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1LT applies the LT predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1LTE applies the LTE predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1LTE applies the LTE predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCollectedFeesToken1), v))
 	})
 }
 
-// CollectedFeesToken1Contains applies the Contains predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1Contains applies the Contains predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1758,7 +1881,7 @@ func CollectedFeesToken1Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1HasPrefix applies the HasPrefix predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1HasPrefix applies the HasPrefix predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1766,7 +1889,7 @@ func CollectedFeesToken1HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1HasSuffix applies the HasSuffix predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1HasSuffix applies the HasSuffix predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1774,7 +1897,7 @@ func CollectedFeesToken1HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1EqualFold applies the EqualFold predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1EqualFold applies the EqualFold predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1782,7 +1905,7 @@ func CollectedFeesToken1EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// CollectedFeesToken1ContainsFold applies the ContainsFold predicate on the "collectedFeesToken1" field.
+// CollectedFeesToken1ContainsFold applies the ContainsFold predicate on the "collected_fees_token1" field.
 func CollectedFeesToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1790,21 +1913,21 @@ func CollectedFeesToken1ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128EQ applies the EQ predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128EQ applies the EQ predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128NEQ applies the NEQ predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128NEQ applies the NEQ predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128In applies the In predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128In applies the In predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1821,7 +1944,7 @@ func FeeGrowthInside0LastX128In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128NotIn applies the NotIn predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128NotIn applies the NotIn predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1838,35 +1961,35 @@ func FeeGrowthInside0LastX128NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128GT applies the GT predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128GT applies the GT predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128GTE applies the GTE predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128GTE applies the GTE predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128LT applies the LT predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128LT applies the LT predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128LTE applies the LTE predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128LTE applies the LTE predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldFeeGrowthInside0LastX128), v))
 	})
 }
 
-// FeeGrowthInside0LastX128Contains applies the Contains predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128Contains applies the Contains predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1874,7 +1997,7 @@ func FeeGrowthInside0LastX128Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128HasPrefix applies the HasPrefix predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128HasPrefix applies the HasPrefix predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1882,7 +2005,7 @@ func FeeGrowthInside0LastX128HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128HasSuffix applies the HasSuffix predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128HasSuffix applies the HasSuffix predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1890,7 +2013,7 @@ func FeeGrowthInside0LastX128HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128EqualFold applies the EqualFold predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128EqualFold applies the EqualFold predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1898,7 +2021,7 @@ func FeeGrowthInside0LastX128EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside0LastX128ContainsFold applies the ContainsFold predicate on the "feeGrowthInside0LastX128" field.
+// FeeGrowthInside0LastX128ContainsFold applies the ContainsFold predicate on the "fee_growth_inside0_lastX128" field.
 func FeeGrowthInside0LastX128ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1906,21 +2029,21 @@ func FeeGrowthInside0LastX128ContainsFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128EQ applies the EQ predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128EQ applies the EQ predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128EQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128NEQ applies the NEQ predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128NEQ applies the NEQ predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128NEQ(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128In applies the In predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128In applies the In predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128In(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1937,7 +2060,7 @@ func FeeGrowthInside1LastX128In(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128NotIn applies the NotIn predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128NotIn applies the NotIn predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128NotIn(vs ...*schema.BigInt) predicate.Position {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1954,35 +2077,35 @@ func FeeGrowthInside1LastX128NotIn(vs ...*schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128GT applies the GT predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128GT applies the GT predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128GT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128GTE applies the GTE predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128GTE applies the GTE predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128GTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128LT applies the LT predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128LT applies the LT predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128LT(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128LTE applies the LTE predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128LTE applies the LTE predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128LTE(v *schema.BigInt) predicate.Position {
 	return predicate.Position(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldFeeGrowthInside1LastX128), v))
 	})
 }
 
-// FeeGrowthInside1LastX128Contains applies the Contains predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128Contains applies the Contains predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128Contains(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1990,7 +2113,7 @@ func FeeGrowthInside1LastX128Contains(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128HasPrefix applies the HasPrefix predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128HasPrefix applies the HasPrefix predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128HasPrefix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -1998,7 +2121,7 @@ func FeeGrowthInside1LastX128HasPrefix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128HasSuffix applies the HasSuffix predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128HasSuffix applies the HasSuffix predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128HasSuffix(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -2006,7 +2129,7 @@ func FeeGrowthInside1LastX128HasSuffix(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128EqualFold applies the EqualFold predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128EqualFold applies the EqualFold predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128EqualFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {
@@ -2014,7 +2137,7 @@ func FeeGrowthInside1LastX128EqualFold(v *schema.BigInt) predicate.Position {
 	})
 }
 
-// FeeGrowthInside1LastX128ContainsFold applies the ContainsFold predicate on the "feeGrowthInside1LastX128" field.
+// FeeGrowthInside1LastX128ContainsFold applies the ContainsFold predicate on the "fee_growth_inside1_lastX128" field.
 func FeeGrowthInside1LastX128ContainsFold(v *schema.BigInt) predicate.Position {
 	vc := v.String()
 	return predicate.Position(func(s *sql.Selector) {

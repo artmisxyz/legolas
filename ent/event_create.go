@@ -13,6 +13,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -77,64 +78,99 @@ func (ec *EventCreate) SetHash(s string) *EventCreate {
 	return ec
 }
 
-// AddIncreaseLiquidityIDs adds the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by IDs.
-func (ec *EventCreate) AddIncreaseLiquidityIDs(ids ...int) *EventCreate {
-	ec.mutation.AddIncreaseLiquidityIDs(ids...)
+// SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ID.
+func (ec *EventCreate) SetIncreaseLiquidityID(id int) *EventCreate {
+	ec.mutation.SetIncreaseLiquidityID(id)
 	return ec
 }
 
-// AddIncreaseLiquidity adds the "increase_liquidity" edges to the UniswapV3IncreaseLiqudity entity.
-func (ec *EventCreate) AddIncreaseLiquidity(u ...*UniswapV3IncreaseLiqudity) *EventCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ID if the given value is not nil.
+func (ec *EventCreate) SetNillableIncreaseLiquidityID(id *int) *EventCreate {
+	if id != nil {
+		ec = ec.SetIncreaseLiquidityID(*id)
 	}
-	return ec.AddIncreaseLiquidityIDs(ids...)
-}
-
-// AddDecreaseLiquidityIDs adds the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by IDs.
-func (ec *EventCreate) AddDecreaseLiquidityIDs(ids ...int) *EventCreate {
-	ec.mutation.AddDecreaseLiquidityIDs(ids...)
 	return ec
 }
 
-// AddDecreaseLiquidity adds the "decrease_liquidity" edges to the UniswapV3DecreaseLiqudity entity.
-func (ec *EventCreate) AddDecreaseLiquidity(u ...*UniswapV3DecreaseLiqudity) *EventCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ec.AddDecreaseLiquidityIDs(ids...)
+// SetIncreaseLiquidity sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity.
+func (ec *EventCreate) SetIncreaseLiquidity(u *UniswapV3IncreaseLiqudity) *EventCreate {
+	return ec.SetIncreaseLiquidityID(u.ID)
 }
 
-// AddCollectIDs adds the "collect" edge to the UniswapV3Collect entity by IDs.
-func (ec *EventCreate) AddCollectIDs(ids ...int) *EventCreate {
-	ec.mutation.AddCollectIDs(ids...)
+// SetDecreaseLiquidityID sets the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by ID.
+func (ec *EventCreate) SetDecreaseLiquidityID(id int) *EventCreate {
+	ec.mutation.SetDecreaseLiquidityID(id)
 	return ec
 }
 
-// AddCollect adds the "collect" edges to the UniswapV3Collect entity.
-func (ec *EventCreate) AddCollect(u ...*UniswapV3Collect) *EventCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableDecreaseLiquidityID sets the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity by ID if the given value is not nil.
+func (ec *EventCreate) SetNillableDecreaseLiquidityID(id *int) *EventCreate {
+	if id != nil {
+		ec = ec.SetDecreaseLiquidityID(*id)
 	}
-	return ec.AddCollectIDs(ids...)
-}
-
-// AddTransferIDs adds the "transfer" edge to the UniswapV3Transfer entity by IDs.
-func (ec *EventCreate) AddTransferIDs(ids ...int) *EventCreate {
-	ec.mutation.AddTransferIDs(ids...)
 	return ec
 }
 
-// AddTransfer adds the "transfer" edges to the UniswapV3Transfer entity.
-func (ec *EventCreate) AddTransfer(u ...*UniswapV3Transfer) *EventCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetDecreaseLiquidity sets the "decrease_liquidity" edge to the UniswapV3DecreaseLiqudity entity.
+func (ec *EventCreate) SetDecreaseLiquidity(u *UniswapV3DecreaseLiqudity) *EventCreate {
+	return ec.SetDecreaseLiquidityID(u.ID)
+}
+
+// SetCollectID sets the "collect" edge to the UniswapV3Collect entity by ID.
+func (ec *EventCreate) SetCollectID(id int) *EventCreate {
+	ec.mutation.SetCollectID(id)
+	return ec
+}
+
+// SetNillableCollectID sets the "collect" edge to the UniswapV3Collect entity by ID if the given value is not nil.
+func (ec *EventCreate) SetNillableCollectID(id *int) *EventCreate {
+	if id != nil {
+		ec = ec.SetCollectID(*id)
 	}
-	return ec.AddTransferIDs(ids...)
+	return ec
+}
+
+// SetCollect sets the "collect" edge to the UniswapV3Collect entity.
+func (ec *EventCreate) SetCollect(u *UniswapV3Collect) *EventCreate {
+	return ec.SetCollectID(u.ID)
+}
+
+// SetTransferID sets the "transfer" edge to the UniswapV3Transfer entity by ID.
+func (ec *EventCreate) SetTransferID(id int) *EventCreate {
+	ec.mutation.SetTransferID(id)
+	return ec
+}
+
+// SetNillableTransferID sets the "transfer" edge to the UniswapV3Transfer entity by ID if the given value is not nil.
+func (ec *EventCreate) SetNillableTransferID(id *int) *EventCreate {
+	if id != nil {
+		ec = ec.SetTransferID(*id)
+	}
+	return ec
+}
+
+// SetTransfer sets the "transfer" edge to the UniswapV3Transfer entity.
+func (ec *EventCreate) SetTransfer(u *UniswapV3Transfer) *EventCreate {
+	return ec.SetTransferID(u.ID)
+}
+
+// SetPoolCreatedID sets the "pool_created" edge to the UniswapV3PoolCreated entity by ID.
+func (ec *EventCreate) SetPoolCreatedID(id int) *EventCreate {
+	ec.mutation.SetPoolCreatedID(id)
+	return ec
+}
+
+// SetNillablePoolCreatedID sets the "pool_created" edge to the UniswapV3PoolCreated entity by ID if the given value is not nil.
+func (ec *EventCreate) SetNillablePoolCreatedID(id *int) *EventCreate {
+	if id != nil {
+		ec = ec.SetPoolCreatedID(*id)
+	}
+	return ec
+}
+
+// SetPoolCreated sets the "pool_created" edge to the UniswapV3PoolCreated entity.
+func (ec *EventCreate) SetPoolCreated(u *UniswapV3PoolCreated) *EventCreate {
+	return ec.SetPoolCreatedID(u.ID)
 }
 
 // Mutation returns the EventMutation object of the builder.
@@ -365,7 +401,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.IncreaseLiquidityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   event.IncreaseLiquidityTable,
 			Columns: []string{event.IncreaseLiquidityColumn},
@@ -384,7 +420,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.DecreaseLiquidityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   event.DecreaseLiquidityTable,
 			Columns: []string{event.DecreaseLiquidityColumn},
@@ -403,7 +439,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.CollectIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   event.CollectTable,
 			Columns: []string{event.CollectColumn},
@@ -422,7 +458,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.TransferIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   event.TransferTable,
 			Columns: []string{event.TransferColumn},
@@ -431,6 +467,25 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: uniswapv3transfer.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.PoolCreatedIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolCreatedTable,
+			Columns: []string{event.PoolCreatedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolcreated.FieldID,
 				},
 			},
 		}

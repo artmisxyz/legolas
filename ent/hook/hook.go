@@ -74,6 +74,19 @@ func (f UniswapV3IncreaseLiqudityFunc) Mutate(ctx context.Context, m ent.Mutatio
 	return f(ctx, mv)
 }
 
+// The UniswapV3PoolCreatedFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolCreated mutator.
+type UniswapV3PoolCreatedFunc func(context.Context, *ent.UniswapV3PoolCreatedMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolCreatedFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolCreatedMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolCreatedMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UniswapV3TransferFunc type is an adapter to allow the use of ordinary
 // function as UniswapV3Transfer mutator.
 type UniswapV3TransferFunc func(context.Context, *ent.UniswapV3TransferMutation) (ent.Value, error)

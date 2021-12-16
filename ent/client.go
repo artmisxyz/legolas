@@ -8,13 +8,13 @@ import (
 	"log"
 
 	"github.com/artmisxyz/blockinspector/ent/migrate"
-	"github.com/artmisxyz/blockinspector/ent/schema"
 
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 
 	"entgo.io/ent/dialect"
@@ -37,6 +37,8 @@ type Client struct {
 	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
+	// UniswapV3PoolCreated is the client for interacting with the UniswapV3PoolCreated builders.
+	UniswapV3PoolCreated *UniswapV3PoolCreatedClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
 }
@@ -57,6 +59,7 @@ func (c *Client) init() {
 	c.UniswapV3Collect = NewUniswapV3CollectClient(c.config)
 	c.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(c.config)
 	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
+	c.UniswapV3PoolCreated = NewUniswapV3PoolCreatedClient(c.config)
 	c.UniswapV3Transfer = NewUniswapV3TransferClient(c.config)
 }
 
@@ -96,6 +99,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
+		UniswapV3PoolCreated:      NewUniswapV3PoolCreatedClient(cfg),
 		UniswapV3Transfer:         NewUniswapV3TransferClient(cfg),
 	}, nil
 }
@@ -120,6 +124,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
+		UniswapV3PoolCreated:      NewUniswapV3PoolCreatedClient(cfg),
 		UniswapV3Transfer:         NewUniswapV3TransferClient(cfg),
 	}, nil
 }
@@ -155,6 +160,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.UniswapV3Collect.Use(hooks...)
 	c.UniswapV3DecreaseLiqudity.Use(hooks...)
 	c.UniswapV3IncreaseLiqudity.Use(hooks...)
+	c.UniswapV3PoolCreated.Use(hooks...)
 	c.UniswapV3Transfer.Use(hooks...)
 }
 
@@ -251,7 +257,7 @@ func (c *EventClient) QueryIncreaseLiquidity(e *Event) *UniswapV3IncreaseLiqudit
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.IncreaseLiquidityTable, event.IncreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.IncreaseLiquidityTable, event.IncreaseLiquidityColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -267,7 +273,7 @@ func (c *EventClient) QueryDecreaseLiquidity(e *Event) *UniswapV3DecreaseLiqudit
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.DecreaseLiquidityTable, event.DecreaseLiquidityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.DecreaseLiquidityTable, event.DecreaseLiquidityColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -283,7 +289,7 @@ func (c *EventClient) QueryCollect(e *Event) *UniswapV3CollectQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(uniswapv3collect.Table, uniswapv3collect.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.CollectTable, event.CollectColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.CollectTable, event.CollectColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -299,7 +305,23 @@ func (c *EventClient) QueryTransfer(e *Event) *UniswapV3TransferQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(uniswapv3transfer.Table, uniswapv3transfer.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.TransferTable, event.TransferColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.TransferTable, event.TransferColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolCreated queries the pool_created edge of a Event.
+func (c *EventClient) QueryPoolCreated(e *Event) *UniswapV3PoolCreatedQuery {
+	query := &UniswapV3PoolCreatedQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolcreated.Table, uniswapv3poolcreated.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolCreatedTable, event.PoolCreatedColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -352,7 +374,7 @@ func (c *PositionClient) UpdateOne(po *Position) *PositionUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PositionClient) UpdateOneID(id *schema.BigInt) *PositionUpdateOne {
+func (c *PositionClient) UpdateOneID(id int) *PositionUpdateOne {
 	mutation := newPositionMutation(c.config, OpUpdateOne, withPositionID(id))
 	return &PositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -369,7 +391,7 @@ func (c *PositionClient) DeleteOne(po *Position) *PositionDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *PositionClient) DeleteOneID(id *schema.BigInt) *PositionDeleteOne {
+func (c *PositionClient) DeleteOneID(id int) *PositionDeleteOne {
 	builder := c.Delete().Where(position.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -384,12 +406,12 @@ func (c *PositionClient) Query() *PositionQuery {
 }
 
 // Get returns a Position entity by its id.
-func (c *PositionClient) Get(ctx context.Context, id *schema.BigInt) (*Position, error) {
+func (c *PositionClient) Get(ctx context.Context, id int) (*Position, error) {
 	return c.Query().Where(position.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PositionClient) GetX(ctx context.Context, id *schema.BigInt) *Position {
+func (c *PositionClient) GetX(ctx context.Context, id int) *Position {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -495,7 +517,7 @@ func (c *UniswapV3CollectClient) QueryEvent(uv *UniswapV3Collect) *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3collect.Table, uniswapv3collect.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3collect.EventTable, uniswapv3collect.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3collect.EventTable, uniswapv3collect.EventColumn),
 		)
 		fromV = sqlgraph.Neighbors(uv.driver.Dialect(), step)
 		return fromV, nil
@@ -601,7 +623,7 @@ func (c *UniswapV3DecreaseLiqudityClient) QueryEvent(uvl *UniswapV3DecreaseLiqud
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3decreaseliqudity.EventTable, uniswapv3decreaseliqudity.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3decreaseliqudity.EventTable, uniswapv3decreaseliqudity.EventColumn),
 		)
 		fromV = sqlgraph.Neighbors(uvl.driver.Dialect(), step)
 		return fromV, nil
@@ -707,7 +729,7 @@ func (c *UniswapV3IncreaseLiqudityClient) QueryEvent(uvl *UniswapV3IncreaseLiqud
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3increaseliqudity.Table, uniswapv3increaseliqudity.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3increaseliqudity.EventTable, uniswapv3increaseliqudity.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3increaseliqudity.EventTable, uniswapv3increaseliqudity.EventColumn),
 		)
 		fromV = sqlgraph.Neighbors(uvl.driver.Dialect(), step)
 		return fromV, nil
@@ -718,6 +740,112 @@ func (c *UniswapV3IncreaseLiqudityClient) QueryEvent(uvl *UniswapV3IncreaseLiqud
 // Hooks returns the client hooks.
 func (c *UniswapV3IncreaseLiqudityClient) Hooks() []Hook {
 	return c.hooks.UniswapV3IncreaseLiqudity
+}
+
+// UniswapV3PoolCreatedClient is a client for the UniswapV3PoolCreated schema.
+type UniswapV3PoolCreatedClient struct {
+	config
+}
+
+// NewUniswapV3PoolCreatedClient returns a client for the UniswapV3PoolCreated from the given config.
+func NewUniswapV3PoolCreatedClient(c config) *UniswapV3PoolCreatedClient {
+	return &UniswapV3PoolCreatedClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolcreated.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolCreatedClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolCreated = append(c.hooks.UniswapV3PoolCreated, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolCreated.
+func (c *UniswapV3PoolCreatedClient) Create() *UniswapV3PoolCreatedCreate {
+	mutation := newUniswapV3PoolCreatedMutation(c.config, OpCreate)
+	return &UniswapV3PoolCreatedCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolCreated entities.
+func (c *UniswapV3PoolCreatedClient) CreateBulk(builders ...*UniswapV3PoolCreatedCreate) *UniswapV3PoolCreatedCreateBulk {
+	return &UniswapV3PoolCreatedCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolCreated.
+func (c *UniswapV3PoolCreatedClient) Update() *UniswapV3PoolCreatedUpdate {
+	mutation := newUniswapV3PoolCreatedMutation(c.config, OpUpdate)
+	return &UniswapV3PoolCreatedUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolCreatedClient) UpdateOne(uvc *UniswapV3PoolCreated) *UniswapV3PoolCreatedUpdateOne {
+	mutation := newUniswapV3PoolCreatedMutation(c.config, OpUpdateOne, withUniswapV3PoolCreated(uvc))
+	return &UniswapV3PoolCreatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolCreatedClient) UpdateOneID(id int) *UniswapV3PoolCreatedUpdateOne {
+	mutation := newUniswapV3PoolCreatedMutation(c.config, OpUpdateOne, withUniswapV3PoolCreatedID(id))
+	return &UniswapV3PoolCreatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolCreated.
+func (c *UniswapV3PoolCreatedClient) Delete() *UniswapV3PoolCreatedDelete {
+	mutation := newUniswapV3PoolCreatedMutation(c.config, OpDelete)
+	return &UniswapV3PoolCreatedDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolCreatedClient) DeleteOne(uvc *UniswapV3PoolCreated) *UniswapV3PoolCreatedDeleteOne {
+	return c.DeleteOneID(uvc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolCreatedClient) DeleteOneID(id int) *UniswapV3PoolCreatedDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolcreated.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolCreatedDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolCreated.
+func (c *UniswapV3PoolCreatedClient) Query() *UniswapV3PoolCreatedQuery {
+	return &UniswapV3PoolCreatedQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolCreated entity by its id.
+func (c *UniswapV3PoolCreatedClient) Get(ctx context.Context, id int) (*UniswapV3PoolCreated, error) {
+	return c.Query().Where(uniswapv3poolcreated.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolCreatedClient) GetX(ctx context.Context, id int) *UniswapV3PoolCreated {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolCreated.
+func (c *UniswapV3PoolCreatedClient) QueryEvent(uvc *UniswapV3PoolCreated) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolcreated.Table, uniswapv3poolcreated.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolcreated.EventTable, uniswapv3poolcreated.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolCreatedClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolCreated
 }
 
 // UniswapV3TransferClient is a client for the UniswapV3Transfer schema.
@@ -813,7 +941,7 @@ func (c *UniswapV3TransferClient) QueryEvent(uv *UniswapV3Transfer) *EventQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uniswapv3transfer.Table, uniswapv3transfer.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uniswapv3transfer.EventTable, uniswapv3transfer.EventColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3transfer.EventTable, uniswapv3transfer.EventColumn),
 		)
 		fromV = sqlgraph.Neighbors(uv.driver.Dialect(), step)
 		return fromV, nil
