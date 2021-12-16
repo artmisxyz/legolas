@@ -11,6 +11,7 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/position"
 	"github.com/artmisxyz/blockinspector/ent/predicate"
 	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 
 	"entgo.io/ent"
@@ -27,6 +28,7 @@ const (
 	// Node types.
 	TypeEvent                     = "Event"
 	TypePosition                  = "Position"
+	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
 )
 
@@ -2016,6 +2018,553 @@ func (m *PositionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PositionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Position edge %s", name)
+}
+
+// UniswapV3DecreaseLiqudityMutation represents an operation that mutates the UniswapV3DecreaseLiqudity nodes in the graph.
+type UniswapV3DecreaseLiqudityMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	token_id      **schema.BigInt
+	liquidity     **schema.BigInt
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	clearedFields map[string]struct{}
+	event         map[int]struct{}
+	removedevent  map[int]struct{}
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3DecreaseLiqudity, error)
+	predicates    []predicate.UniswapV3DecreaseLiqudity
+}
+
+var _ ent.Mutation = (*UniswapV3DecreaseLiqudityMutation)(nil)
+
+// uniswapv3decreaseliqudityOption allows management of the mutation configuration using functional options.
+type uniswapv3decreaseliqudityOption func(*UniswapV3DecreaseLiqudityMutation)
+
+// newUniswapV3DecreaseLiqudityMutation creates new mutation for the UniswapV3DecreaseLiqudity entity.
+func newUniswapV3DecreaseLiqudityMutation(c config, op Op, opts ...uniswapv3decreaseliqudityOption) *UniswapV3DecreaseLiqudityMutation {
+	m := &UniswapV3DecreaseLiqudityMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3DecreaseLiqudity,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3DecreaseLiqudityID sets the ID field of the mutation.
+func withUniswapV3DecreaseLiqudityID(id int) uniswapv3decreaseliqudityOption {
+	return func(m *UniswapV3DecreaseLiqudityMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3DecreaseLiqudity
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3DecreaseLiqudity, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3DecreaseLiqudity.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3DecreaseLiqudity sets the old UniswapV3DecreaseLiqudity of the mutation.
+func withUniswapV3DecreaseLiqudity(node *UniswapV3DecreaseLiqudity) uniswapv3decreaseliqudityOption {
+	return func(m *UniswapV3DecreaseLiqudityMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3DecreaseLiqudity, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3DecreaseLiqudityMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3DecreaseLiqudityMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3DecreaseLiqudityMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetTokenID sets the "token_id" field.
+func (m *UniswapV3DecreaseLiqudityMutation) SetTokenID(si *schema.BigInt) {
+	m.token_id = &si
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the UniswapV3DecreaseLiqudity entity.
+// If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3DecreaseLiqudityMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetTokenID() {
+	m.token_id = nil
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (m *UniswapV3DecreaseLiqudityMutation) SetLiquidity(si *schema.BigInt) {
+	m.liquidity = &si
+}
+
+// Liquidity returns the value of the "liquidity" field in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exists bool) {
+	v := m.liquidity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLiquidity returns the old "liquidity" field's value of the UniswapV3DecreaseLiqudity entity.
+// If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3DecreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLiquidity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLiquidity: %w", err)
+	}
+	return oldValue.Liquidity, nil
+}
+
+// ResetLiquidity resets all changes to the "liquidity" field.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetLiquidity() {
+	m.liquidity = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3DecreaseLiqudityMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3DecreaseLiqudity entity.
+// If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3DecreaseLiqudityMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3DecreaseLiqudityMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3DecreaseLiqudity entity.
+// If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3DecreaseLiqudityMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// AddEventIDs adds the "event" edge to the Event entity by ids.
+func (m *UniswapV3DecreaseLiqudityMutation) AddEventIDs(ids ...int) {
+	if m.event == nil {
+		m.event = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.event[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3DecreaseLiqudityMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3DecreaseLiqudityMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// RemoveEventIDs removes the "event" edge to the Event entity by IDs.
+func (m *UniswapV3DecreaseLiqudityMutation) RemoveEventIDs(ids ...int) {
+	if m.removedevent == nil {
+		m.removedevent = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.event, ids[i])
+		m.removedevent[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEvent returns the removed IDs of the "event" edge to the Event entity.
+func (m *UniswapV3DecreaseLiqudityMutation) RemovedEventIDs() (ids []int) {
+	for id := range m.removedevent {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) EventIDs() (ids []int) {
+	for id := range m.event {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+	m.removedevent = nil
+}
+
+// Where appends a list predicates to the UniswapV3DecreaseLiqudityMutation builder.
+func (m *UniswapV3DecreaseLiqudityMutation) Where(ps ...predicate.UniswapV3DecreaseLiqudity) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3DecreaseLiqudityMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3DecreaseLiqudity).
+func (m *UniswapV3DecreaseLiqudityMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3DecreaseLiqudityMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.token_id != nil {
+		fields = append(fields, uniswapv3decreaseliqudity.FieldTokenID)
+	}
+	if m.liquidity != nil {
+		fields = append(fields, uniswapv3decreaseliqudity.FieldLiquidity)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3decreaseliqudity.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3decreaseliqudity.FieldAmount1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3DecreaseLiqudityMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3decreaseliqudity.FieldTokenID:
+		return m.TokenID()
+	case uniswapv3decreaseliqudity.FieldLiquidity:
+		return m.Liquidity()
+	case uniswapv3decreaseliqudity.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3decreaseliqudity.FieldAmount1:
+		return m.Amount1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3DecreaseLiqudityMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3decreaseliqudity.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case uniswapv3decreaseliqudity.FieldLiquidity:
+		return m.OldLiquidity(ctx)
+	case uniswapv3decreaseliqudity.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3decreaseliqudity.FieldAmount1:
+		return m.OldAmount1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3DecreaseLiqudity field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3DecreaseLiqudityMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3decreaseliqudity.FieldTokenID:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case uniswapv3decreaseliqudity.FieldLiquidity:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLiquidity(v)
+		return nil
+	case uniswapv3decreaseliqudity.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3decreaseliqudity.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3DecreaseLiqudityMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3DecreaseLiqudityMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3DecreaseLiqudityMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3decreaseliqudity.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case uniswapv3decreaseliqudity.FieldLiquidity:
+		m.ResetLiquidity()
+		return nil
+	case uniswapv3decreaseliqudity.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3decreaseliqudity.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3decreaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3decreaseliqudity.EdgeEvent:
+		ids := make([]ent.Value, 0, len(m.event))
+		for id := range m.event {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedevent != nil {
+		edges = append(edges, uniswapv3decreaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3decreaseliqudity.EdgeEvent:
+		ids := make([]ent.Value, 0, len(m.removedevent))
+		for id := range m.removedevent {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3decreaseliqudity.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3DecreaseLiqudityMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3decreaseliqudity.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3DecreaseLiqudityMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3DecreaseLiqudityMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3decreaseliqudity.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3DecreaseLiqudity edge %s", name)
 }
 
 // UniswapV3IncreaseLiqudityMutation represents an operation that mutates the UniswapV3IncreaseLiqudity nodes in the graph.

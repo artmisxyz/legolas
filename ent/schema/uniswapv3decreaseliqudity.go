@@ -7,13 +7,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// UniswapV3IncreaseLiqudity holds the schema definition for the UniswapV3IncreaseLiqudity entity.
-type UniswapV3IncreaseLiqudity struct {
+// UniswapV3DecreaseLiqudity holds the schema definition for the UniswapV3DecreaseLiqudity entity.
+type UniswapV3DecreaseLiqudity struct {
 	ent.Schema
 }
 
-// Fields of the UniswapV3IncreaseLiqudity.
-func (UniswapV3IncreaseLiqudity) Fields() []ent.Field {
+// Fields of the UniswapV3DecreaseLiqudity.
+func (UniswapV3DecreaseLiqudity) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("token_id").GoType(new(BigInt)).
 			SchemaType(map[string]string{
@@ -38,8 +38,8 @@ func (UniswapV3IncreaseLiqudity) Fields() []ent.Field {
 	}
 }
 
-// Edges of the UniswapV3IncreaseLiqudity.
-func (UniswapV3IncreaseLiqudity) Edges() []ent.Edge {
+// Edges of the UniswapV3DecreaseLiqudity.
+func (UniswapV3DecreaseLiqudity) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("event", Event.Type),
 	}

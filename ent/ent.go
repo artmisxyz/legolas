@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 )
 
@@ -33,6 +34,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		event.Table:                     event.ValidColumn,
 		position.Table:                  position.ValidColumn,
+		uniswapv3decreaseliqudity.Table: uniswapv3decreaseliqudity.ValidColumn,
 		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,
 	}
 	check, ok := checks[table]

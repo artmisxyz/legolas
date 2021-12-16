@@ -33,6 +33,7 @@ type Event struct {
 	Index uint `json:"index,omitempty"`
 	// Hash holds the value of the "hash" field.
 	Hash                              string `json:"hash,omitempty"`
+	uniswap_v3decrease_liqudity_event *int
 	uniswap_v3increase_liqudity_event *int
 }
 
@@ -45,7 +46,9 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case event.FieldName, event.FieldSignature, event.FieldAddress, event.FieldTxHash, event.FieldBlockHash, event.FieldHash:
 			values[i] = new(sql.NullString)
-		case event.ForeignKeys[0]: // uniswap_v3increase_liqudity_event
+		case event.ForeignKeys[0]: // uniswap_v3decrease_liqudity_event
+			values[i] = new(sql.NullInt64)
+		case event.ForeignKeys[1]: // uniswap_v3increase_liqudity_event
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Event", columns[i])
@@ -123,6 +126,13 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 				e.Hash = value.String
 			}
 		case event.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field uniswap_v3decrease_liqudity_event", value)
+			} else if value.Valid {
+				e.uniswap_v3decrease_liqudity_event = new(int)
+				*e.uniswap_v3decrease_liqudity_event = int(value.Int64)
+			}
+		case event.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field uniswap_v3increase_liqudity_event", value)
 			} else if value.Valid {

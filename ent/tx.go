@@ -16,6 +16,8 @@ type Tx struct {
 	Event *EventClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// UniswapV3DecreaseLiqudity is the client for interacting with the UniswapV3DecreaseLiqudity builders.
+	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
 
@@ -155,6 +157,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Event = NewEventClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
+	tx.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(tx.config)
 	tx.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(tx.config)
 }
 

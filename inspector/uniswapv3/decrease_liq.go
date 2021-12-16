@@ -14,6 +14,11 @@ type decreaseLiquidityEventHandler struct {
 	state   State
 }
 
+const (
+	DecreaseLiquidityEventName      = "UniswapV3_Decrease_Liquidity"
+	DecreaseLiquidityEventSignature = "0x26f6a048ee9138f2c0ce266f322cb99228e8d619ae2bff30c67f8dcf9d2377b4"
+)
+
 func (d *decreaseLiquidityEventHandler) Save(log types.Log) error {
 	event, err := d.binding.ParseDecreaseLiquidity(log)
 	if err != nil {
@@ -33,6 +38,6 @@ func NewDecreaseLiquidityEventHandler(address common.Address, backend bind.Contr
 	}
 	return &decreaseLiquidityEventHandler{
 		binding: binding,
-		state:   NewMemoryState(),
+		state:   nil,
 	}
 }

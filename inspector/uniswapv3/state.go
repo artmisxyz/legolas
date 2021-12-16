@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/artmisxyz/blockinspector/ent"
+	"github.com/artmisxyz/blockinspector/ent/schema"
 	"github.com/artmisxyz/blockinspector/pkg/hashing"
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
 )
@@ -28,7 +29,7 @@ func NewMemoryState(db ent.Client) State {
 func (m *Postgres) CreateIncreaseLiquidity(event *nftpositionmanager.NftpositionmanagerIncreaseLiquidity) error {
 	log := event.Raw
 	hash := hashing.LogHash(log)
-	_, err := m.db.Event.Create().
+	instance, err := m.db.Event.Create().
 		SetAddress(log.Address.String()).
 		SetHash(hash).
 		SetBlockHash(log.BlockHash.String()).
@@ -42,11 +43,48 @@ func (m *Postgres) CreateIncreaseLiquidity(event *nftpositionmanager.Nftposition
 	if err != nil {
 		return err
 	}
+
+	_, err = m.db.UniswapV3IncreaseLiqudity.Create().
+		AddEvent(instance).
+		SetLiquidity(&schema.BigInt{*event.Liquidity}).
+		SetTokenID(&schema.BigInt{*event.TokenId}).
+		SetAmount0(&schema.BigInt{*event.Amount0}).
+		SetAmount1(&schema.BigInt{*event.Amount1}).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *Postgres) CreateDecreaseLiquidity(event *nftpositionmanager.NftpositionmanagerDecreaseLiquidity) error {
-	fmt.Println("decrease liquidity state save")
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	instance, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(DecreaseLiquidityEventName).
+		SetSignature(DecreaseLiquidityEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = m.db.UniswapV3DecreaseLiqudity.Create().
+		AddEvent(instance).
+		SetLiquidity(&schema.BigInt{*event.Liquidity}).
+		SetTokenID(&schema.BigInt{*event.TokenId}).
+		SetAmount0(&schema.BigInt{*event.Amount0}).
+		SetAmount1(&schema.BigInt{*event.Amount1}).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

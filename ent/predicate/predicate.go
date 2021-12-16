@@ -12,5 +12,8 @@ type Event func(*sql.Selector)
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
 
+// UniswapV3DecreaseLiqudity is the predicate function for uniswapv3decreaseliqudity builders.
+type UniswapV3DecreaseLiqudity func(*sql.Selector)
+
 // UniswapV3IncreaseLiqudity is the predicate function for uniswapv3increaseliqudity builders.
 type UniswapV3IncreaseLiqudity func(*sql.Selector)

@@ -49,54 +49,67 @@ func (Position) Fields() []ent.Field {
 		field.String("tickLower").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("tickUpper").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("liquidity").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("depositedToken0").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("depositedToken1").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("withdrawnToken0").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("withdrawnToken1").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("collectedToken0").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("collectedToken1").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("collectedFeesToken0").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("collectedFeesToken1").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("feeGrowthInside0LastX128").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 		field.String("feeGrowthInside1LastX128").GoType(new(BigInt)).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(18, 0)",
+				dialect.SQLite:   "numeric(18, 0)",
 			}),
 	}
 }

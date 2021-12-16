@@ -12,6 +12,7 @@ import (
 
 	"github.com/artmisxyz/blockinspector/ent/event"
 	"github.com/artmisxyz/blockinspector/ent/position"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
 
 	"entgo.io/ent/dialect"
@@ -28,6 +29,8 @@ type Client struct {
 	Event *EventClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// UniswapV3DecreaseLiqudity is the client for interacting with the UniswapV3DecreaseLiqudity builders.
+	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
 }
@@ -45,6 +48,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Event = NewEventClient(c.config)
 	c.Position = NewPositionClient(c.config)
+	c.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(c.config)
 	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
 }
 
@@ -81,6 +85,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
 		Position:                  NewPositionClient(cfg),
+		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
 	}, nil
 }
@@ -102,6 +107,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
 		Position:                  NewPositionClient(cfg),
+		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
 	}, nil
 }
@@ -134,6 +140,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Event.Use(hooks...)
 	c.Position.Use(hooks...)
+	c.UniswapV3DecreaseLiqudity.Use(hooks...)
 	c.UniswapV3IncreaseLiqudity.Use(hooks...)
 }
 
@@ -315,6 +322,112 @@ func (c *PositionClient) GetX(ctx context.Context, id *schema.BigInt) *Position 
 // Hooks returns the client hooks.
 func (c *PositionClient) Hooks() []Hook {
 	return c.hooks.Position
+}
+
+// UniswapV3DecreaseLiqudityClient is a client for the UniswapV3DecreaseLiqudity schema.
+type UniswapV3DecreaseLiqudityClient struct {
+	config
+}
+
+// NewUniswapV3DecreaseLiqudityClient returns a client for the UniswapV3DecreaseLiqudity from the given config.
+func NewUniswapV3DecreaseLiqudityClient(c config) *UniswapV3DecreaseLiqudityClient {
+	return &UniswapV3DecreaseLiqudityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3decreaseliqudity.Hooks(f(g(h())))`.
+func (c *UniswapV3DecreaseLiqudityClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3DecreaseLiqudity = append(c.hooks.UniswapV3DecreaseLiqudity, hooks...)
+}
+
+// Create returns a create builder for UniswapV3DecreaseLiqudity.
+func (c *UniswapV3DecreaseLiqudityClient) Create() *UniswapV3DecreaseLiqudityCreate {
+	mutation := newUniswapV3DecreaseLiqudityMutation(c.config, OpCreate)
+	return &UniswapV3DecreaseLiqudityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3DecreaseLiqudity entities.
+func (c *UniswapV3DecreaseLiqudityClient) CreateBulk(builders ...*UniswapV3DecreaseLiqudityCreate) *UniswapV3DecreaseLiqudityCreateBulk {
+	return &UniswapV3DecreaseLiqudityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3DecreaseLiqudity.
+func (c *UniswapV3DecreaseLiqudityClient) Update() *UniswapV3DecreaseLiqudityUpdate {
+	mutation := newUniswapV3DecreaseLiqudityMutation(c.config, OpUpdate)
+	return &UniswapV3DecreaseLiqudityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3DecreaseLiqudityClient) UpdateOne(uvl *UniswapV3DecreaseLiqudity) *UniswapV3DecreaseLiqudityUpdateOne {
+	mutation := newUniswapV3DecreaseLiqudityMutation(c.config, OpUpdateOne, withUniswapV3DecreaseLiqudity(uvl))
+	return &UniswapV3DecreaseLiqudityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3DecreaseLiqudityClient) UpdateOneID(id int) *UniswapV3DecreaseLiqudityUpdateOne {
+	mutation := newUniswapV3DecreaseLiqudityMutation(c.config, OpUpdateOne, withUniswapV3DecreaseLiqudityID(id))
+	return &UniswapV3DecreaseLiqudityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3DecreaseLiqudity.
+func (c *UniswapV3DecreaseLiqudityClient) Delete() *UniswapV3DecreaseLiqudityDelete {
+	mutation := newUniswapV3DecreaseLiqudityMutation(c.config, OpDelete)
+	return &UniswapV3DecreaseLiqudityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3DecreaseLiqudityClient) DeleteOne(uvl *UniswapV3DecreaseLiqudity) *UniswapV3DecreaseLiqudityDeleteOne {
+	return c.DeleteOneID(uvl.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3DecreaseLiqudityClient) DeleteOneID(id int) *UniswapV3DecreaseLiqudityDeleteOne {
+	builder := c.Delete().Where(uniswapv3decreaseliqudity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3DecreaseLiqudityDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3DecreaseLiqudity.
+func (c *UniswapV3DecreaseLiqudityClient) Query() *UniswapV3DecreaseLiqudityQuery {
+	return &UniswapV3DecreaseLiqudityQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3DecreaseLiqudity entity by its id.
+func (c *UniswapV3DecreaseLiqudityClient) Get(ctx context.Context, id int) (*UniswapV3DecreaseLiqudity, error) {
+	return c.Query().Where(uniswapv3decreaseliqudity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3DecreaseLiqudityClient) GetX(ctx context.Context, id int) *UniswapV3DecreaseLiqudity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3DecreaseLiqudity.
+func (c *UniswapV3DecreaseLiqudityClient) QueryEvent(uvl *UniswapV3DecreaseLiqudity) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3decreaseliqudity.Table, uniswapv3decreaseliqudity.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, uniswapv3decreaseliqudity.EventTable, uniswapv3decreaseliqudity.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3DecreaseLiqudityClient) Hooks() []Hook {
+	return c.hooks.UniswapV3DecreaseLiqudity
 }
 
 // UniswapV3IncreaseLiqudityClient is a client for the UniswapV3IncreaseLiqudity schema.

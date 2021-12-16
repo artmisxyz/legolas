@@ -46,6 +46,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "events"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"uniswap_v3decrease_liqudity_event",
 	"uniswap_v3increase_liqudity_event",
 }
 

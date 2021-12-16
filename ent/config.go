@@ -26,6 +26,7 @@ type config struct {
 type hooks struct {
 	Event                     []ent.Hook
 	Position                  []ent.Hook
+	UniswapV3DecreaseLiqudity []ent.Hook
 	UniswapV3IncreaseLiqudity []ent.Hook
 }
 

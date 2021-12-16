@@ -35,6 +35,19 @@ func (f PositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The UniswapV3DecreaseLiqudityFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3DecreaseLiqudity mutator.
+type UniswapV3DecreaseLiqudityFunc func(context.Context, *ent.UniswapV3DecreaseLiqudityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3DecreaseLiqudityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3DecreaseLiqudityMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3DecreaseLiqudityMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UniswapV3IncreaseLiqudityFunc type is an adapter to allow the use of ordinary
 // function as UniswapV3IncreaseLiqudity mutator.
 type UniswapV3IncreaseLiqudityFunc func(context.Context, *ent.UniswapV3IncreaseLiqudityMutation) (ent.Value, error)

@@ -20,6 +20,7 @@ var (
 		{Name: "block_hash", Type: field.TypeString},
 		{Name: "index", Type: field.TypeUint},
 		{Name: "hash", Type: field.TypeString, Unique: true},
+		{Name: "uniswap_v3decrease_liqudity_event", Type: field.TypeInt, Nullable: true},
 		{Name: "uniswap_v3increase_liqudity_event", Type: field.TypeInt, Nullable: true},
 	}
 	// EventsTable holds the schema information for the "events" table.
@@ -29,8 +30,14 @@ var (
 		PrimaryKey: []*schema.Column{EventsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "events_uniswap_v3increase_liqudities_event",
+				Symbol:     "events_uniswap_v3decrease_liqudities_event",
 				Columns:    []*schema.Column{EventsColumns[10]},
+				RefColumns: []*schema.Column{UniswapV3decreaseLiquditiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "events_uniswap_v3increase_liqudities_event",
+				Columns:    []*schema.Column{EventsColumns[11]},
 				RefColumns: []*schema.Column{UniswapV3increaseLiquditiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -43,19 +50,19 @@ var (
 		{Name: "pool", Type: field.TypeBytes},
 		{Name: "token0", Type: field.TypeBytes},
 		{Name: "token1", Type: field.TypeBytes},
-		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "deposited_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "deposited_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "withdrawn_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "withdrawn_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "collected_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "collected_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "collected_fees_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "collected_fees_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "fee_growth_inside0last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "fee_growth_inside1last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "deposited_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "deposited_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "withdrawn_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "withdrawn_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "collected_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "collected_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "collected_fees_token0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "collected_fees_token1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "fee_growth_inside0last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "fee_growth_inside1last_x128", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 	}
 	// PositionsTable holds the schema information for the "positions" table.
 	PositionsTable = &schema.Table{
@@ -63,13 +70,27 @@ var (
 		Columns:    PositionsColumns,
 		PrimaryKey: []*schema.Column{PositionsColumns[0]},
 	}
+	// UniswapV3decreaseLiquditiesColumns holds the columns for the "uniswap_v3decrease_liqudities" table.
+	UniswapV3decreaseLiquditiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+	}
+	// UniswapV3decreaseLiquditiesTable holds the schema information for the "uniswap_v3decrease_liqudities" table.
+	UniswapV3decreaseLiquditiesTable = &schema.Table{
+		Name:       "uniswap_v3decrease_liqudities",
+		Columns:    UniswapV3decreaseLiquditiesColumns,
+		PrimaryKey: []*schema.Column{UniswapV3decreaseLiquditiesColumns[0]},
+	}
 	// UniswapV3increaseLiquditiesColumns holds the columns for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)"}},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(18, 0)", "sqlite3": "numeric(18, 0)"}},
 	}
 	// UniswapV3increaseLiquditiesTable holds the schema information for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesTable = &schema.Table{
@@ -81,10 +102,12 @@ var (
 	Tables = []*schema.Table{
 		EventsTable,
 		PositionsTable,
+		UniswapV3decreaseLiquditiesTable,
 		UniswapV3increaseLiquditiesTable,
 	}
 )
 
 func init() {
-	EventsTable.ForeignKeys[0].RefTable = UniswapV3increaseLiquditiesTable
+	EventsTable.ForeignKeys[0].RefTable = UniswapV3decreaseLiquditiesTable
+	EventsTable.ForeignKeys[1].RefTable = UniswapV3increaseLiquditiesTable
 }
