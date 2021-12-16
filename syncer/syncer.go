@@ -45,7 +45,7 @@ func (s *Syncer) Init(conf Config) {
 	}
 
 	core := zapcore.NewTee(cores...)
-	s.logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+	s.logger = zap.New(core, zap.AddCaller())
 
 	s.ws = connections.RPC(conf.Node.Websocket)
 	s.rpc = connections.Websocket(conf.Node.RPC)
