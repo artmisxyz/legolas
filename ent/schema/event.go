@@ -18,9 +18,9 @@ func (Event) Fields() []ent.Field {
 		field.String("address").NotEmpty(),
 		field.Uint64("block_number"),
 		field.String("tx_hash").NotEmpty(),
-		field.Uint64("tx_index"),
+		field.Uint("tx_index"),
 		field.String("block_hash").NotEmpty(),
-		field.Uint64("index"),
+		field.Uint("index"),
 		field.String("hash").Unique().NotEmpty(),
 	}
 }

@@ -64,14 +64,14 @@ func (eu *EventUpdate) SetTxHash(s string) *EventUpdate {
 }
 
 // SetTxIndex sets the "tx_index" field.
-func (eu *EventUpdate) SetTxIndex(u uint64) *EventUpdate {
+func (eu *EventUpdate) SetTxIndex(u uint) *EventUpdate {
 	eu.mutation.ResetTxIndex()
 	eu.mutation.SetTxIndex(u)
 	return eu
 }
 
 // AddTxIndex adds u to the "tx_index" field.
-func (eu *EventUpdate) AddTxIndex(u uint64) *EventUpdate {
+func (eu *EventUpdate) AddTxIndex(u uint) *EventUpdate {
 	eu.mutation.AddTxIndex(u)
 	return eu
 }
@@ -83,14 +83,14 @@ func (eu *EventUpdate) SetBlockHash(s string) *EventUpdate {
 }
 
 // SetIndex sets the "index" field.
-func (eu *EventUpdate) SetIndex(u uint64) *EventUpdate {
+func (eu *EventUpdate) SetIndex(u uint) *EventUpdate {
 	eu.mutation.ResetIndex()
 	eu.mutation.SetIndex(u)
 	return eu
 }
 
 // AddIndex adds u to the "index" field.
-func (eu *EventUpdate) AddIndex(u uint64) *EventUpdate {
+func (eu *EventUpdate) AddIndex(u uint) *EventUpdate {
 	eu.mutation.AddIndex(u)
 	return eu
 }
@@ -263,14 +263,14 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := eu.mutation.TxIndex(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldTxIndex,
 		})
 	}
 	if value, ok := eu.mutation.AddedTxIndex(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldTxIndex,
 		})
@@ -284,14 +284,14 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := eu.mutation.Index(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
 		})
 	}
 	if value, ok := eu.mutation.AddedIndex(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
 		})
@@ -360,14 +360,14 @@ func (euo *EventUpdateOne) SetTxHash(s string) *EventUpdateOne {
 }
 
 // SetTxIndex sets the "tx_index" field.
-func (euo *EventUpdateOne) SetTxIndex(u uint64) *EventUpdateOne {
+func (euo *EventUpdateOne) SetTxIndex(u uint) *EventUpdateOne {
 	euo.mutation.ResetTxIndex()
 	euo.mutation.SetTxIndex(u)
 	return euo
 }
 
 // AddTxIndex adds u to the "tx_index" field.
-func (euo *EventUpdateOne) AddTxIndex(u uint64) *EventUpdateOne {
+func (euo *EventUpdateOne) AddTxIndex(u uint) *EventUpdateOne {
 	euo.mutation.AddTxIndex(u)
 	return euo
 }
@@ -379,14 +379,14 @@ func (euo *EventUpdateOne) SetBlockHash(s string) *EventUpdateOne {
 }
 
 // SetIndex sets the "index" field.
-func (euo *EventUpdateOne) SetIndex(u uint64) *EventUpdateOne {
+func (euo *EventUpdateOne) SetIndex(u uint) *EventUpdateOne {
 	euo.mutation.ResetIndex()
 	euo.mutation.SetIndex(u)
 	return euo
 }
 
 // AddIndex adds u to the "index" field.
-func (euo *EventUpdateOne) AddIndex(u uint64) *EventUpdateOne {
+func (euo *EventUpdateOne) AddIndex(u uint) *EventUpdateOne {
 	euo.mutation.AddIndex(u)
 	return euo
 }
@@ -583,14 +583,14 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if value, ok := euo.mutation.TxIndex(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldTxIndex,
 		})
 	}
 	if value, ok := euo.mutation.AddedTxIndex(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldTxIndex,
 		})
@@ -604,14 +604,14 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if value, ok := euo.mutation.Index(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
 		})
 	}
 	if value, ok := euo.mutation.AddedIndex(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
 		})

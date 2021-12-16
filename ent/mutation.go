@@ -42,11 +42,11 @@ type EventMutation struct {
 	block_number    *uint64
 	addblock_number *uint64
 	tx_hash         *string
-	tx_index        *uint64
-	addtx_index     *uint64
+	tx_index        *uint
+	addtx_index     *uint
 	block_hash      *string
-	index           *uint64
-	addindex        *uint64
+	index           *uint
+	addindex        *uint
 	hash            *string
 	clearedFields   map[string]struct{}
 	done            bool
@@ -334,13 +334,13 @@ func (m *EventMutation) ResetTxHash() {
 }
 
 // SetTxIndex sets the "tx_index" field.
-func (m *EventMutation) SetTxIndex(u uint64) {
+func (m *EventMutation) SetTxIndex(u uint) {
 	m.tx_index = &u
 	m.addtx_index = nil
 }
 
 // TxIndex returns the value of the "tx_index" field in the mutation.
-func (m *EventMutation) TxIndex() (r uint64, exists bool) {
+func (m *EventMutation) TxIndex() (r uint, exists bool) {
 	v := m.tx_index
 	if v == nil {
 		return
@@ -351,7 +351,7 @@ func (m *EventMutation) TxIndex() (r uint64, exists bool) {
 // OldTxIndex returns the old "tx_index" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldTxIndex(ctx context.Context) (v uint64, err error) {
+func (m *EventMutation) OldTxIndex(ctx context.Context) (v uint, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTxIndex is only allowed on UpdateOne operations")
 	}
@@ -366,7 +366,7 @@ func (m *EventMutation) OldTxIndex(ctx context.Context) (v uint64, err error) {
 }
 
 // AddTxIndex adds u to the "tx_index" field.
-func (m *EventMutation) AddTxIndex(u uint64) {
+func (m *EventMutation) AddTxIndex(u uint) {
 	if m.addtx_index != nil {
 		*m.addtx_index += u
 	} else {
@@ -375,7 +375,7 @@ func (m *EventMutation) AddTxIndex(u uint64) {
 }
 
 // AddedTxIndex returns the value that was added to the "tx_index" field in this mutation.
-func (m *EventMutation) AddedTxIndex() (r uint64, exists bool) {
+func (m *EventMutation) AddedTxIndex() (r uint, exists bool) {
 	v := m.addtx_index
 	if v == nil {
 		return
@@ -426,13 +426,13 @@ func (m *EventMutation) ResetBlockHash() {
 }
 
 // SetIndex sets the "index" field.
-func (m *EventMutation) SetIndex(u uint64) {
+func (m *EventMutation) SetIndex(u uint) {
 	m.index = &u
 	m.addindex = nil
 }
 
 // Index returns the value of the "index" field in the mutation.
-func (m *EventMutation) Index() (r uint64, exists bool) {
+func (m *EventMutation) Index() (r uint, exists bool) {
 	v := m.index
 	if v == nil {
 		return
@@ -443,7 +443,7 @@ func (m *EventMutation) Index() (r uint64, exists bool) {
 // OldIndex returns the old "index" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldIndex(ctx context.Context) (v uint64, err error) {
+func (m *EventMutation) OldIndex(ctx context.Context) (v uint, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldIndex is only allowed on UpdateOne operations")
 	}
@@ -458,7 +458,7 @@ func (m *EventMutation) OldIndex(ctx context.Context) (v uint64, err error) {
 }
 
 // AddIndex adds u to the "index" field.
-func (m *EventMutation) AddIndex(u uint64) {
+func (m *EventMutation) AddIndex(u uint) {
 	if m.addindex != nil {
 		*m.addindex += u
 	} else {
@@ -467,7 +467,7 @@ func (m *EventMutation) AddIndex(u uint64) {
 }
 
 // AddedIndex returns the value that was added to the "index" field in this mutation.
-func (m *EventMutation) AddedIndex() (r uint64, exists bool) {
+func (m *EventMutation) AddedIndex() (r uint, exists bool) {
 	v := m.addindex
 	if v == nil {
 		return
@@ -662,7 +662,7 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		m.SetTxHash(v)
 		return nil
 	case event.FieldTxIndex:
-		v, ok := value.(uint64)
+		v, ok := value.(uint)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -676,7 +676,7 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		m.SetBlockHash(v)
 		return nil
 	case event.FieldIndex:
-		v, ok := value.(uint64)
+		v, ok := value.(uint)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -737,14 +737,14 @@ func (m *EventMutation) AddField(name string, value ent.Value) error {
 		m.AddBlockNumber(v)
 		return nil
 	case event.FieldTxIndex:
-		v, ok := value.(uint64)
+		v, ok := value.(uint)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTxIndex(v)
 		return nil
 	case event.FieldIndex:
-		v, ok := value.(uint64)
+		v, ok := value.(uint)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

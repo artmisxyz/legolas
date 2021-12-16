@@ -26,11 +26,11 @@ type Event struct {
 	// TxHash holds the value of the "tx_hash" field.
 	TxHash string `json:"tx_hash,omitempty"`
 	// TxIndex holds the value of the "tx_index" field.
-	TxIndex uint64 `json:"tx_index,omitempty"`
+	TxIndex uint `json:"tx_index,omitempty"`
 	// BlockHash holds the value of the "block_hash" field.
 	BlockHash string `json:"block_hash,omitempty"`
 	// Index holds the value of the "index" field.
-	Index uint64 `json:"index,omitempty"`
+	Index uint `json:"index,omitempty"`
 	// Hash holds the value of the "hash" field.
 	Hash                              string `json:"hash,omitempty"`
 	uniswap_v3increase_liqudity_event *int
@@ -102,7 +102,7 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tx_index", values[i])
 			} else if value.Valid {
-				e.TxIndex = uint64(value.Int64)
+				e.TxIndex = uint(value.Int64)
 			}
 		case event.FieldBlockHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -114,7 +114,7 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field index", values[i])
 			} else if value.Valid {
-				e.Index = uint64(value.Int64)
+				e.Index = uint(value.Int64)
 			}
 		case event.FieldHash:
 			if value, ok := values[i].(*sql.NullString); !ok {

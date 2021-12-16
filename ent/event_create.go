@@ -50,7 +50,7 @@ func (ec *EventCreate) SetTxHash(s string) *EventCreate {
 }
 
 // SetTxIndex sets the "tx_index" field.
-func (ec *EventCreate) SetTxIndex(u uint64) *EventCreate {
+func (ec *EventCreate) SetTxIndex(u uint) *EventCreate {
 	ec.mutation.SetTxIndex(u)
 	return ec
 }
@@ -62,7 +62,7 @@ func (ec *EventCreate) SetBlockHash(s string) *EventCreate {
 }
 
 // SetIndex sets the "index" field.
-func (ec *EventCreate) SetIndex(u uint64) *EventCreate {
+func (ec *EventCreate) SetIndex(u uint) *EventCreate {
 	ec.mutation.SetIndex(u)
 	return ec
 }
@@ -269,7 +269,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ec.mutation.TxIndex(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldTxIndex,
 		})
@@ -285,7 +285,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ec.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
 		})

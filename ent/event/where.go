@@ -126,7 +126,7 @@ func TxHash(v string) predicate.Event {
 }
 
 // TxIndex applies equality check predicate on the "tx_index" field. It's identical to TxIndexEQ.
-func TxIndex(v uint64) predicate.Event {
+func TxIndex(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxIndex), v))
 	})
@@ -140,7 +140,7 @@ func BlockHash(v string) predicate.Event {
 }
 
 // Index applies equality check predicate on the "index" field. It's identical to IndexEQ.
-func Index(v uint64) predicate.Event {
+func Index(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldIndex), v))
 	})
@@ -674,21 +674,21 @@ func TxHashContainsFold(v string) predicate.Event {
 }
 
 // TxIndexEQ applies the EQ predicate on the "tx_index" field.
-func TxIndexEQ(v uint64) predicate.Event {
+func TxIndexEQ(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxIndex), v))
 	})
 }
 
 // TxIndexNEQ applies the NEQ predicate on the "tx_index" field.
-func TxIndexNEQ(v uint64) predicate.Event {
+func TxIndexNEQ(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTxIndex), v))
 	})
 }
 
 // TxIndexIn applies the In predicate on the "tx_index" field.
-func TxIndexIn(vs ...uint64) predicate.Event {
+func TxIndexIn(vs ...uint) predicate.Event {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -705,7 +705,7 @@ func TxIndexIn(vs ...uint64) predicate.Event {
 }
 
 // TxIndexNotIn applies the NotIn predicate on the "tx_index" field.
-func TxIndexNotIn(vs ...uint64) predicate.Event {
+func TxIndexNotIn(vs ...uint) predicate.Event {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -722,28 +722,28 @@ func TxIndexNotIn(vs ...uint64) predicate.Event {
 }
 
 // TxIndexGT applies the GT predicate on the "tx_index" field.
-func TxIndexGT(v uint64) predicate.Event {
+func TxIndexGT(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTxIndex), v))
 	})
 }
 
 // TxIndexGTE applies the GTE predicate on the "tx_index" field.
-func TxIndexGTE(v uint64) predicate.Event {
+func TxIndexGTE(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTxIndex), v))
 	})
 }
 
 // TxIndexLT applies the LT predicate on the "tx_index" field.
-func TxIndexLT(v uint64) predicate.Event {
+func TxIndexLT(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTxIndex), v))
 	})
 }
 
 // TxIndexLTE applies the LTE predicate on the "tx_index" field.
-func TxIndexLTE(v uint64) predicate.Event {
+func TxIndexLTE(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTxIndex), v))
 	})
@@ -861,21 +861,21 @@ func BlockHashContainsFold(v string) predicate.Event {
 }
 
 // IndexEQ applies the EQ predicate on the "index" field.
-func IndexEQ(v uint64) predicate.Event {
+func IndexEQ(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldIndex), v))
 	})
 }
 
 // IndexNEQ applies the NEQ predicate on the "index" field.
-func IndexNEQ(v uint64) predicate.Event {
+func IndexNEQ(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldIndex), v))
 	})
 }
 
 // IndexIn applies the In predicate on the "index" field.
-func IndexIn(vs ...uint64) predicate.Event {
+func IndexIn(vs ...uint) predicate.Event {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -892,7 +892,7 @@ func IndexIn(vs ...uint64) predicate.Event {
 }
 
 // IndexNotIn applies the NotIn predicate on the "index" field.
-func IndexNotIn(vs ...uint64) predicate.Event {
+func IndexNotIn(vs ...uint) predicate.Event {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -909,28 +909,28 @@ func IndexNotIn(vs ...uint64) predicate.Event {
 }
 
 // IndexGT applies the GT predicate on the "index" field.
-func IndexGT(v uint64) predicate.Event {
+func IndexGT(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldIndex), v))
 	})
 }
 
 // IndexGTE applies the GTE predicate on the "index" field.
-func IndexGTE(v uint64) predicate.Event {
+func IndexGTE(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldIndex), v))
 	})
 }
 
 // IndexLT applies the LT predicate on the "index" field.
-func IndexLT(v uint64) predicate.Event {
+func IndexLT(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldIndex), v))
 	})
 }
 
 // IndexLTE applies the LTE predicate on the "index" field.
-func IndexLTE(v uint64) predicate.Event {
+func IndexLTE(v uint) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldIndex), v))
 	})

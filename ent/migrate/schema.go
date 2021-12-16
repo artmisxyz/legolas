@@ -16,9 +16,9 @@ var (
 		{Name: "address", Type: field.TypeString},
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "tx_hash", Type: field.TypeString},
-		{Name: "tx_index", Type: field.TypeUint64},
+		{Name: "tx_index", Type: field.TypeUint},
 		{Name: "block_hash", Type: field.TypeString},
-		{Name: "index", Type: field.TypeUint64},
+		{Name: "index", Type: field.TypeUint},
 		{Name: "hash", Type: field.TypeString, Unique: true},
 		{Name: "uniswap_v3increase_liqudity_event", Type: field.TypeInt, Nullable: true},
 	}
