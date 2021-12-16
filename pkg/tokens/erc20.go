@@ -8,91 +8,79 @@ import (
 	"math/big"
 )
 
-type ERC20Token struct {
+type ERC20 struct {
 	binding     *erc20.Erc20
-	name        string
-	symbol      string
-	decimals    uint8
-	totalSupply *big.Int
+	Name        string
+	Symbol      string
+	Decimals    uint8
+	TotalSupply *big.Int
 }
 
-func NewToken(address common.Address, backend bind.ContractBackend) *ERC20Token {
+func NewERC20(address common.Address, backend bind.ContractBackend) (*ERC20, error) {
 	binding, err := erc20.NewErc20(address, backend)
-	if err != nil {
-		panic(err)
-	}
-	return &ERC20Token{binding: binding}
-}
-
-func (t *ERC20Token) Name() (string, error) {
-	if t.name != "" {
-		return t.name, nil
-	}
-
-	opts := &bind.CallOpts{
-		Pending: false,
-		Context: context.Background(),
-	}
-	name, err := t.binding.Name(opts)
-	t.name = name
-	if err != nil {
-		return "", err
-	}
-	return t.name, nil
-}
-
-func (t *ERC20Token) Symbol() (string, error) {
-	if t.symbol != "" {
-		return t.symbol, nil
-	}
-
-	opts := &bind.CallOpts{
-		Pending: false,
-		Context: context.Background(),
-	}
-	symbol, err := t.binding.Symbol(opts)
-	t.symbol = symbol
-	if err != nil {
-		return "", err
-	}
-	return t.symbol, nil
-}
-
-func (t *ERC20Token) Decimals() (uint8, error) {
-	if t.decimals != 0 {
-		return t.decimals, nil
-	}
-
-	opts := &bind.CallOpts{
-		Pending: false,
-		Context: context.Background(),
-	}
-	decimals, err := t.binding.Decimals(opts)
-	t.decimals = decimals
-	if err != nil {
-		return 0, err
-	}
-	return t.decimals, err
-}
-
-func (t *ERC20Token) TotalSupply() (*big.Int, error) {
-	if t.totalSupply != nil {
-		return t.totalSupply, nil
-	}
-
-	opts := &bind.CallOpts{
-		Pending: false,
-		Context: context.Background(),
-	}
-	totalSupply, err := t.binding.TotalSupply(opts)
-	t.totalSupply = totalSupply
 	if err != nil {
 		return nil, err
 	}
-	return t.totalSupply, nil
+
+	instance := &ERC20{binding: binding}
+	opts := &bind.CallOpts{
+		Pending: false,
+		Context: context.Background(),
+	}
+
+	if err = instance.LoadName(opts); err != nil {
+		return nil, err
+	}
+	if err = instance.LoadSymbol(opts); err != nil {
+		return nil, err
+	}
+	if err = instance.LoadDecimals(opts); err != nil {
+		return nil, err
+	}
+	if err = instance.LoadTotalSupply(opts); err != nil {
+		return nil, err
+	}
+
+	return instance, nil
 }
 
-func (t *ERC20Token) BalanceOf(addr common.Address) (*big.Int, error) {
+func (t *ERC20) LoadName(opts *bind.CallOpts) error {
+	name, err := t.binding.Name(opts)
+	if err != nil {
+		return err
+	}
+	t.Name = name
+	return nil
+}
+
+func (t *ERC20) LoadSymbol(opts *bind.CallOpts) error {
+	symbol, err := t.binding.Symbol(opts)
+	if err != nil {
+		return err
+	}
+	t.Symbol = symbol
+	return nil
+}
+
+func (t *ERC20) LoadDecimals(opts *bind.CallOpts) error {
+	decimals, err := t.binding.Decimals(opts)
+	if err != nil {
+		return err
+	}
+	t.Decimals = decimals
+	return nil
+}
+
+func (t *ERC20) LoadTotalSupply(opts *bind.CallOpts) error {
+	totalSupply, err := t.binding.TotalSupply(opts)
+	if err != nil {
+		return err
+	}
+	t.TotalSupply = totalSupply
+	return nil
+}
+
+func (t *ERC20) BalanceOf(addr common.Address) (*big.Int, error) {
 	opts := &bind.CallOpts{
 		Pending: false,
 		Context: context.Background(),
