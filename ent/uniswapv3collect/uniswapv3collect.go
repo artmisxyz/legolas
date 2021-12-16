@@ -25,7 +25,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventInverseTable = "events"
 	// EventColumn is the table column denoting the event relation/edge.
-	EventColumn = "event_collect"
+	EventColumn = "event_id"
 )
 
 // Columns holds all SQL columns for uniswapv3collect fields.
@@ -40,7 +40,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "uniswap_v3collects"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"event_collect",
+	"event_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

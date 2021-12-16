@@ -222,7 +222,7 @@ func (uvc *UniswapV3CollectCreate) createSpec() (*UniswapV3Collect, *sqlgraph.Cr
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.event_collect = &nodes[0]
+		_node.event_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

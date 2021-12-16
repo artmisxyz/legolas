@@ -217,7 +217,7 @@ func (uvlc *UniswapV3DecreaseLiqudityCreate) createSpec() (*UniswapV3DecreaseLiq
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.event_decrease_liquidity = &nodes[0]
+		_node.event_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

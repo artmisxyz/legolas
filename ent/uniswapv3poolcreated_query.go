@@ -385,10 +385,10 @@ func (uvcq *UniswapV3PoolCreatedQuery) sqlAll(ctx context.Context) ([]*UniswapV3
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*UniswapV3PoolCreated)
 		for i := range nodes {
-			if nodes[i].event_pool_created == nil {
+			if nodes[i].event_id == nil {
 				continue
 			}
-			fk := *nodes[i].event_pool_created
+			fk := *nodes[i].event_id
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,7 +402,7 @@ func (uvcq *UniswapV3PoolCreatedQuery) sqlAll(ctx context.Context) ([]*UniswapV3
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_pool_created" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Event = n

@@ -27,8 +27,8 @@ type UniswapV3IncreaseLiqudity struct {
 	Amount1 *schema.BigInt `json:"amount1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3IncreaseLiqudityQuery when eager-loading is set.
-	Edges                    UniswapV3IncreaseLiqudityEdges `json:"edges"`
-	event_increase_liquidity *int
+	Edges    UniswapV3IncreaseLiqudityEdges `json:"edges"`
+	event_id *int
 }
 
 // UniswapV3IncreaseLiqudityEdges holds the relations/edges for other nodes in the graph.
@@ -63,7 +63,7 @@ func (*UniswapV3IncreaseLiqudity) scanValues(columns []string) ([]interface{}, e
 			values[i] = new(schema.BigInt)
 		case uniswapv3increaseliqudity.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3increaseliqudity.ForeignKeys[0]: // event_increase_liquidity
+		case uniswapv3increaseliqudity.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UniswapV3IncreaseLiqudity", columns[i])
@@ -112,10 +112,10 @@ func (uvl *UniswapV3IncreaseLiqudity) assignValues(columns []string, values []in
 			}
 		case uniswapv3increaseliqudity.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field event_increase_liquidity", value)
+				return fmt.Errorf("unexpected type %T for edge-field event_id", value)
 			} else if value.Valid {
-				uvl.event_increase_liquidity = new(int)
-				*uvl.event_increase_liquidity = int(value.Int64)
+				uvl.event_id = new(int)
+				*uvl.event_id = int(value.Int64)
 			}
 		}
 	}

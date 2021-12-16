@@ -538,13 +538,13 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_increase_liquidity
+			fk := n.event_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_increase_liquidity" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_increase_liquidity" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.IncreaseLiquidity = n
 		}
@@ -566,13 +566,13 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_decrease_liquidity
+			fk := n.event_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_decrease_liquidity" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_decrease_liquidity" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.DecreaseLiquidity = n
 		}
@@ -594,13 +594,13 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_collect
+			fk := n.event_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_collect" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_collect" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Collect = n
 		}
@@ -622,13 +622,13 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_transfer
+			fk := n.event_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_transfer" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_transfer" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Transfer = n
 		}
@@ -650,13 +650,13 @@ func (eq *EventQuery) sqlAll(ctx context.Context) ([]*Event, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_pool_created
+			fk := n.event_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_pool_created" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_pool_created" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.PoolCreated = n
 		}

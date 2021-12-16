@@ -29,8 +29,8 @@ type UniswapV3PoolCreated struct {
 	Pool string `json:"pool,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3PoolCreatedQuery when eager-loading is set.
-	Edges              UniswapV3PoolCreatedEdges `json:"edges"`
-	event_pool_created *int
+	Edges    UniswapV3PoolCreatedEdges `json:"edges"`
+	event_id *int
 }
 
 // UniswapV3PoolCreatedEdges holds the relations/edges for other nodes in the graph.
@@ -67,7 +67,7 @@ func (*UniswapV3PoolCreated) scanValues(columns []string) ([]interface{}, error)
 			values[i] = new(sql.NullInt64)
 		case uniswapv3poolcreated.FieldToken0, uniswapv3poolcreated.FieldToken1, uniswapv3poolcreated.FieldPool:
 			values[i] = new(sql.NullString)
-		case uniswapv3poolcreated.ForeignKeys[0]: // event_pool_created
+		case uniswapv3poolcreated.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UniswapV3PoolCreated", columns[i])
@@ -122,10 +122,10 @@ func (uvc *UniswapV3PoolCreated) assignValues(columns []string, values []interfa
 			}
 		case uniswapv3poolcreated.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field event_pool_created", value)
+				return fmt.Errorf("unexpected type %T for edge-field event_id", value)
 			} else if value.Valid {
-				uvc.event_pool_created = new(int)
-				*uvc.event_pool_created = int(value.Int64)
+				uvc.event_id = new(int)
+				*uvc.event_id = int(value.Int64)
 			}
 		}
 	}

@@ -385,10 +385,10 @@ func (uvlq *UniswapV3IncreaseLiqudityQuery) sqlAll(ctx context.Context) ([]*Unis
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*UniswapV3IncreaseLiqudity)
 		for i := range nodes {
-			if nodes[i].event_increase_liquidity == nil {
+			if nodes[i].event_id == nil {
 				continue
 			}
-			fk := *nodes[i].event_increase_liquidity
+			fk := *nodes[i].event_id
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,7 +402,7 @@ func (uvlq *UniswapV3IncreaseLiqudityQuery) sqlAll(ctx context.Context) ([]*Unis
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_increase_liquidity" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Event = n

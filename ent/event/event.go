@@ -43,35 +43,35 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "uniswapv3increaseliqudity" package.
 	IncreaseLiquidityInverseTable = "uniswap_v3increase_liqudities"
 	// IncreaseLiquidityColumn is the table column denoting the increase_liquidity relation/edge.
-	IncreaseLiquidityColumn = "event_increase_liquidity"
+	IncreaseLiquidityColumn = "event_id"
 	// DecreaseLiquidityTable is the table that holds the decrease_liquidity relation/edge.
 	DecreaseLiquidityTable = "uniswap_v3decrease_liqudities"
 	// DecreaseLiquidityInverseTable is the table name for the UniswapV3DecreaseLiqudity entity.
 	// It exists in this package in order to avoid circular dependency with the "uniswapv3decreaseliqudity" package.
 	DecreaseLiquidityInverseTable = "uniswap_v3decrease_liqudities"
 	// DecreaseLiquidityColumn is the table column denoting the decrease_liquidity relation/edge.
-	DecreaseLiquidityColumn = "event_decrease_liquidity"
+	DecreaseLiquidityColumn = "event_id"
 	// CollectTable is the table that holds the collect relation/edge.
 	CollectTable = "uniswap_v3collects"
 	// CollectInverseTable is the table name for the UniswapV3Collect entity.
 	// It exists in this package in order to avoid circular dependency with the "uniswapv3collect" package.
 	CollectInverseTable = "uniswap_v3collects"
 	// CollectColumn is the table column denoting the collect relation/edge.
-	CollectColumn = "event_collect"
+	CollectColumn = "event_id"
 	// TransferTable is the table that holds the transfer relation/edge.
 	TransferTable = "uniswap_v3transfers"
 	// TransferInverseTable is the table name for the UniswapV3Transfer entity.
 	// It exists in this package in order to avoid circular dependency with the "uniswapv3transfer" package.
 	TransferInverseTable = "uniswap_v3transfers"
 	// TransferColumn is the table column denoting the transfer relation/edge.
-	TransferColumn = "event_transfer"
+	TransferColumn = "event_id"
 	// PoolCreatedTable is the table that holds the pool_created relation/edge.
 	PoolCreatedTable = "uniswap_v3pool_createds"
 	// PoolCreatedInverseTable is the table name for the UniswapV3PoolCreated entity.
 	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolcreated" package.
 	PoolCreatedInverseTable = "uniswap_v3pool_createds"
 	// PoolCreatedColumn is the table column denoting the pool_created relation/edge.
-	PoolCreatedColumn = "event_pool_created"
+	PoolCreatedColumn = "event_id"
 )
 
 // Columns holds all SQL columns for event fields.

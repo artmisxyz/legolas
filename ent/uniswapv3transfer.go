@@ -25,8 +25,8 @@ type UniswapV3Transfer struct {
 	To string `json:"to,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3TransferQuery when eager-loading is set.
-	Edges          UniswapV3TransferEdges `json:"edges"`
-	event_transfer *int
+	Edges    UniswapV3TransferEdges `json:"edges"`
+	event_id *int
 }
 
 // UniswapV3TransferEdges holds the relations/edges for other nodes in the graph.
@@ -63,7 +63,7 @@ func (*UniswapV3Transfer) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case uniswapv3transfer.FieldFrom, uniswapv3transfer.FieldTo:
 			values[i] = new(sql.NullString)
-		case uniswapv3transfer.ForeignKeys[0]: // event_transfer
+		case uniswapv3transfer.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UniswapV3Transfer", columns[i])
@@ -106,10 +106,10 @@ func (uv *UniswapV3Transfer) assignValues(columns []string, values []interface{}
 			}
 		case uniswapv3transfer.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field event_transfer", value)
+				return fmt.Errorf("unexpected type %T for edge-field event_id", value)
 			} else if value.Valid {
-				uv.event_transfer = new(int)
-				*uv.event_transfer = int(value.Int64)
+				uv.event_id = new(int)
+				*uv.event_id = int(value.Int64)
 			}
 		}
 	}
