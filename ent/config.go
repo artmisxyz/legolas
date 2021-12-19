@@ -29,7 +29,12 @@ type hooks struct {
 	UniswapV3Collect          []ent.Hook
 	UniswapV3DecreaseLiqudity []ent.Hook
 	UniswapV3IncreaseLiqudity []ent.Hook
+	UniswapV3PoolBurn         []ent.Hook
 	UniswapV3PoolCreated      []ent.Hook
+	UniswapV3PoolFlash        []ent.Hook
+	UniswapV3PoolInitialize   []ent.Hook
+	UniswapV3PoolMint         []ent.Hook
+	UniswapV3PoolSwap         []ent.Hook
 	UniswapV3Transfer         []ent.Hook
 }
 

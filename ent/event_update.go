@@ -14,7 +14,12 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -201,6 +206,101 @@ func (eu *EventUpdate) SetPoolCreated(u *UniswapV3PoolCreated) *EventUpdate {
 	return eu.SetPoolCreatedID(u.ID)
 }
 
+// SetPoolInitializeID sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity by ID.
+func (eu *EventUpdate) SetPoolInitializeID(id int) *EventUpdate {
+	eu.mutation.SetPoolInitializeID(id)
+	return eu
+}
+
+// SetNillablePoolInitializeID sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity by ID if the given value is not nil.
+func (eu *EventUpdate) SetNillablePoolInitializeID(id *int) *EventUpdate {
+	if id != nil {
+		eu = eu.SetPoolInitializeID(*id)
+	}
+	return eu
+}
+
+// SetPoolInitialize sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity.
+func (eu *EventUpdate) SetPoolInitialize(u *UniswapV3PoolInitialize) *EventUpdate {
+	return eu.SetPoolInitializeID(u.ID)
+}
+
+// SetPoolSwapID sets the "pool_swap" edge to the UniswapV3PoolSwap entity by ID.
+func (eu *EventUpdate) SetPoolSwapID(id int) *EventUpdate {
+	eu.mutation.SetPoolSwapID(id)
+	return eu
+}
+
+// SetNillablePoolSwapID sets the "pool_swap" edge to the UniswapV3PoolSwap entity by ID if the given value is not nil.
+func (eu *EventUpdate) SetNillablePoolSwapID(id *int) *EventUpdate {
+	if id != nil {
+		eu = eu.SetPoolSwapID(*id)
+	}
+	return eu
+}
+
+// SetPoolSwap sets the "pool_swap" edge to the UniswapV3PoolSwap entity.
+func (eu *EventUpdate) SetPoolSwap(u *UniswapV3PoolSwap) *EventUpdate {
+	return eu.SetPoolSwapID(u.ID)
+}
+
+// SetPoolMintID sets the "pool_mint" edge to the UniswapV3PoolMint entity by ID.
+func (eu *EventUpdate) SetPoolMintID(id int) *EventUpdate {
+	eu.mutation.SetPoolMintID(id)
+	return eu
+}
+
+// SetNillablePoolMintID sets the "pool_mint" edge to the UniswapV3PoolMint entity by ID if the given value is not nil.
+func (eu *EventUpdate) SetNillablePoolMintID(id *int) *EventUpdate {
+	if id != nil {
+		eu = eu.SetPoolMintID(*id)
+	}
+	return eu
+}
+
+// SetPoolMint sets the "pool_mint" edge to the UniswapV3PoolMint entity.
+func (eu *EventUpdate) SetPoolMint(u *UniswapV3PoolMint) *EventUpdate {
+	return eu.SetPoolMintID(u.ID)
+}
+
+// SetPoolBurnID sets the "pool_burn" edge to the UniswapV3PoolBurn entity by ID.
+func (eu *EventUpdate) SetPoolBurnID(id int) *EventUpdate {
+	eu.mutation.SetPoolBurnID(id)
+	return eu
+}
+
+// SetNillablePoolBurnID sets the "pool_burn" edge to the UniswapV3PoolBurn entity by ID if the given value is not nil.
+func (eu *EventUpdate) SetNillablePoolBurnID(id *int) *EventUpdate {
+	if id != nil {
+		eu = eu.SetPoolBurnID(*id)
+	}
+	return eu
+}
+
+// SetPoolBurn sets the "pool_burn" edge to the UniswapV3PoolBurn entity.
+func (eu *EventUpdate) SetPoolBurn(u *UniswapV3PoolBurn) *EventUpdate {
+	return eu.SetPoolBurnID(u.ID)
+}
+
+// SetPoolFlashID sets the "pool_flash" edge to the UniswapV3PoolFlash entity by ID.
+func (eu *EventUpdate) SetPoolFlashID(id int) *EventUpdate {
+	eu.mutation.SetPoolFlashID(id)
+	return eu
+}
+
+// SetNillablePoolFlashID sets the "pool_flash" edge to the UniswapV3PoolFlash entity by ID if the given value is not nil.
+func (eu *EventUpdate) SetNillablePoolFlashID(id *int) *EventUpdate {
+	if id != nil {
+		eu = eu.SetPoolFlashID(*id)
+	}
+	return eu
+}
+
+// SetPoolFlash sets the "pool_flash" edge to the UniswapV3PoolFlash entity.
+func (eu *EventUpdate) SetPoolFlash(u *UniswapV3PoolFlash) *EventUpdate {
+	return eu.SetPoolFlashID(u.ID)
+}
+
 // Mutation returns the EventMutation object of the builder.
 func (eu *EventUpdate) Mutation() *EventMutation {
 	return eu.mutation
@@ -233,6 +333,36 @@ func (eu *EventUpdate) ClearTransfer() *EventUpdate {
 // ClearPoolCreated clears the "pool_created" edge to the UniswapV3PoolCreated entity.
 func (eu *EventUpdate) ClearPoolCreated() *EventUpdate {
 	eu.mutation.ClearPoolCreated()
+	return eu
+}
+
+// ClearPoolInitialize clears the "pool_initialize" edge to the UniswapV3PoolInitialize entity.
+func (eu *EventUpdate) ClearPoolInitialize() *EventUpdate {
+	eu.mutation.ClearPoolInitialize()
+	return eu
+}
+
+// ClearPoolSwap clears the "pool_swap" edge to the UniswapV3PoolSwap entity.
+func (eu *EventUpdate) ClearPoolSwap() *EventUpdate {
+	eu.mutation.ClearPoolSwap()
+	return eu
+}
+
+// ClearPoolMint clears the "pool_mint" edge to the UniswapV3PoolMint entity.
+func (eu *EventUpdate) ClearPoolMint() *EventUpdate {
+	eu.mutation.ClearPoolMint()
+	return eu
+}
+
+// ClearPoolBurn clears the "pool_burn" edge to the UniswapV3PoolBurn entity.
+func (eu *EventUpdate) ClearPoolBurn() *EventUpdate {
+	eu.mutation.ClearPoolBurn()
+	return eu
+}
+
+// ClearPoolFlash clears the "pool_flash" edge to the UniswapV3PoolFlash entity.
+func (eu *EventUpdate) ClearPoolFlash() *EventUpdate {
+	eu.mutation.ClearPoolFlash()
 	return eu
 }
 
@@ -608,6 +738,181 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if eu.mutation.PoolInitializeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolInitializeTable,
+			Columns: []string{event.PoolInitializeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolinitialize.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.PoolInitializeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolInitializeTable,
+			Columns: []string{event.PoolInitializeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolinitialize.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.PoolSwapCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolSwapTable,
+			Columns: []string{event.PoolSwapColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolswap.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.PoolSwapIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolSwapTable,
+			Columns: []string{event.PoolSwapColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolswap.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.PoolMintCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolMintTable,
+			Columns: []string{event.PoolMintColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolmint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.PoolMintIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolMintTable,
+			Columns: []string{event.PoolMintColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolmint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.PoolBurnCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolBurnTable,
+			Columns: []string{event.PoolBurnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolburn.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.PoolBurnIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolBurnTable,
+			Columns: []string{event.PoolBurnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolburn.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.PoolFlashCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolFlashTable,
+			Columns: []string{event.PoolFlashColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolflash.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.PoolFlashIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolFlashTable,
+			Columns: []string{event.PoolFlashColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolflash.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{event.Label}
@@ -797,6 +1102,101 @@ func (euo *EventUpdateOne) SetPoolCreated(u *UniswapV3PoolCreated) *EventUpdateO
 	return euo.SetPoolCreatedID(u.ID)
 }
 
+// SetPoolInitializeID sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity by ID.
+func (euo *EventUpdateOne) SetPoolInitializeID(id int) *EventUpdateOne {
+	euo.mutation.SetPoolInitializeID(id)
+	return euo
+}
+
+// SetNillablePoolInitializeID sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity by ID if the given value is not nil.
+func (euo *EventUpdateOne) SetNillablePoolInitializeID(id *int) *EventUpdateOne {
+	if id != nil {
+		euo = euo.SetPoolInitializeID(*id)
+	}
+	return euo
+}
+
+// SetPoolInitialize sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity.
+func (euo *EventUpdateOne) SetPoolInitialize(u *UniswapV3PoolInitialize) *EventUpdateOne {
+	return euo.SetPoolInitializeID(u.ID)
+}
+
+// SetPoolSwapID sets the "pool_swap" edge to the UniswapV3PoolSwap entity by ID.
+func (euo *EventUpdateOne) SetPoolSwapID(id int) *EventUpdateOne {
+	euo.mutation.SetPoolSwapID(id)
+	return euo
+}
+
+// SetNillablePoolSwapID sets the "pool_swap" edge to the UniswapV3PoolSwap entity by ID if the given value is not nil.
+func (euo *EventUpdateOne) SetNillablePoolSwapID(id *int) *EventUpdateOne {
+	if id != nil {
+		euo = euo.SetPoolSwapID(*id)
+	}
+	return euo
+}
+
+// SetPoolSwap sets the "pool_swap" edge to the UniswapV3PoolSwap entity.
+func (euo *EventUpdateOne) SetPoolSwap(u *UniswapV3PoolSwap) *EventUpdateOne {
+	return euo.SetPoolSwapID(u.ID)
+}
+
+// SetPoolMintID sets the "pool_mint" edge to the UniswapV3PoolMint entity by ID.
+func (euo *EventUpdateOne) SetPoolMintID(id int) *EventUpdateOne {
+	euo.mutation.SetPoolMintID(id)
+	return euo
+}
+
+// SetNillablePoolMintID sets the "pool_mint" edge to the UniswapV3PoolMint entity by ID if the given value is not nil.
+func (euo *EventUpdateOne) SetNillablePoolMintID(id *int) *EventUpdateOne {
+	if id != nil {
+		euo = euo.SetPoolMintID(*id)
+	}
+	return euo
+}
+
+// SetPoolMint sets the "pool_mint" edge to the UniswapV3PoolMint entity.
+func (euo *EventUpdateOne) SetPoolMint(u *UniswapV3PoolMint) *EventUpdateOne {
+	return euo.SetPoolMintID(u.ID)
+}
+
+// SetPoolBurnID sets the "pool_burn" edge to the UniswapV3PoolBurn entity by ID.
+func (euo *EventUpdateOne) SetPoolBurnID(id int) *EventUpdateOne {
+	euo.mutation.SetPoolBurnID(id)
+	return euo
+}
+
+// SetNillablePoolBurnID sets the "pool_burn" edge to the UniswapV3PoolBurn entity by ID if the given value is not nil.
+func (euo *EventUpdateOne) SetNillablePoolBurnID(id *int) *EventUpdateOne {
+	if id != nil {
+		euo = euo.SetPoolBurnID(*id)
+	}
+	return euo
+}
+
+// SetPoolBurn sets the "pool_burn" edge to the UniswapV3PoolBurn entity.
+func (euo *EventUpdateOne) SetPoolBurn(u *UniswapV3PoolBurn) *EventUpdateOne {
+	return euo.SetPoolBurnID(u.ID)
+}
+
+// SetPoolFlashID sets the "pool_flash" edge to the UniswapV3PoolFlash entity by ID.
+func (euo *EventUpdateOne) SetPoolFlashID(id int) *EventUpdateOne {
+	euo.mutation.SetPoolFlashID(id)
+	return euo
+}
+
+// SetNillablePoolFlashID sets the "pool_flash" edge to the UniswapV3PoolFlash entity by ID if the given value is not nil.
+func (euo *EventUpdateOne) SetNillablePoolFlashID(id *int) *EventUpdateOne {
+	if id != nil {
+		euo = euo.SetPoolFlashID(*id)
+	}
+	return euo
+}
+
+// SetPoolFlash sets the "pool_flash" edge to the UniswapV3PoolFlash entity.
+func (euo *EventUpdateOne) SetPoolFlash(u *UniswapV3PoolFlash) *EventUpdateOne {
+	return euo.SetPoolFlashID(u.ID)
+}
+
 // Mutation returns the EventMutation object of the builder.
 func (euo *EventUpdateOne) Mutation() *EventMutation {
 	return euo.mutation
@@ -829,6 +1229,36 @@ func (euo *EventUpdateOne) ClearTransfer() *EventUpdateOne {
 // ClearPoolCreated clears the "pool_created" edge to the UniswapV3PoolCreated entity.
 func (euo *EventUpdateOne) ClearPoolCreated() *EventUpdateOne {
 	euo.mutation.ClearPoolCreated()
+	return euo
+}
+
+// ClearPoolInitialize clears the "pool_initialize" edge to the UniswapV3PoolInitialize entity.
+func (euo *EventUpdateOne) ClearPoolInitialize() *EventUpdateOne {
+	euo.mutation.ClearPoolInitialize()
+	return euo
+}
+
+// ClearPoolSwap clears the "pool_swap" edge to the UniswapV3PoolSwap entity.
+func (euo *EventUpdateOne) ClearPoolSwap() *EventUpdateOne {
+	euo.mutation.ClearPoolSwap()
+	return euo
+}
+
+// ClearPoolMint clears the "pool_mint" edge to the UniswapV3PoolMint entity.
+func (euo *EventUpdateOne) ClearPoolMint() *EventUpdateOne {
+	euo.mutation.ClearPoolMint()
+	return euo
+}
+
+// ClearPoolBurn clears the "pool_burn" edge to the UniswapV3PoolBurn entity.
+func (euo *EventUpdateOne) ClearPoolBurn() *EventUpdateOne {
+	euo.mutation.ClearPoolBurn()
+	return euo
+}
+
+// ClearPoolFlash clears the "pool_flash" edge to the UniswapV3PoolFlash entity.
+func (euo *EventUpdateOne) ClearPoolFlash() *EventUpdateOne {
+	euo.mutation.ClearPoolFlash()
 	return euo
 }
 
@@ -1220,6 +1650,181 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: uniswapv3poolcreated.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.PoolInitializeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolInitializeTable,
+			Columns: []string{event.PoolInitializeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolinitialize.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.PoolInitializeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolInitializeTable,
+			Columns: []string{event.PoolInitializeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolinitialize.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.PoolSwapCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolSwapTable,
+			Columns: []string{event.PoolSwapColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolswap.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.PoolSwapIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolSwapTable,
+			Columns: []string{event.PoolSwapColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolswap.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.PoolMintCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolMintTable,
+			Columns: []string{event.PoolMintColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolmint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.PoolMintIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolMintTable,
+			Columns: []string{event.PoolMintColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolmint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.PoolBurnCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolBurnTable,
+			Columns: []string{event.PoolBurnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolburn.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.PoolBurnIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolBurnTable,
+			Columns: []string{event.PoolBurnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolburn.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.PoolFlashCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolFlashTable,
+			Columns: []string{event.PoolFlashColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolflash.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.PoolFlashIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   event.PoolFlashTable,
+			Columns: []string{event.PoolFlashColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uniswapv3poolflash.FieldID,
 				},
 			},
 		}

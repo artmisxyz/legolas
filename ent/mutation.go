@@ -14,7 +14,12 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 
 	"entgo.io/ent"
@@ -34,7 +39,12 @@ const (
 	TypeUniswapV3Collect          = "UniswapV3Collect"
 	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
+	TypeUniswapV3PoolBurn         = "UniswapV3PoolBurn"
 	TypeUniswapV3PoolCreated      = "UniswapV3PoolCreated"
+	TypeUniswapV3PoolFlash        = "UniswapV3PoolFlash"
+	TypeUniswapV3PoolInitialize   = "UniswapV3PoolInitialize"
+	TypeUniswapV3PoolMint         = "UniswapV3PoolMint"
+	TypeUniswapV3PoolSwap         = "UniswapV3PoolSwap"
 	TypeUniswapV3Transfer         = "UniswapV3Transfer"
 )
 
@@ -67,6 +77,16 @@ type EventMutation struct {
 	clearedtransfer           bool
 	pool_created              *int
 	clearedpool_created       bool
+	pool_initialize           *int
+	clearedpool_initialize    bool
+	pool_swap                 *int
+	clearedpool_swap          bool
+	pool_mint                 *int
+	clearedpool_mint          bool
+	pool_burn                 *int
+	clearedpool_burn          bool
+	pool_flash                *int
+	clearedpool_flash         bool
 	done                      bool
 	oldValue                  func(context.Context) (*Event, error)
 	predicates                []predicate.Event
@@ -730,6 +750,201 @@ func (m *EventMutation) ResetPoolCreated() {
 	m.clearedpool_created = false
 }
 
+// SetPoolInitializeID sets the "pool_initialize" edge to the UniswapV3PoolInitialize entity by id.
+func (m *EventMutation) SetPoolInitializeID(id int) {
+	m.pool_initialize = &id
+}
+
+// ClearPoolInitialize clears the "pool_initialize" edge to the UniswapV3PoolInitialize entity.
+func (m *EventMutation) ClearPoolInitialize() {
+	m.clearedpool_initialize = true
+}
+
+// PoolInitializeCleared reports if the "pool_initialize" edge to the UniswapV3PoolInitialize entity was cleared.
+func (m *EventMutation) PoolInitializeCleared() bool {
+	return m.clearedpool_initialize
+}
+
+// PoolInitializeID returns the "pool_initialize" edge ID in the mutation.
+func (m *EventMutation) PoolInitializeID() (id int, exists bool) {
+	if m.pool_initialize != nil {
+		return *m.pool_initialize, true
+	}
+	return
+}
+
+// PoolInitializeIDs returns the "pool_initialize" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolInitializeID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolInitializeIDs() (ids []int) {
+	if id := m.pool_initialize; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolInitialize resets all changes to the "pool_initialize" edge.
+func (m *EventMutation) ResetPoolInitialize() {
+	m.pool_initialize = nil
+	m.clearedpool_initialize = false
+}
+
+// SetPoolSwapID sets the "pool_swap" edge to the UniswapV3PoolSwap entity by id.
+func (m *EventMutation) SetPoolSwapID(id int) {
+	m.pool_swap = &id
+}
+
+// ClearPoolSwap clears the "pool_swap" edge to the UniswapV3PoolSwap entity.
+func (m *EventMutation) ClearPoolSwap() {
+	m.clearedpool_swap = true
+}
+
+// PoolSwapCleared reports if the "pool_swap" edge to the UniswapV3PoolSwap entity was cleared.
+func (m *EventMutation) PoolSwapCleared() bool {
+	return m.clearedpool_swap
+}
+
+// PoolSwapID returns the "pool_swap" edge ID in the mutation.
+func (m *EventMutation) PoolSwapID() (id int, exists bool) {
+	if m.pool_swap != nil {
+		return *m.pool_swap, true
+	}
+	return
+}
+
+// PoolSwapIDs returns the "pool_swap" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolSwapID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolSwapIDs() (ids []int) {
+	if id := m.pool_swap; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolSwap resets all changes to the "pool_swap" edge.
+func (m *EventMutation) ResetPoolSwap() {
+	m.pool_swap = nil
+	m.clearedpool_swap = false
+}
+
+// SetPoolMintID sets the "pool_mint" edge to the UniswapV3PoolMint entity by id.
+func (m *EventMutation) SetPoolMintID(id int) {
+	m.pool_mint = &id
+}
+
+// ClearPoolMint clears the "pool_mint" edge to the UniswapV3PoolMint entity.
+func (m *EventMutation) ClearPoolMint() {
+	m.clearedpool_mint = true
+}
+
+// PoolMintCleared reports if the "pool_mint" edge to the UniswapV3PoolMint entity was cleared.
+func (m *EventMutation) PoolMintCleared() bool {
+	return m.clearedpool_mint
+}
+
+// PoolMintID returns the "pool_mint" edge ID in the mutation.
+func (m *EventMutation) PoolMintID() (id int, exists bool) {
+	if m.pool_mint != nil {
+		return *m.pool_mint, true
+	}
+	return
+}
+
+// PoolMintIDs returns the "pool_mint" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolMintID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolMintIDs() (ids []int) {
+	if id := m.pool_mint; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolMint resets all changes to the "pool_mint" edge.
+func (m *EventMutation) ResetPoolMint() {
+	m.pool_mint = nil
+	m.clearedpool_mint = false
+}
+
+// SetPoolBurnID sets the "pool_burn" edge to the UniswapV3PoolBurn entity by id.
+func (m *EventMutation) SetPoolBurnID(id int) {
+	m.pool_burn = &id
+}
+
+// ClearPoolBurn clears the "pool_burn" edge to the UniswapV3PoolBurn entity.
+func (m *EventMutation) ClearPoolBurn() {
+	m.clearedpool_burn = true
+}
+
+// PoolBurnCleared reports if the "pool_burn" edge to the UniswapV3PoolBurn entity was cleared.
+func (m *EventMutation) PoolBurnCleared() bool {
+	return m.clearedpool_burn
+}
+
+// PoolBurnID returns the "pool_burn" edge ID in the mutation.
+func (m *EventMutation) PoolBurnID() (id int, exists bool) {
+	if m.pool_burn != nil {
+		return *m.pool_burn, true
+	}
+	return
+}
+
+// PoolBurnIDs returns the "pool_burn" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolBurnID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolBurnIDs() (ids []int) {
+	if id := m.pool_burn; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolBurn resets all changes to the "pool_burn" edge.
+func (m *EventMutation) ResetPoolBurn() {
+	m.pool_burn = nil
+	m.clearedpool_burn = false
+}
+
+// SetPoolFlashID sets the "pool_flash" edge to the UniswapV3PoolFlash entity by id.
+func (m *EventMutation) SetPoolFlashID(id int) {
+	m.pool_flash = &id
+}
+
+// ClearPoolFlash clears the "pool_flash" edge to the UniswapV3PoolFlash entity.
+func (m *EventMutation) ClearPoolFlash() {
+	m.clearedpool_flash = true
+}
+
+// PoolFlashCleared reports if the "pool_flash" edge to the UniswapV3PoolFlash entity was cleared.
+func (m *EventMutation) PoolFlashCleared() bool {
+	return m.clearedpool_flash
+}
+
+// PoolFlashID returns the "pool_flash" edge ID in the mutation.
+func (m *EventMutation) PoolFlashID() (id int, exists bool) {
+	if m.pool_flash != nil {
+		return *m.pool_flash, true
+	}
+	return
+}
+
+// PoolFlashIDs returns the "pool_flash" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PoolFlashID instead. It exists only for internal usage by the builders.
+func (m *EventMutation) PoolFlashIDs() (ids []int) {
+	if id := m.pool_flash; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPoolFlash resets all changes to the "pool_flash" edge.
+func (m *EventMutation) ResetPoolFlash() {
+	m.pool_flash = nil
+	m.clearedpool_flash = false
+}
+
 // Where appends a list predicates to the EventMutation builder.
 func (m *EventMutation) Where(ps ...predicate.Event) {
 	m.predicates = append(m.predicates, ps...)
@@ -1023,7 +1238,7 @@ func (m *EventMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EventMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 10)
 	if m.increase_liquidity != nil {
 		edges = append(edges, event.EdgeIncreaseLiquidity)
 	}
@@ -1038,6 +1253,21 @@ func (m *EventMutation) AddedEdges() []string {
 	}
 	if m.pool_created != nil {
 		edges = append(edges, event.EdgePoolCreated)
+	}
+	if m.pool_initialize != nil {
+		edges = append(edges, event.EdgePoolInitialize)
+	}
+	if m.pool_swap != nil {
+		edges = append(edges, event.EdgePoolSwap)
+	}
+	if m.pool_mint != nil {
+		edges = append(edges, event.EdgePoolMint)
+	}
+	if m.pool_burn != nil {
+		edges = append(edges, event.EdgePoolBurn)
+	}
+	if m.pool_flash != nil {
+		edges = append(edges, event.EdgePoolFlash)
 	}
 	return edges
 }
@@ -1066,13 +1296,33 @@ func (m *EventMutation) AddedIDs(name string) []ent.Value {
 		if id := m.pool_created; id != nil {
 			return []ent.Value{*id}
 		}
+	case event.EdgePoolInitialize:
+		if id := m.pool_initialize; id != nil {
+			return []ent.Value{*id}
+		}
+	case event.EdgePoolSwap:
+		if id := m.pool_swap; id != nil {
+			return []ent.Value{*id}
+		}
+	case event.EdgePoolMint:
+		if id := m.pool_mint; id != nil {
+			return []ent.Value{*id}
+		}
+	case event.EdgePoolBurn:
+		if id := m.pool_burn; id != nil {
+			return []ent.Value{*id}
+		}
+	case event.EdgePoolFlash:
+		if id := m.pool_flash; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EventMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 10)
 	return edges
 }
 
@@ -1086,7 +1336,7 @@ func (m *EventMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EventMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 10)
 	if m.clearedincrease_liquidity {
 		edges = append(edges, event.EdgeIncreaseLiquidity)
 	}
@@ -1101,6 +1351,21 @@ func (m *EventMutation) ClearedEdges() []string {
 	}
 	if m.clearedpool_created {
 		edges = append(edges, event.EdgePoolCreated)
+	}
+	if m.clearedpool_initialize {
+		edges = append(edges, event.EdgePoolInitialize)
+	}
+	if m.clearedpool_swap {
+		edges = append(edges, event.EdgePoolSwap)
+	}
+	if m.clearedpool_mint {
+		edges = append(edges, event.EdgePoolMint)
+	}
+	if m.clearedpool_burn {
+		edges = append(edges, event.EdgePoolBurn)
+	}
+	if m.clearedpool_flash {
+		edges = append(edges, event.EdgePoolFlash)
 	}
 	return edges
 }
@@ -1119,6 +1384,16 @@ func (m *EventMutation) EdgeCleared(name string) bool {
 		return m.clearedtransfer
 	case event.EdgePoolCreated:
 		return m.clearedpool_created
+	case event.EdgePoolInitialize:
+		return m.clearedpool_initialize
+	case event.EdgePoolSwap:
+		return m.clearedpool_swap
+	case event.EdgePoolMint:
+		return m.clearedpool_mint
+	case event.EdgePoolBurn:
+		return m.clearedpool_burn
+	case event.EdgePoolFlash:
+		return m.clearedpool_flash
 	}
 	return false
 }
@@ -1142,6 +1417,21 @@ func (m *EventMutation) ClearEdge(name string) error {
 	case event.EdgePoolCreated:
 		m.ClearPoolCreated()
 		return nil
+	case event.EdgePoolInitialize:
+		m.ClearPoolInitialize()
+		return nil
+	case event.EdgePoolSwap:
+		m.ClearPoolSwap()
+		return nil
+	case event.EdgePoolMint:
+		m.ClearPoolMint()
+		return nil
+	case event.EdgePoolBurn:
+		m.ClearPoolBurn()
+		return nil
+	case event.EdgePoolFlash:
+		m.ClearPoolFlash()
+		return nil
 	}
 	return fmt.Errorf("unknown Event unique edge %s", name)
 }
@@ -1164,6 +1454,21 @@ func (m *EventMutation) ResetEdge(name string) error {
 		return nil
 	case event.EdgePoolCreated:
 		m.ResetPoolCreated()
+		return nil
+	case event.EdgePoolInitialize:
+		m.ResetPoolInitialize()
+		return nil
+	case event.EdgePoolSwap:
+		m.ResetPoolSwap()
+		return nil
+	case event.EdgePoolMint:
+		m.ResetPoolMint()
+		return nil
+	case event.EdgePoolBurn:
+		m.ResetPoolBurn()
+		return nil
+	case event.EdgePoolFlash:
+		m.ResetPoolFlash()
 		return nil
 	}
 	return fmt.Errorf("unknown Event edge %s", name)
@@ -3948,6 +4253,637 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown UniswapV3IncreaseLiqudity edge %s", name)
 }
 
+// UniswapV3PoolBurnMutation represents an operation that mutates the UniswapV3PoolBurn nodes in the graph.
+type UniswapV3PoolBurnMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	owner         *string
+	tick_lower    **schema.BigInt
+	tick_upper    **schema.BigInt
+	amount        **schema.BigInt
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3PoolBurn, error)
+	predicates    []predicate.UniswapV3PoolBurn
+}
+
+var _ ent.Mutation = (*UniswapV3PoolBurnMutation)(nil)
+
+// uniswapv3poolburnOption allows management of the mutation configuration using functional options.
+type uniswapv3poolburnOption func(*UniswapV3PoolBurnMutation)
+
+// newUniswapV3PoolBurnMutation creates new mutation for the UniswapV3PoolBurn entity.
+func newUniswapV3PoolBurnMutation(c config, op Op, opts ...uniswapv3poolburnOption) *UniswapV3PoolBurnMutation {
+	m := &UniswapV3PoolBurnMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolBurn,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolBurnID sets the ID field of the mutation.
+func withUniswapV3PoolBurnID(id int) uniswapv3poolburnOption {
+	return func(m *UniswapV3PoolBurnMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolBurn
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolBurn, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolBurn.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolBurn sets the old UniswapV3PoolBurn of the mutation.
+func withUniswapV3PoolBurn(node *UniswapV3PoolBurn) uniswapv3poolburnOption {
+	return func(m *UniswapV3PoolBurnMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolBurn, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolBurnMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolBurnMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolBurnMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetOwner sets the "owner" field.
+func (m *UniswapV3PoolBurnMutation) SetOwner(s string) {
+	m.owner = &s
+}
+
+// Owner returns the value of the "owner" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) Owner() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwner returns the old "owner" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldOwner(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOwner is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOwner requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
+	}
+	return oldValue.Owner, nil
+}
+
+// ResetOwner resets all changes to the "owner" field.
+func (m *UniswapV3PoolBurnMutation) ResetOwner() {
+	m.owner = nil
+}
+
+// SetTickLower sets the "tick_lower" field.
+func (m *UniswapV3PoolBurnMutation) SetTickLower(si *schema.BigInt) {
+	m.tick_lower = &si
+}
+
+// TickLower returns the value of the "tick_lower" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) TickLower() (r *schema.BigInt, exists bool) {
+	v := m.tick_lower
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickLower returns the old "tick_lower" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTickLower is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTickLower requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickLower: %w", err)
+	}
+	return oldValue.TickLower, nil
+}
+
+// ResetTickLower resets all changes to the "tick_lower" field.
+func (m *UniswapV3PoolBurnMutation) ResetTickLower() {
+	m.tick_lower = nil
+}
+
+// SetTickUpper sets the "tick_upper" field.
+func (m *UniswapV3PoolBurnMutation) SetTickUpper(si *schema.BigInt) {
+	m.tick_upper = &si
+}
+
+// TickUpper returns the value of the "tick_upper" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) TickUpper() (r *schema.BigInt, exists bool) {
+	v := m.tick_upper
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickUpper returns the old "tick_upper" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTickUpper is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTickUpper requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickUpper: %w", err)
+	}
+	return oldValue.TickUpper, nil
+}
+
+// ResetTickUpper resets all changes to the "tick_upper" field.
+func (m *UniswapV3PoolBurnMutation) ResetTickUpper() {
+	m.tick_upper = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *UniswapV3PoolBurnMutation) SetAmount(si *schema.BigInt) {
+	m.amount = &si
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) Amount() (r *schema.BigInt, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldAmount(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *UniswapV3PoolBurnMutation) ResetAmount() {
+	m.amount = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3PoolBurnMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3PoolBurnMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3PoolBurnMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3PoolBurnMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolBurn entity.
+// If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolBurnMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3PoolBurnMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolBurnMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolBurnMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolBurnMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolBurnMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolBurnMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolBurnMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolBurnMutation builder.
+func (m *UniswapV3PoolBurnMutation) Where(ps ...predicate.UniswapV3PoolBurn) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolBurnMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolBurn).
+func (m *UniswapV3PoolBurnMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolBurnMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.owner != nil {
+		fields = append(fields, uniswapv3poolburn.FieldOwner)
+	}
+	if m.tick_lower != nil {
+		fields = append(fields, uniswapv3poolburn.FieldTickLower)
+	}
+	if m.tick_upper != nil {
+		fields = append(fields, uniswapv3poolburn.FieldTickUpper)
+	}
+	if m.amount != nil {
+		fields = append(fields, uniswapv3poolburn.FieldAmount)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3poolburn.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3poolburn.FieldAmount1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolBurnMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolburn.FieldOwner:
+		return m.Owner()
+	case uniswapv3poolburn.FieldTickLower:
+		return m.TickLower()
+	case uniswapv3poolburn.FieldTickUpper:
+		return m.TickUpper()
+	case uniswapv3poolburn.FieldAmount:
+		return m.Amount()
+	case uniswapv3poolburn.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3poolburn.FieldAmount1:
+		return m.Amount1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolBurnMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolburn.FieldOwner:
+		return m.OldOwner(ctx)
+	case uniswapv3poolburn.FieldTickLower:
+		return m.OldTickLower(ctx)
+	case uniswapv3poolburn.FieldTickUpper:
+		return m.OldTickUpper(ctx)
+	case uniswapv3poolburn.FieldAmount:
+		return m.OldAmount(ctx)
+	case uniswapv3poolburn.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3poolburn.FieldAmount1:
+		return m.OldAmount1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolBurn field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolBurnMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolburn.FieldOwner:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwner(v)
+		return nil
+	case uniswapv3poolburn.FieldTickLower:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickLower(v)
+		return nil
+	case uniswapv3poolburn.FieldTickUpper:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickUpper(v)
+		return nil
+	case uniswapv3poolburn.FieldAmount:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case uniswapv3poolburn.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3poolburn.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolBurn field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolBurnMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolBurnMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolBurnMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolBurn numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolBurnMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolBurnMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolBurnMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolBurn nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolBurnMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolburn.FieldOwner:
+		m.ResetOwner()
+		return nil
+	case uniswapv3poolburn.FieldTickLower:
+		m.ResetTickLower()
+		return nil
+	case uniswapv3poolburn.FieldTickUpper:
+		m.ResetTickUpper()
+		return nil
+	case uniswapv3poolburn.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case uniswapv3poolburn.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3poolburn.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolBurn field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolBurnMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolburn.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolBurnMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolburn.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolBurnMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolBurnMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolBurnMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolburn.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolBurnMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolburn.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolBurnMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolburn.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolBurn unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolBurnMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolburn.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolBurn edge %s", name)
+}
+
 // UniswapV3PoolCreatedMutation represents an operation that mutates the UniswapV3PoolCreated nodes in the graph.
 type UniswapV3PoolCreatedMutation struct {
 	config
@@ -4523,6 +5459,2368 @@ func (m *UniswapV3PoolCreatedMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown UniswapV3PoolCreated edge %s", name)
+}
+
+// UniswapV3PoolFlashMutation represents an operation that mutates the UniswapV3PoolFlash nodes in the graph.
+type UniswapV3PoolFlashMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	sender        *string
+	recipient     *string
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	paid0         **schema.BigInt
+	paid1         **schema.BigInt
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3PoolFlash, error)
+	predicates    []predicate.UniswapV3PoolFlash
+}
+
+var _ ent.Mutation = (*UniswapV3PoolFlashMutation)(nil)
+
+// uniswapv3poolflashOption allows management of the mutation configuration using functional options.
+type uniswapv3poolflashOption func(*UniswapV3PoolFlashMutation)
+
+// newUniswapV3PoolFlashMutation creates new mutation for the UniswapV3PoolFlash entity.
+func newUniswapV3PoolFlashMutation(c config, op Op, opts ...uniswapv3poolflashOption) *UniswapV3PoolFlashMutation {
+	m := &UniswapV3PoolFlashMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolFlash,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolFlashID sets the ID field of the mutation.
+func withUniswapV3PoolFlashID(id int) uniswapv3poolflashOption {
+	return func(m *UniswapV3PoolFlashMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolFlash
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolFlash, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolFlash.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolFlash sets the old UniswapV3PoolFlash of the mutation.
+func withUniswapV3PoolFlash(node *UniswapV3PoolFlash) uniswapv3poolflashOption {
+	return func(m *UniswapV3PoolFlashMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolFlash, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolFlashMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolFlashMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolFlashMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetSender sets the "sender" field.
+func (m *UniswapV3PoolFlashMutation) SetSender(s string) {
+	m.sender = &s
+}
+
+// Sender returns the value of the "sender" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Sender() (r string, exists bool) {
+	v := m.sender
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSender returns the old "sender" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldSender(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSender is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSender requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSender: %w", err)
+	}
+	return oldValue.Sender, nil
+}
+
+// ResetSender resets all changes to the "sender" field.
+func (m *UniswapV3PoolFlashMutation) ResetSender() {
+	m.sender = nil
+}
+
+// SetRecipient sets the "recipient" field.
+func (m *UniswapV3PoolFlashMutation) SetRecipient(s string) {
+	m.recipient = &s
+}
+
+// Recipient returns the value of the "recipient" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Recipient() (r string, exists bool) {
+	v := m.recipient
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecipient returns the old "recipient" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldRecipient(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRecipient is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRecipient requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecipient: %w", err)
+	}
+	return oldValue.Recipient, nil
+}
+
+// ResetRecipient resets all changes to the "recipient" field.
+func (m *UniswapV3PoolFlashMutation) ResetRecipient() {
+	m.recipient = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3PoolFlashMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3PoolFlashMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3PoolFlashMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3PoolFlashMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// SetPaid0 sets the "paid0" field.
+func (m *UniswapV3PoolFlashMutation) SetPaid0(si *schema.BigInt) {
+	m.paid0 = &si
+}
+
+// Paid0 returns the value of the "paid0" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Paid0() (r *schema.BigInt, exists bool) {
+	v := m.paid0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaid0 returns the old "paid0" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldPaid0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPaid0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPaid0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaid0: %w", err)
+	}
+	return oldValue.Paid0, nil
+}
+
+// ResetPaid0 resets all changes to the "paid0" field.
+func (m *UniswapV3PoolFlashMutation) ResetPaid0() {
+	m.paid0 = nil
+}
+
+// SetPaid1 sets the "paid1" field.
+func (m *UniswapV3PoolFlashMutation) SetPaid1(si *schema.BigInt) {
+	m.paid1 = &si
+}
+
+// Paid1 returns the value of the "paid1" field in the mutation.
+func (m *UniswapV3PoolFlashMutation) Paid1() (r *schema.BigInt, exists bool) {
+	v := m.paid1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaid1 returns the old "paid1" field's value of the UniswapV3PoolFlash entity.
+// If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolFlashMutation) OldPaid1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPaid1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPaid1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaid1: %w", err)
+	}
+	return oldValue.Paid1, nil
+}
+
+// ResetPaid1 resets all changes to the "paid1" field.
+func (m *UniswapV3PoolFlashMutation) ResetPaid1() {
+	m.paid1 = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolFlashMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolFlashMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolFlashMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolFlashMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolFlashMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolFlashMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolFlashMutation builder.
+func (m *UniswapV3PoolFlashMutation) Where(ps ...predicate.UniswapV3PoolFlash) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolFlashMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolFlash).
+func (m *UniswapV3PoolFlashMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolFlashMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.sender != nil {
+		fields = append(fields, uniswapv3poolflash.FieldSender)
+	}
+	if m.recipient != nil {
+		fields = append(fields, uniswapv3poolflash.FieldRecipient)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3poolflash.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3poolflash.FieldAmount1)
+	}
+	if m.paid0 != nil {
+		fields = append(fields, uniswapv3poolflash.FieldPaid0)
+	}
+	if m.paid1 != nil {
+		fields = append(fields, uniswapv3poolflash.FieldPaid1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolFlashMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolflash.FieldSender:
+		return m.Sender()
+	case uniswapv3poolflash.FieldRecipient:
+		return m.Recipient()
+	case uniswapv3poolflash.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3poolflash.FieldAmount1:
+		return m.Amount1()
+	case uniswapv3poolflash.FieldPaid0:
+		return m.Paid0()
+	case uniswapv3poolflash.FieldPaid1:
+		return m.Paid1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolFlashMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolflash.FieldSender:
+		return m.OldSender(ctx)
+	case uniswapv3poolflash.FieldRecipient:
+		return m.OldRecipient(ctx)
+	case uniswapv3poolflash.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3poolflash.FieldAmount1:
+		return m.OldAmount1(ctx)
+	case uniswapv3poolflash.FieldPaid0:
+		return m.OldPaid0(ctx)
+	case uniswapv3poolflash.FieldPaid1:
+		return m.OldPaid1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolFlash field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolFlashMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolflash.FieldSender:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSender(v)
+		return nil
+	case uniswapv3poolflash.FieldRecipient:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecipient(v)
+		return nil
+	case uniswapv3poolflash.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3poolflash.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	case uniswapv3poolflash.FieldPaid0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaid0(v)
+		return nil
+	case uniswapv3poolflash.FieldPaid1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaid1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolFlash field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolFlashMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolFlashMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolFlashMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolFlash numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolFlashMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolFlashMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolFlashMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolFlash nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolFlashMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolflash.FieldSender:
+		m.ResetSender()
+		return nil
+	case uniswapv3poolflash.FieldRecipient:
+		m.ResetRecipient()
+		return nil
+	case uniswapv3poolflash.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3poolflash.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	case uniswapv3poolflash.FieldPaid0:
+		m.ResetPaid0()
+		return nil
+	case uniswapv3poolflash.FieldPaid1:
+		m.ResetPaid1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolFlash field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolFlashMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolflash.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolFlashMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolflash.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolFlashMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolFlashMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolFlashMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolflash.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolFlashMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolflash.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolFlashMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolflash.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolFlash unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolFlashMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolflash.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolFlash edge %s", name)
+}
+
+// UniswapV3PoolInitializeMutation represents an operation that mutates the UniswapV3PoolInitialize nodes in the graph.
+type UniswapV3PoolInitializeMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	sqrt_price_x96 **schema.BigInt
+	tick           **schema.BigInt
+	clearedFields  map[string]struct{}
+	event          *int
+	clearedevent   bool
+	done           bool
+	oldValue       func(context.Context) (*UniswapV3PoolInitialize, error)
+	predicates     []predicate.UniswapV3PoolInitialize
+}
+
+var _ ent.Mutation = (*UniswapV3PoolInitializeMutation)(nil)
+
+// uniswapv3poolinitializeOption allows management of the mutation configuration using functional options.
+type uniswapv3poolinitializeOption func(*UniswapV3PoolInitializeMutation)
+
+// newUniswapV3PoolInitializeMutation creates new mutation for the UniswapV3PoolInitialize entity.
+func newUniswapV3PoolInitializeMutation(c config, op Op, opts ...uniswapv3poolinitializeOption) *UniswapV3PoolInitializeMutation {
+	m := &UniswapV3PoolInitializeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolInitialize,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolInitializeID sets the ID field of the mutation.
+func withUniswapV3PoolInitializeID(id int) uniswapv3poolinitializeOption {
+	return func(m *UniswapV3PoolInitializeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolInitialize
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolInitialize, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolInitialize.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolInitialize sets the old UniswapV3PoolInitialize of the mutation.
+func withUniswapV3PoolInitialize(node *UniswapV3PoolInitialize) uniswapv3poolinitializeOption {
+	return func(m *UniswapV3PoolInitializeMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolInitialize, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolInitializeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolInitializeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolInitializeMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetSqrtPriceX96 sets the "sqrt_price_x96" field.
+func (m *UniswapV3PoolInitializeMutation) SetSqrtPriceX96(si *schema.BigInt) {
+	m.sqrt_price_x96 = &si
+}
+
+// SqrtPriceX96 returns the value of the "sqrt_price_x96" field in the mutation.
+func (m *UniswapV3PoolInitializeMutation) SqrtPriceX96() (r *schema.BigInt, exists bool) {
+	v := m.sqrt_price_x96
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSqrtPriceX96 returns the old "sqrt_price_x96" field's value of the UniswapV3PoolInitialize entity.
+// If the UniswapV3PoolInitialize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolInitializeMutation) OldSqrtPriceX96(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSqrtPriceX96 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSqrtPriceX96 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSqrtPriceX96: %w", err)
+	}
+	return oldValue.SqrtPriceX96, nil
+}
+
+// ResetSqrtPriceX96 resets all changes to the "sqrt_price_x96" field.
+func (m *UniswapV3PoolInitializeMutation) ResetSqrtPriceX96() {
+	m.sqrt_price_x96 = nil
+}
+
+// SetTick sets the "tick" field.
+func (m *UniswapV3PoolInitializeMutation) SetTick(si *schema.BigInt) {
+	m.tick = &si
+}
+
+// Tick returns the value of the "tick" field in the mutation.
+func (m *UniswapV3PoolInitializeMutation) Tick() (r *schema.BigInt, exists bool) {
+	v := m.tick
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTick returns the old "tick" field's value of the UniswapV3PoolInitialize entity.
+// If the UniswapV3PoolInitialize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolInitializeMutation) OldTick(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTick is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTick requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTick: %w", err)
+	}
+	return oldValue.Tick, nil
+}
+
+// ResetTick resets all changes to the "tick" field.
+func (m *UniswapV3PoolInitializeMutation) ResetTick() {
+	m.tick = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolInitializeMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolInitializeMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolInitializeMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolInitializeMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolInitializeMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolInitializeMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolInitializeMutation builder.
+func (m *UniswapV3PoolInitializeMutation) Where(ps ...predicate.UniswapV3PoolInitialize) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolInitializeMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolInitialize).
+func (m *UniswapV3PoolInitializeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolInitializeMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.sqrt_price_x96 != nil {
+		fields = append(fields, uniswapv3poolinitialize.FieldSqrtPriceX96)
+	}
+	if m.tick != nil {
+		fields = append(fields, uniswapv3poolinitialize.FieldTick)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolInitializeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolinitialize.FieldSqrtPriceX96:
+		return m.SqrtPriceX96()
+	case uniswapv3poolinitialize.FieldTick:
+		return m.Tick()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolInitializeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolinitialize.FieldSqrtPriceX96:
+		return m.OldSqrtPriceX96(ctx)
+	case uniswapv3poolinitialize.FieldTick:
+		return m.OldTick(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolInitialize field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolInitializeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolinitialize.FieldSqrtPriceX96:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSqrtPriceX96(v)
+		return nil
+	case uniswapv3poolinitialize.FieldTick:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTick(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolInitialize field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolInitializeMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolInitializeMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolInitializeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolInitialize numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolInitializeMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolInitializeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolInitializeMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolInitialize nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolInitializeMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolinitialize.FieldSqrtPriceX96:
+		m.ResetSqrtPriceX96()
+		return nil
+	case uniswapv3poolinitialize.FieldTick:
+		m.ResetTick()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolInitialize field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolInitializeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolinitialize.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolInitializeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolinitialize.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolInitializeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolInitializeMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolInitializeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolinitialize.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolInitializeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolinitialize.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolInitializeMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolinitialize.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolInitialize unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolInitializeMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolinitialize.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolInitialize edge %s", name)
+}
+
+// UniswapV3PoolMintMutation represents an operation that mutates the UniswapV3PoolMint nodes in the graph.
+type UniswapV3PoolMintMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	owner         *string
+	tick_lower    **schema.BigInt
+	tick_upper    **schema.BigInt
+	amount        **schema.BigInt
+	amount0       **schema.BigInt
+	amount1       **schema.BigInt
+	clearedFields map[string]struct{}
+	event         *int
+	clearedevent  bool
+	done          bool
+	oldValue      func(context.Context) (*UniswapV3PoolMint, error)
+	predicates    []predicate.UniswapV3PoolMint
+}
+
+var _ ent.Mutation = (*UniswapV3PoolMintMutation)(nil)
+
+// uniswapv3poolmintOption allows management of the mutation configuration using functional options.
+type uniswapv3poolmintOption func(*UniswapV3PoolMintMutation)
+
+// newUniswapV3PoolMintMutation creates new mutation for the UniswapV3PoolMint entity.
+func newUniswapV3PoolMintMutation(c config, op Op, opts ...uniswapv3poolmintOption) *UniswapV3PoolMintMutation {
+	m := &UniswapV3PoolMintMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolMint,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolMintID sets the ID field of the mutation.
+func withUniswapV3PoolMintID(id int) uniswapv3poolmintOption {
+	return func(m *UniswapV3PoolMintMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolMint
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolMint, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolMint.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolMint sets the old UniswapV3PoolMint of the mutation.
+func withUniswapV3PoolMint(node *UniswapV3PoolMint) uniswapv3poolmintOption {
+	return func(m *UniswapV3PoolMintMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolMint, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolMintMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolMintMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolMintMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetOwner sets the "owner" field.
+func (m *UniswapV3PoolMintMutation) SetOwner(s string) {
+	m.owner = &s
+}
+
+// Owner returns the value of the "owner" field in the mutation.
+func (m *UniswapV3PoolMintMutation) Owner() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwner returns the old "owner" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldOwner(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOwner is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOwner requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
+	}
+	return oldValue.Owner, nil
+}
+
+// ResetOwner resets all changes to the "owner" field.
+func (m *UniswapV3PoolMintMutation) ResetOwner() {
+	m.owner = nil
+}
+
+// SetTickLower sets the "tick_lower" field.
+func (m *UniswapV3PoolMintMutation) SetTickLower(si *schema.BigInt) {
+	m.tick_lower = &si
+}
+
+// TickLower returns the value of the "tick_lower" field in the mutation.
+func (m *UniswapV3PoolMintMutation) TickLower() (r *schema.BigInt, exists bool) {
+	v := m.tick_lower
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickLower returns the old "tick_lower" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTickLower is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTickLower requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickLower: %w", err)
+	}
+	return oldValue.TickLower, nil
+}
+
+// ResetTickLower resets all changes to the "tick_lower" field.
+func (m *UniswapV3PoolMintMutation) ResetTickLower() {
+	m.tick_lower = nil
+}
+
+// SetTickUpper sets the "tick_upper" field.
+func (m *UniswapV3PoolMintMutation) SetTickUpper(si *schema.BigInt) {
+	m.tick_upper = &si
+}
+
+// TickUpper returns the value of the "tick_upper" field in the mutation.
+func (m *UniswapV3PoolMintMutation) TickUpper() (r *schema.BigInt, exists bool) {
+	v := m.tick_upper
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickUpper returns the old "tick_upper" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTickUpper is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTickUpper requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickUpper: %w", err)
+	}
+	return oldValue.TickUpper, nil
+}
+
+// ResetTickUpper resets all changes to the "tick_upper" field.
+func (m *UniswapV3PoolMintMutation) ResetTickUpper() {
+	m.tick_upper = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *UniswapV3PoolMintMutation) SetAmount(si *schema.BigInt) {
+	m.amount = &si
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *UniswapV3PoolMintMutation) Amount() (r *schema.BigInt, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldAmount(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *UniswapV3PoolMintMutation) ResetAmount() {
+	m.amount = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3PoolMintMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3PoolMintMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3PoolMintMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3PoolMintMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3PoolMintMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3PoolMintMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolMintMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolMintMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolMintMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolMintMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolMintMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolMintMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolMintMutation builder.
+func (m *UniswapV3PoolMintMutation) Where(ps ...predicate.UniswapV3PoolMint) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolMintMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolMint).
+func (m *UniswapV3PoolMintMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolMintMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.owner != nil {
+		fields = append(fields, uniswapv3poolmint.FieldOwner)
+	}
+	if m.tick_lower != nil {
+		fields = append(fields, uniswapv3poolmint.FieldTickLower)
+	}
+	if m.tick_upper != nil {
+		fields = append(fields, uniswapv3poolmint.FieldTickUpper)
+	}
+	if m.amount != nil {
+		fields = append(fields, uniswapv3poolmint.FieldAmount)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3poolmint.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3poolmint.FieldAmount1)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolMintMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolmint.FieldOwner:
+		return m.Owner()
+	case uniswapv3poolmint.FieldTickLower:
+		return m.TickLower()
+	case uniswapv3poolmint.FieldTickUpper:
+		return m.TickUpper()
+	case uniswapv3poolmint.FieldAmount:
+		return m.Amount()
+	case uniswapv3poolmint.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3poolmint.FieldAmount1:
+		return m.Amount1()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolMintMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolmint.FieldOwner:
+		return m.OldOwner(ctx)
+	case uniswapv3poolmint.FieldTickLower:
+		return m.OldTickLower(ctx)
+	case uniswapv3poolmint.FieldTickUpper:
+		return m.OldTickUpper(ctx)
+	case uniswapv3poolmint.FieldAmount:
+		return m.OldAmount(ctx)
+	case uniswapv3poolmint.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3poolmint.FieldAmount1:
+		return m.OldAmount1(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolMint field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolMintMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolmint.FieldOwner:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwner(v)
+		return nil
+	case uniswapv3poolmint.FieldTickLower:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickLower(v)
+		return nil
+	case uniswapv3poolmint.FieldTickUpper:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickUpper(v)
+		return nil
+	case uniswapv3poolmint.FieldAmount:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case uniswapv3poolmint.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3poolmint.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolMint field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolMintMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolMintMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolMintMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolMint numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolMintMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolMintMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolMintMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolMint nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolMintMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolmint.FieldOwner:
+		m.ResetOwner()
+		return nil
+	case uniswapv3poolmint.FieldTickLower:
+		m.ResetTickLower()
+		return nil
+	case uniswapv3poolmint.FieldTickUpper:
+		m.ResetTickUpper()
+		return nil
+	case uniswapv3poolmint.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case uniswapv3poolmint.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3poolmint.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolMint field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolMintMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolmint.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolMintMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolmint.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolMintMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolMintMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolMintMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolmint.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolMintMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolmint.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolMintMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolmint.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolMint unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolMintMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolmint.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolMint edge %s", name)
+}
+
+// UniswapV3PoolSwapMutation represents an operation that mutates the UniswapV3PoolSwap nodes in the graph.
+type UniswapV3PoolSwapMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	sender         *string
+	recipient      *string
+	amount0        **schema.BigInt
+	amount1        **schema.BigInt
+	sqrt_price_x96 **schema.BigInt
+	liquidity      **schema.BigInt
+	tick           **schema.BigInt
+	clearedFields  map[string]struct{}
+	event          *int
+	clearedevent   bool
+	done           bool
+	oldValue       func(context.Context) (*UniswapV3PoolSwap, error)
+	predicates     []predicate.UniswapV3PoolSwap
+}
+
+var _ ent.Mutation = (*UniswapV3PoolSwapMutation)(nil)
+
+// uniswapv3poolswapOption allows management of the mutation configuration using functional options.
+type uniswapv3poolswapOption func(*UniswapV3PoolSwapMutation)
+
+// newUniswapV3PoolSwapMutation creates new mutation for the UniswapV3PoolSwap entity.
+func newUniswapV3PoolSwapMutation(c config, op Op, opts ...uniswapv3poolswapOption) *UniswapV3PoolSwapMutation {
+	m := &UniswapV3PoolSwapMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUniswapV3PoolSwap,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUniswapV3PoolSwapID sets the ID field of the mutation.
+func withUniswapV3PoolSwapID(id int) uniswapv3poolswapOption {
+	return func(m *UniswapV3PoolSwapMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UniswapV3PoolSwap
+		)
+		m.oldValue = func(ctx context.Context) (*UniswapV3PoolSwap, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UniswapV3PoolSwap.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUniswapV3PoolSwap sets the old UniswapV3PoolSwap of the mutation.
+func withUniswapV3PoolSwap(node *UniswapV3PoolSwap) uniswapv3poolswapOption {
+	return func(m *UniswapV3PoolSwapMutation) {
+		m.oldValue = func(context.Context) (*UniswapV3PoolSwap, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UniswapV3PoolSwapMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UniswapV3PoolSwapMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UniswapV3PoolSwapMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetSender sets the "sender" field.
+func (m *UniswapV3PoolSwapMutation) SetSender(s string) {
+	m.sender = &s
+}
+
+// Sender returns the value of the "sender" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Sender() (r string, exists bool) {
+	v := m.sender
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSender returns the old "sender" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldSender(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSender is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSender requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSender: %w", err)
+	}
+	return oldValue.Sender, nil
+}
+
+// ResetSender resets all changes to the "sender" field.
+func (m *UniswapV3PoolSwapMutation) ResetSender() {
+	m.sender = nil
+}
+
+// SetRecipient sets the "recipient" field.
+func (m *UniswapV3PoolSwapMutation) SetRecipient(s string) {
+	m.recipient = &s
+}
+
+// Recipient returns the value of the "recipient" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Recipient() (r string, exists bool) {
+	v := m.recipient
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecipient returns the old "recipient" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldRecipient(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRecipient is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRecipient requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecipient: %w", err)
+	}
+	return oldValue.Recipient, nil
+}
+
+// ResetRecipient resets all changes to the "recipient" field.
+func (m *UniswapV3PoolSwapMutation) ResetRecipient() {
+	m.recipient = nil
+}
+
+// SetAmount0 sets the "amount0" field.
+func (m *UniswapV3PoolSwapMutation) SetAmount0(si *schema.BigInt) {
+	m.amount0 = &si
+}
+
+// Amount0 returns the value of the "amount0" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Amount0() (r *schema.BigInt, exists bool) {
+	v := m.amount0
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount0 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount0: %w", err)
+	}
+	return oldValue.Amount0, nil
+}
+
+// ResetAmount0 resets all changes to the "amount0" field.
+func (m *UniswapV3PoolSwapMutation) ResetAmount0() {
+	m.amount0 = nil
+}
+
+// SetAmount1 sets the "amount1" field.
+func (m *UniswapV3PoolSwapMutation) SetAmount1(si *schema.BigInt) {
+	m.amount1 = &si
+}
+
+// Amount1 returns the value of the "amount1" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Amount1() (r *schema.BigInt, exists bool) {
+	v := m.amount1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAmount1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount1: %w", err)
+	}
+	return oldValue.Amount1, nil
+}
+
+// ResetAmount1 resets all changes to the "amount1" field.
+func (m *UniswapV3PoolSwapMutation) ResetAmount1() {
+	m.amount1 = nil
+}
+
+// SetSqrtPriceX96 sets the "sqrt_price_x96" field.
+func (m *UniswapV3PoolSwapMutation) SetSqrtPriceX96(si *schema.BigInt) {
+	m.sqrt_price_x96 = &si
+}
+
+// SqrtPriceX96 returns the value of the "sqrt_price_x96" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) SqrtPriceX96() (r *schema.BigInt, exists bool) {
+	v := m.sqrt_price_x96
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSqrtPriceX96 returns the old "sqrt_price_x96" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldSqrtPriceX96(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSqrtPriceX96 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSqrtPriceX96 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSqrtPriceX96: %w", err)
+	}
+	return oldValue.SqrtPriceX96, nil
+}
+
+// ResetSqrtPriceX96 resets all changes to the "sqrt_price_x96" field.
+func (m *UniswapV3PoolSwapMutation) ResetSqrtPriceX96() {
+	m.sqrt_price_x96 = nil
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (m *UniswapV3PoolSwapMutation) SetLiquidity(si *schema.BigInt) {
+	m.liquidity = &si
+}
+
+// Liquidity returns the value of the "liquidity" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Liquidity() (r *schema.BigInt, exists bool) {
+	v := m.liquidity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLiquidity returns the old "liquidity" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLiquidity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLiquidity: %w", err)
+	}
+	return oldValue.Liquidity, nil
+}
+
+// ResetLiquidity resets all changes to the "liquidity" field.
+func (m *UniswapV3PoolSwapMutation) ResetLiquidity() {
+	m.liquidity = nil
+}
+
+// SetTick sets the "tick" field.
+func (m *UniswapV3PoolSwapMutation) SetTick(si *schema.BigInt) {
+	m.tick = &si
+}
+
+// Tick returns the value of the "tick" field in the mutation.
+func (m *UniswapV3PoolSwapMutation) Tick() (r *schema.BigInt, exists bool) {
+	v := m.tick
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTick returns the old "tick" field's value of the UniswapV3PoolSwap entity.
+// If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolSwapMutation) OldTick(ctx context.Context) (v *schema.BigInt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTick is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTick requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTick: %w", err)
+	}
+	return oldValue.Tick, nil
+}
+
+// ResetTick resets all changes to the "tick" field.
+func (m *UniswapV3PoolSwapMutation) ResetTick() {
+	m.tick = nil
+}
+
+// SetEventID sets the "event" edge to the Event entity by id.
+func (m *UniswapV3PoolSwapMutation) SetEventID(id int) {
+	m.event = &id
+}
+
+// ClearEvent clears the "event" edge to the Event entity.
+func (m *UniswapV3PoolSwapMutation) ClearEvent() {
+	m.clearedevent = true
+}
+
+// EventCleared reports if the "event" edge to the Event entity was cleared.
+func (m *UniswapV3PoolSwapMutation) EventCleared() bool {
+	return m.clearedevent
+}
+
+// EventID returns the "event" edge ID in the mutation.
+func (m *UniswapV3PoolSwapMutation) EventID() (id int, exists bool) {
+	if m.event != nil {
+		return *m.event, true
+	}
+	return
+}
+
+// EventIDs returns the "event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EventID instead. It exists only for internal usage by the builders.
+func (m *UniswapV3PoolSwapMutation) EventIDs() (ids []int) {
+	if id := m.event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEvent resets all changes to the "event" edge.
+func (m *UniswapV3PoolSwapMutation) ResetEvent() {
+	m.event = nil
+	m.clearedevent = false
+}
+
+// Where appends a list predicates to the UniswapV3PoolSwapMutation builder.
+func (m *UniswapV3PoolSwapMutation) Where(ps ...predicate.UniswapV3PoolSwap) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UniswapV3PoolSwapMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UniswapV3PoolSwap).
+func (m *UniswapV3PoolSwapMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UniswapV3PoolSwapMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.sender != nil {
+		fields = append(fields, uniswapv3poolswap.FieldSender)
+	}
+	if m.recipient != nil {
+		fields = append(fields, uniswapv3poolswap.FieldRecipient)
+	}
+	if m.amount0 != nil {
+		fields = append(fields, uniswapv3poolswap.FieldAmount0)
+	}
+	if m.amount1 != nil {
+		fields = append(fields, uniswapv3poolswap.FieldAmount1)
+	}
+	if m.sqrt_price_x96 != nil {
+		fields = append(fields, uniswapv3poolswap.FieldSqrtPriceX96)
+	}
+	if m.liquidity != nil {
+		fields = append(fields, uniswapv3poolswap.FieldLiquidity)
+	}
+	if m.tick != nil {
+		fields = append(fields, uniswapv3poolswap.FieldTick)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UniswapV3PoolSwapMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case uniswapv3poolswap.FieldSender:
+		return m.Sender()
+	case uniswapv3poolswap.FieldRecipient:
+		return m.Recipient()
+	case uniswapv3poolswap.FieldAmount0:
+		return m.Amount0()
+	case uniswapv3poolswap.FieldAmount1:
+		return m.Amount1()
+	case uniswapv3poolswap.FieldSqrtPriceX96:
+		return m.SqrtPriceX96()
+	case uniswapv3poolswap.FieldLiquidity:
+		return m.Liquidity()
+	case uniswapv3poolswap.FieldTick:
+		return m.Tick()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UniswapV3PoolSwapMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case uniswapv3poolswap.FieldSender:
+		return m.OldSender(ctx)
+	case uniswapv3poolswap.FieldRecipient:
+		return m.OldRecipient(ctx)
+	case uniswapv3poolswap.FieldAmount0:
+		return m.OldAmount0(ctx)
+	case uniswapv3poolswap.FieldAmount1:
+		return m.OldAmount1(ctx)
+	case uniswapv3poolswap.FieldSqrtPriceX96:
+		return m.OldSqrtPriceX96(ctx)
+	case uniswapv3poolswap.FieldLiquidity:
+		return m.OldLiquidity(ctx)
+	case uniswapv3poolswap.FieldTick:
+		return m.OldTick(ctx)
+	}
+	return nil, fmt.Errorf("unknown UniswapV3PoolSwap field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolSwapMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case uniswapv3poolswap.FieldSender:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSender(v)
+		return nil
+	case uniswapv3poolswap.FieldRecipient:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecipient(v)
+		return nil
+	case uniswapv3poolswap.FieldAmount0:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount0(v)
+		return nil
+	case uniswapv3poolswap.FieldAmount1:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount1(v)
+		return nil
+	case uniswapv3poolswap.FieldSqrtPriceX96:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSqrtPriceX96(v)
+		return nil
+	case uniswapv3poolswap.FieldLiquidity:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLiquidity(v)
+		return nil
+	case uniswapv3poolswap.FieldTick:
+		v, ok := value.(*schema.BigInt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTick(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolSwap field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UniswapV3PoolSwapMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UniswapV3PoolSwapMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UniswapV3PoolSwapMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown UniswapV3PoolSwap numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UniswapV3PoolSwapMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UniswapV3PoolSwapMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UniswapV3PoolSwapMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UniswapV3PoolSwap nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UniswapV3PoolSwapMutation) ResetField(name string) error {
+	switch name {
+	case uniswapv3poolswap.FieldSender:
+		m.ResetSender()
+		return nil
+	case uniswapv3poolswap.FieldRecipient:
+		m.ResetRecipient()
+		return nil
+	case uniswapv3poolswap.FieldAmount0:
+		m.ResetAmount0()
+		return nil
+	case uniswapv3poolswap.FieldAmount1:
+		m.ResetAmount1()
+		return nil
+	case uniswapv3poolswap.FieldSqrtPriceX96:
+		m.ResetSqrtPriceX96()
+		return nil
+	case uniswapv3poolswap.FieldLiquidity:
+		m.ResetLiquidity()
+		return nil
+	case uniswapv3poolswap.FieldTick:
+		m.ResetTick()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolSwap field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UniswapV3PoolSwapMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.event != nil {
+		edges = append(edges, uniswapv3poolswap.EdgeEvent)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UniswapV3PoolSwapMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case uniswapv3poolswap.EdgeEvent:
+		if id := m.event; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UniswapV3PoolSwapMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UniswapV3PoolSwapMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UniswapV3PoolSwapMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedevent {
+		edges = append(edges, uniswapv3poolswap.EdgeEvent)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UniswapV3PoolSwapMutation) EdgeCleared(name string) bool {
+	switch name {
+	case uniswapv3poolswap.EdgeEvent:
+		return m.clearedevent
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UniswapV3PoolSwapMutation) ClearEdge(name string) error {
+	switch name {
+	case uniswapv3poolswap.EdgeEvent:
+		m.ClearEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolSwap unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UniswapV3PoolSwapMutation) ResetEdge(name string) error {
+	switch name {
+	case uniswapv3poolswap.EdgeEvent:
+		m.ResetEvent()
+		return nil
+	}
+	return fmt.Errorf("unknown UniswapV3PoolSwap edge %s", name)
 }
 
 // UniswapV3TransferMutation represents an operation that mutates the UniswapV3Transfer nodes in the graph.

@@ -22,8 +22,18 @@ type Tx struct {
 	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
+	// UniswapV3PoolBurn is the client for interacting with the UniswapV3PoolBurn builders.
+	UniswapV3PoolBurn *UniswapV3PoolBurnClient
 	// UniswapV3PoolCreated is the client for interacting with the UniswapV3PoolCreated builders.
 	UniswapV3PoolCreated *UniswapV3PoolCreatedClient
+	// UniswapV3PoolFlash is the client for interacting with the UniswapV3PoolFlash builders.
+	UniswapV3PoolFlash *UniswapV3PoolFlashClient
+	// UniswapV3PoolInitialize is the client for interacting with the UniswapV3PoolInitialize builders.
+	UniswapV3PoolInitialize *UniswapV3PoolInitializeClient
+	// UniswapV3PoolMint is the client for interacting with the UniswapV3PoolMint builders.
+	UniswapV3PoolMint *UniswapV3PoolMintClient
+	// UniswapV3PoolSwap is the client for interacting with the UniswapV3PoolSwap builders.
+	UniswapV3PoolSwap *UniswapV3PoolSwapClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
 
@@ -166,7 +176,12 @@ func (tx *Tx) init() {
 	tx.UniswapV3Collect = NewUniswapV3CollectClient(tx.config)
 	tx.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(tx.config)
 	tx.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(tx.config)
+	tx.UniswapV3PoolBurn = NewUniswapV3PoolBurnClient(tx.config)
 	tx.UniswapV3PoolCreated = NewUniswapV3PoolCreatedClient(tx.config)
+	tx.UniswapV3PoolFlash = NewUniswapV3PoolFlashClient(tx.config)
+	tx.UniswapV3PoolInitialize = NewUniswapV3PoolInitializeClient(tx.config)
+	tx.UniswapV3PoolMint = NewUniswapV3PoolMintClient(tx.config)
+	tx.UniswapV3PoolSwap = NewUniswapV3PoolSwapClient(tx.config)
 	tx.UniswapV3Transfer = NewUniswapV3TransferClient(tx.config)
 }
 

@@ -52,10 +52,10 @@ func (m *Postgres) CreateIncreaseLiquidity(event *nftpositionmanager.Nftposition
 	}
 
 	_, err = m.db.UniswapV3IncreaseLiqudity.Create().
-		SetLiquidity(&schema.BigInt{*event.Liquidity}).
-		SetTokenID(&schema.BigInt{*event.TokenId}).
-		SetAmount0(&schema.BigInt{*event.Amount0}).
-		SetAmount1(&schema.BigInt{*event.Amount1}).
+		SetLiquidity(&schema.BigInt{Int: *event.Liquidity}).
+		SetTokenID(&schema.BigInt{Int: *event.TokenId}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
 		SetEvent(instance).
 		Save(context.Background())
 	if err != nil {
@@ -83,10 +83,10 @@ func (m *Postgres) CreateDecreaseLiquidity(event *nftpositionmanager.Nftposition
 	}
 
 	_, err = m.db.UniswapV3DecreaseLiqudity.Create().
-		SetLiquidity(&schema.BigInt{*event.Liquidity}).
-		SetTokenID(&schema.BigInt{*event.TokenId}).
-		SetAmount0(&schema.BigInt{*event.Amount0}).
-		SetAmount1(&schema.BigInt{*event.Amount1}).
+		SetLiquidity(&schema.BigInt{Int: *event.Liquidity}).
+		SetTokenID(&schema.BigInt{Int: *event.TokenId}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
 		SetEvent(instance).
 		Save(context.Background())
 	if err != nil {
@@ -114,7 +114,7 @@ func (m *Postgres) CreateTransfer(event *nftpositionmanager.NftpositionmanagerTr
 	}
 
 	_, err = m.db.UniswapV3Transfer.Create().
-		SetTokenID(&schema.BigInt{*event.TokenId}).
+		SetTokenID(&schema.BigInt{Int: *event.TokenId}).
 		SetFrom(event.From.String()).
 		SetTo(event.To.String()).
 		SetEvent(instance).
@@ -144,9 +144,9 @@ func (m *Postgres) CreateCollect(event *nftpositionmanager.NftpositionmanagerCol
 	}
 
 	_, err = m.db.UniswapV3Collect.Create().
-		SetTokenID(&schema.BigInt{*event.TokenId}).
-		SetAmount0(&schema.BigInt{*event.Amount0}).
-		SetAmount1(&schema.BigInt{*event.Amount1}).
+		SetTokenID(&schema.BigInt{Int: *event.TokenId}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
 		SetRecipient(event.Recipient.String()).
 		SetEvent(instance).
 		Save(context.Background())
@@ -178,8 +178,8 @@ func (m *Postgres) CreatePoolCreated(event *factory.FactoryPoolCreated) error {
 		SetPool(event.Pool.String()).
 		SetToken0(event.Token0.String()).
 		SetToken1(event.Token1.String()).
-		SetFee(&schema.BigInt{*event.Fee}).
-		SetTickSpacing(&schema.BigInt{*event.TickSpacing}).
+		SetFee(&schema.BigInt{Int: *event.Fee}).
+		SetTickSpacing(&schema.BigInt{Int: *event.TickSpacing}).
 		SetEvent(instance).
 		Save(context.Background())
 	if err != nil {
@@ -191,7 +191,7 @@ func (m *Postgres) CreatePoolCreated(event *factory.FactoryPoolCreated) error {
 func (m *Postgres) CreatePoolInitialize(event *pool.PoolInitialize) error {
 	log := event.Raw
 	hash := hashing.LogHash(log)
-	_, err := m.db.Event.Create().
+	instance, err := m.db.Event.Create().
 		SetAddress(log.Address.String()).
 		SetHash(hash).
 		SetBlockHash(log.BlockHash.String()).
@@ -206,22 +206,148 @@ func (m *Postgres) CreatePoolInitialize(event *pool.PoolInitialize) error {
 		return err
 	}
 
+	_, err = m.db.UniswapV3PoolInitialize.Create().
+		SetTick(&schema.BigInt{Int: *event.Tick}).
+		SetSqrtPriceX96(&schema.BigInt{Int: *event.SqrtPriceX96}).
+		SetEvent(instance).
+		Save(context.Background())
 
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *Postgres) CreatePoolSwap(event *pool.PoolSwap) error {
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	instance, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(PoolSwapEventName).
+		SetSignature(PoolSwapEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = m.db.UniswapV3PoolSwap.Create().
+		SetRecipient(event.Recipient.String()).
+		SetSender(event.Sender.String()).
+		SetSqrtPriceX96(&schema.BigInt{Int: *event.SqrtPriceX96}).
+		SetLiquidity(&schema.BigInt{Int: *event.Liquidity}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
+		SetTick(&schema.BigInt{Int: *event.Tick}).
+		SetEvent(instance).Save(context.Background())
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *Postgres) CreatePoolBurn(event *pool.PoolBurn) error {
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	instance, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(PoolBurnEventName).
+		SetSignature(PoolBurnEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = m.db.UniswapV3PoolBurn.Create().
+		SetOwner(event.Owner.String()).
+		SetTickLower(&schema.BigInt{Int: *event.TickLower}).
+		SetTickUpper(&schema.BigInt{Int: *event.TickUpper}).
+		SetAmount(&schema.BigInt{Int: *event.Amount}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
+		SetEvent(instance).
+		Save(context.Background())
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *Postgres) CreatePoolFlash(event *pool.PoolFlash) error {
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	instance, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(PoolFlashEventName).
+		SetSignature(PoolFlashEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = m.db.UniswapV3PoolFlash.Create().
+		SetRecipient(event.Recipient.String()).
+		SetSender(event.Sender.String()).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
+		SetPaid0(&schema.BigInt{Int: *event.Paid0}).
+		SetPaid1(&schema.BigInt{Int: *event.Paid1}).
+		SetEvent(instance).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (m *Postgres) CreatePoolMint(event *pool.PoolMint) error {
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	instance, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(PoolMintEventName).
+		SetSignature(PoolMintEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = m.db.UniswapV3PoolMint.Create().
+		SetOwner(event.Owner.String()).
+		SetTickLower(&schema.BigInt{Int: *event.TickLower}).
+		SetTickUpper(&schema.BigInt{Int: *event.TickUpper}).
+		SetAmount(&schema.BigInt{Int: *event.Amount}).
+		SetAmount0(&schema.BigInt{Int: *event.Amount0}).
+		SetAmount1(&schema.BigInt{Int: *event.Amount1}).
+		SetEvent(instance).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
 	return nil
 }

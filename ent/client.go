@@ -14,7 +14,12 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 
 	"entgo.io/ent/dialect"
@@ -37,8 +42,18 @@ type Client struct {
 	UniswapV3DecreaseLiqudity *UniswapV3DecreaseLiqudityClient
 	// UniswapV3IncreaseLiqudity is the client for interacting with the UniswapV3IncreaseLiqudity builders.
 	UniswapV3IncreaseLiqudity *UniswapV3IncreaseLiqudityClient
+	// UniswapV3PoolBurn is the client for interacting with the UniswapV3PoolBurn builders.
+	UniswapV3PoolBurn *UniswapV3PoolBurnClient
 	// UniswapV3PoolCreated is the client for interacting with the UniswapV3PoolCreated builders.
 	UniswapV3PoolCreated *UniswapV3PoolCreatedClient
+	// UniswapV3PoolFlash is the client for interacting with the UniswapV3PoolFlash builders.
+	UniswapV3PoolFlash *UniswapV3PoolFlashClient
+	// UniswapV3PoolInitialize is the client for interacting with the UniswapV3PoolInitialize builders.
+	UniswapV3PoolInitialize *UniswapV3PoolInitializeClient
+	// UniswapV3PoolMint is the client for interacting with the UniswapV3PoolMint builders.
+	UniswapV3PoolMint *UniswapV3PoolMintClient
+	// UniswapV3PoolSwap is the client for interacting with the UniswapV3PoolSwap builders.
+	UniswapV3PoolSwap *UniswapV3PoolSwapClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
 }
@@ -59,7 +74,12 @@ func (c *Client) init() {
 	c.UniswapV3Collect = NewUniswapV3CollectClient(c.config)
 	c.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(c.config)
 	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
+	c.UniswapV3PoolBurn = NewUniswapV3PoolBurnClient(c.config)
 	c.UniswapV3PoolCreated = NewUniswapV3PoolCreatedClient(c.config)
+	c.UniswapV3PoolFlash = NewUniswapV3PoolFlashClient(c.config)
+	c.UniswapV3PoolInitialize = NewUniswapV3PoolInitializeClient(c.config)
+	c.UniswapV3PoolMint = NewUniswapV3PoolMintClient(c.config)
+	c.UniswapV3PoolSwap = NewUniswapV3PoolSwapClient(c.config)
 	c.UniswapV3Transfer = NewUniswapV3TransferClient(c.config)
 }
 
@@ -99,7 +119,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
+		UniswapV3PoolBurn:         NewUniswapV3PoolBurnClient(cfg),
 		UniswapV3PoolCreated:      NewUniswapV3PoolCreatedClient(cfg),
+		UniswapV3PoolFlash:        NewUniswapV3PoolFlashClient(cfg),
+		UniswapV3PoolInitialize:   NewUniswapV3PoolInitializeClient(cfg),
+		UniswapV3PoolMint:         NewUniswapV3PoolMintClient(cfg),
+		UniswapV3PoolSwap:         NewUniswapV3PoolSwapClient(cfg),
 		UniswapV3Transfer:         NewUniswapV3TransferClient(cfg),
 	}, nil
 }
@@ -124,7 +149,12 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
+		UniswapV3PoolBurn:         NewUniswapV3PoolBurnClient(cfg),
 		UniswapV3PoolCreated:      NewUniswapV3PoolCreatedClient(cfg),
+		UniswapV3PoolFlash:        NewUniswapV3PoolFlashClient(cfg),
+		UniswapV3PoolInitialize:   NewUniswapV3PoolInitializeClient(cfg),
+		UniswapV3PoolMint:         NewUniswapV3PoolMintClient(cfg),
+		UniswapV3PoolSwap:         NewUniswapV3PoolSwapClient(cfg),
 		UniswapV3Transfer:         NewUniswapV3TransferClient(cfg),
 	}, nil
 }
@@ -160,7 +190,12 @@ func (c *Client) Use(hooks ...Hook) {
 	c.UniswapV3Collect.Use(hooks...)
 	c.UniswapV3DecreaseLiqudity.Use(hooks...)
 	c.UniswapV3IncreaseLiqudity.Use(hooks...)
+	c.UniswapV3PoolBurn.Use(hooks...)
 	c.UniswapV3PoolCreated.Use(hooks...)
+	c.UniswapV3PoolFlash.Use(hooks...)
+	c.UniswapV3PoolInitialize.Use(hooks...)
+	c.UniswapV3PoolMint.Use(hooks...)
+	c.UniswapV3PoolSwap.Use(hooks...)
 	c.UniswapV3Transfer.Use(hooks...)
 }
 
@@ -322,6 +357,86 @@ func (c *EventClient) QueryPoolCreated(e *Event) *UniswapV3PoolCreatedQuery {
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(uniswapv3poolcreated.Table, uniswapv3poolcreated.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolCreatedTable, event.PoolCreatedColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolInitialize queries the pool_initialize edge of a Event.
+func (c *EventClient) QueryPoolInitialize(e *Event) *UniswapV3PoolInitializeQuery {
+	query := &UniswapV3PoolInitializeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolinitialize.Table, uniswapv3poolinitialize.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolInitializeTable, event.PoolInitializeColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolSwap queries the pool_swap edge of a Event.
+func (c *EventClient) QueryPoolSwap(e *Event) *UniswapV3PoolSwapQuery {
+	query := &UniswapV3PoolSwapQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolswap.Table, uniswapv3poolswap.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolSwapTable, event.PoolSwapColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolMint queries the pool_mint edge of a Event.
+func (c *EventClient) QueryPoolMint(e *Event) *UniswapV3PoolMintQuery {
+	query := &UniswapV3PoolMintQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolmint.Table, uniswapv3poolmint.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolMintTable, event.PoolMintColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolBurn queries the pool_burn edge of a Event.
+func (c *EventClient) QueryPoolBurn(e *Event) *UniswapV3PoolBurnQuery {
+	query := &UniswapV3PoolBurnQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolburn.Table, uniswapv3poolburn.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolBurnTable, event.PoolBurnColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPoolFlash queries the pool_flash edge of a Event.
+func (c *EventClient) QueryPoolFlash(e *Event) *UniswapV3PoolFlashQuery {
+	query := &UniswapV3PoolFlashQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(uniswapv3poolflash.Table, uniswapv3poolflash.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, event.PoolFlashTable, event.PoolFlashColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -742,6 +857,112 @@ func (c *UniswapV3IncreaseLiqudityClient) Hooks() []Hook {
 	return c.hooks.UniswapV3IncreaseLiqudity
 }
 
+// UniswapV3PoolBurnClient is a client for the UniswapV3PoolBurn schema.
+type UniswapV3PoolBurnClient struct {
+	config
+}
+
+// NewUniswapV3PoolBurnClient returns a client for the UniswapV3PoolBurn from the given config.
+func NewUniswapV3PoolBurnClient(c config) *UniswapV3PoolBurnClient {
+	return &UniswapV3PoolBurnClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolburn.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolBurnClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolBurn = append(c.hooks.UniswapV3PoolBurn, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolBurn.
+func (c *UniswapV3PoolBurnClient) Create() *UniswapV3PoolBurnCreate {
+	mutation := newUniswapV3PoolBurnMutation(c.config, OpCreate)
+	return &UniswapV3PoolBurnCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolBurn entities.
+func (c *UniswapV3PoolBurnClient) CreateBulk(builders ...*UniswapV3PoolBurnCreate) *UniswapV3PoolBurnCreateBulk {
+	return &UniswapV3PoolBurnCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolBurn.
+func (c *UniswapV3PoolBurnClient) Update() *UniswapV3PoolBurnUpdate {
+	mutation := newUniswapV3PoolBurnMutation(c.config, OpUpdate)
+	return &UniswapV3PoolBurnUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolBurnClient) UpdateOne(uvb *UniswapV3PoolBurn) *UniswapV3PoolBurnUpdateOne {
+	mutation := newUniswapV3PoolBurnMutation(c.config, OpUpdateOne, withUniswapV3PoolBurn(uvb))
+	return &UniswapV3PoolBurnUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolBurnClient) UpdateOneID(id int) *UniswapV3PoolBurnUpdateOne {
+	mutation := newUniswapV3PoolBurnMutation(c.config, OpUpdateOne, withUniswapV3PoolBurnID(id))
+	return &UniswapV3PoolBurnUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolBurn.
+func (c *UniswapV3PoolBurnClient) Delete() *UniswapV3PoolBurnDelete {
+	mutation := newUniswapV3PoolBurnMutation(c.config, OpDelete)
+	return &UniswapV3PoolBurnDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolBurnClient) DeleteOne(uvb *UniswapV3PoolBurn) *UniswapV3PoolBurnDeleteOne {
+	return c.DeleteOneID(uvb.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolBurnClient) DeleteOneID(id int) *UniswapV3PoolBurnDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolburn.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolBurnDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolBurn.
+func (c *UniswapV3PoolBurnClient) Query() *UniswapV3PoolBurnQuery {
+	return &UniswapV3PoolBurnQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolBurn entity by its id.
+func (c *UniswapV3PoolBurnClient) Get(ctx context.Context, id int) (*UniswapV3PoolBurn, error) {
+	return c.Query().Where(uniswapv3poolburn.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolBurnClient) GetX(ctx context.Context, id int) *UniswapV3PoolBurn {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolBurn.
+func (c *UniswapV3PoolBurnClient) QueryEvent(uvb *UniswapV3PoolBurn) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolburn.Table, uniswapv3poolburn.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolburn.EventTable, uniswapv3poolburn.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolBurnClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolBurn
+}
+
 // UniswapV3PoolCreatedClient is a client for the UniswapV3PoolCreated schema.
 type UniswapV3PoolCreatedClient struct {
 	config
@@ -846,6 +1067,430 @@ func (c *UniswapV3PoolCreatedClient) QueryEvent(uvc *UniswapV3PoolCreated) *Even
 // Hooks returns the client hooks.
 func (c *UniswapV3PoolCreatedClient) Hooks() []Hook {
 	return c.hooks.UniswapV3PoolCreated
+}
+
+// UniswapV3PoolFlashClient is a client for the UniswapV3PoolFlash schema.
+type UniswapV3PoolFlashClient struct {
+	config
+}
+
+// NewUniswapV3PoolFlashClient returns a client for the UniswapV3PoolFlash from the given config.
+func NewUniswapV3PoolFlashClient(c config) *UniswapV3PoolFlashClient {
+	return &UniswapV3PoolFlashClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolflash.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolFlashClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolFlash = append(c.hooks.UniswapV3PoolFlash, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolFlash.
+func (c *UniswapV3PoolFlashClient) Create() *UniswapV3PoolFlashCreate {
+	mutation := newUniswapV3PoolFlashMutation(c.config, OpCreate)
+	return &UniswapV3PoolFlashCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolFlash entities.
+func (c *UniswapV3PoolFlashClient) CreateBulk(builders ...*UniswapV3PoolFlashCreate) *UniswapV3PoolFlashCreateBulk {
+	return &UniswapV3PoolFlashCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolFlash.
+func (c *UniswapV3PoolFlashClient) Update() *UniswapV3PoolFlashUpdate {
+	mutation := newUniswapV3PoolFlashMutation(c.config, OpUpdate)
+	return &UniswapV3PoolFlashUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolFlashClient) UpdateOne(uvf *UniswapV3PoolFlash) *UniswapV3PoolFlashUpdateOne {
+	mutation := newUniswapV3PoolFlashMutation(c.config, OpUpdateOne, withUniswapV3PoolFlash(uvf))
+	return &UniswapV3PoolFlashUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolFlashClient) UpdateOneID(id int) *UniswapV3PoolFlashUpdateOne {
+	mutation := newUniswapV3PoolFlashMutation(c.config, OpUpdateOne, withUniswapV3PoolFlashID(id))
+	return &UniswapV3PoolFlashUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolFlash.
+func (c *UniswapV3PoolFlashClient) Delete() *UniswapV3PoolFlashDelete {
+	mutation := newUniswapV3PoolFlashMutation(c.config, OpDelete)
+	return &UniswapV3PoolFlashDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolFlashClient) DeleteOne(uvf *UniswapV3PoolFlash) *UniswapV3PoolFlashDeleteOne {
+	return c.DeleteOneID(uvf.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolFlashClient) DeleteOneID(id int) *UniswapV3PoolFlashDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolflash.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolFlashDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolFlash.
+func (c *UniswapV3PoolFlashClient) Query() *UniswapV3PoolFlashQuery {
+	return &UniswapV3PoolFlashQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolFlash entity by its id.
+func (c *UniswapV3PoolFlashClient) Get(ctx context.Context, id int) (*UniswapV3PoolFlash, error) {
+	return c.Query().Where(uniswapv3poolflash.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolFlashClient) GetX(ctx context.Context, id int) *UniswapV3PoolFlash {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolFlash.
+func (c *UniswapV3PoolFlashClient) QueryEvent(uvf *UniswapV3PoolFlash) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolflash.Table, uniswapv3poolflash.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolflash.EventTable, uniswapv3poolflash.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolFlashClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolFlash
+}
+
+// UniswapV3PoolInitializeClient is a client for the UniswapV3PoolInitialize schema.
+type UniswapV3PoolInitializeClient struct {
+	config
+}
+
+// NewUniswapV3PoolInitializeClient returns a client for the UniswapV3PoolInitialize from the given config.
+func NewUniswapV3PoolInitializeClient(c config) *UniswapV3PoolInitializeClient {
+	return &UniswapV3PoolInitializeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolinitialize.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolInitializeClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolInitialize = append(c.hooks.UniswapV3PoolInitialize, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolInitialize.
+func (c *UniswapV3PoolInitializeClient) Create() *UniswapV3PoolInitializeCreate {
+	mutation := newUniswapV3PoolInitializeMutation(c.config, OpCreate)
+	return &UniswapV3PoolInitializeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolInitialize entities.
+func (c *UniswapV3PoolInitializeClient) CreateBulk(builders ...*UniswapV3PoolInitializeCreate) *UniswapV3PoolInitializeCreateBulk {
+	return &UniswapV3PoolInitializeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolInitialize.
+func (c *UniswapV3PoolInitializeClient) Update() *UniswapV3PoolInitializeUpdate {
+	mutation := newUniswapV3PoolInitializeMutation(c.config, OpUpdate)
+	return &UniswapV3PoolInitializeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolInitializeClient) UpdateOne(uvi *UniswapV3PoolInitialize) *UniswapV3PoolInitializeUpdateOne {
+	mutation := newUniswapV3PoolInitializeMutation(c.config, OpUpdateOne, withUniswapV3PoolInitialize(uvi))
+	return &UniswapV3PoolInitializeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolInitializeClient) UpdateOneID(id int) *UniswapV3PoolInitializeUpdateOne {
+	mutation := newUniswapV3PoolInitializeMutation(c.config, OpUpdateOne, withUniswapV3PoolInitializeID(id))
+	return &UniswapV3PoolInitializeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolInitialize.
+func (c *UniswapV3PoolInitializeClient) Delete() *UniswapV3PoolInitializeDelete {
+	mutation := newUniswapV3PoolInitializeMutation(c.config, OpDelete)
+	return &UniswapV3PoolInitializeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolInitializeClient) DeleteOne(uvi *UniswapV3PoolInitialize) *UniswapV3PoolInitializeDeleteOne {
+	return c.DeleteOneID(uvi.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolInitializeClient) DeleteOneID(id int) *UniswapV3PoolInitializeDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolinitialize.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolInitializeDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolInitialize.
+func (c *UniswapV3PoolInitializeClient) Query() *UniswapV3PoolInitializeQuery {
+	return &UniswapV3PoolInitializeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolInitialize entity by its id.
+func (c *UniswapV3PoolInitializeClient) Get(ctx context.Context, id int) (*UniswapV3PoolInitialize, error) {
+	return c.Query().Where(uniswapv3poolinitialize.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolInitializeClient) GetX(ctx context.Context, id int) *UniswapV3PoolInitialize {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolInitialize.
+func (c *UniswapV3PoolInitializeClient) QueryEvent(uvi *UniswapV3PoolInitialize) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolinitialize.Table, uniswapv3poolinitialize.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolinitialize.EventTable, uniswapv3poolinitialize.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolInitializeClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolInitialize
+}
+
+// UniswapV3PoolMintClient is a client for the UniswapV3PoolMint schema.
+type UniswapV3PoolMintClient struct {
+	config
+}
+
+// NewUniswapV3PoolMintClient returns a client for the UniswapV3PoolMint from the given config.
+func NewUniswapV3PoolMintClient(c config) *UniswapV3PoolMintClient {
+	return &UniswapV3PoolMintClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolmint.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolMintClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolMint = append(c.hooks.UniswapV3PoolMint, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolMint.
+func (c *UniswapV3PoolMintClient) Create() *UniswapV3PoolMintCreate {
+	mutation := newUniswapV3PoolMintMutation(c.config, OpCreate)
+	return &UniswapV3PoolMintCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolMint entities.
+func (c *UniswapV3PoolMintClient) CreateBulk(builders ...*UniswapV3PoolMintCreate) *UniswapV3PoolMintCreateBulk {
+	return &UniswapV3PoolMintCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolMint.
+func (c *UniswapV3PoolMintClient) Update() *UniswapV3PoolMintUpdate {
+	mutation := newUniswapV3PoolMintMutation(c.config, OpUpdate)
+	return &UniswapV3PoolMintUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolMintClient) UpdateOne(uvm *UniswapV3PoolMint) *UniswapV3PoolMintUpdateOne {
+	mutation := newUniswapV3PoolMintMutation(c.config, OpUpdateOne, withUniswapV3PoolMint(uvm))
+	return &UniswapV3PoolMintUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolMintClient) UpdateOneID(id int) *UniswapV3PoolMintUpdateOne {
+	mutation := newUniswapV3PoolMintMutation(c.config, OpUpdateOne, withUniswapV3PoolMintID(id))
+	return &UniswapV3PoolMintUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolMint.
+func (c *UniswapV3PoolMintClient) Delete() *UniswapV3PoolMintDelete {
+	mutation := newUniswapV3PoolMintMutation(c.config, OpDelete)
+	return &UniswapV3PoolMintDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolMintClient) DeleteOne(uvm *UniswapV3PoolMint) *UniswapV3PoolMintDeleteOne {
+	return c.DeleteOneID(uvm.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolMintClient) DeleteOneID(id int) *UniswapV3PoolMintDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolmint.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolMintDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolMint.
+func (c *UniswapV3PoolMintClient) Query() *UniswapV3PoolMintQuery {
+	return &UniswapV3PoolMintQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolMint entity by its id.
+func (c *UniswapV3PoolMintClient) Get(ctx context.Context, id int) (*UniswapV3PoolMint, error) {
+	return c.Query().Where(uniswapv3poolmint.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolMintClient) GetX(ctx context.Context, id int) *UniswapV3PoolMint {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolMint.
+func (c *UniswapV3PoolMintClient) QueryEvent(uvm *UniswapV3PoolMint) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolmint.Table, uniswapv3poolmint.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolmint.EventTable, uniswapv3poolmint.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolMintClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolMint
+}
+
+// UniswapV3PoolSwapClient is a client for the UniswapV3PoolSwap schema.
+type UniswapV3PoolSwapClient struct {
+	config
+}
+
+// NewUniswapV3PoolSwapClient returns a client for the UniswapV3PoolSwap from the given config.
+func NewUniswapV3PoolSwapClient(c config) *UniswapV3PoolSwapClient {
+	return &UniswapV3PoolSwapClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uniswapv3poolswap.Hooks(f(g(h())))`.
+func (c *UniswapV3PoolSwapClient) Use(hooks ...Hook) {
+	c.hooks.UniswapV3PoolSwap = append(c.hooks.UniswapV3PoolSwap, hooks...)
+}
+
+// Create returns a create builder for UniswapV3PoolSwap.
+func (c *UniswapV3PoolSwapClient) Create() *UniswapV3PoolSwapCreate {
+	mutation := newUniswapV3PoolSwapMutation(c.config, OpCreate)
+	return &UniswapV3PoolSwapCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UniswapV3PoolSwap entities.
+func (c *UniswapV3PoolSwapClient) CreateBulk(builders ...*UniswapV3PoolSwapCreate) *UniswapV3PoolSwapCreateBulk {
+	return &UniswapV3PoolSwapCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UniswapV3PoolSwap.
+func (c *UniswapV3PoolSwapClient) Update() *UniswapV3PoolSwapUpdate {
+	mutation := newUniswapV3PoolSwapMutation(c.config, OpUpdate)
+	return &UniswapV3PoolSwapUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UniswapV3PoolSwapClient) UpdateOne(uvs *UniswapV3PoolSwap) *UniswapV3PoolSwapUpdateOne {
+	mutation := newUniswapV3PoolSwapMutation(c.config, OpUpdateOne, withUniswapV3PoolSwap(uvs))
+	return &UniswapV3PoolSwapUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UniswapV3PoolSwapClient) UpdateOneID(id int) *UniswapV3PoolSwapUpdateOne {
+	mutation := newUniswapV3PoolSwapMutation(c.config, OpUpdateOne, withUniswapV3PoolSwapID(id))
+	return &UniswapV3PoolSwapUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UniswapV3PoolSwap.
+func (c *UniswapV3PoolSwapClient) Delete() *UniswapV3PoolSwapDelete {
+	mutation := newUniswapV3PoolSwapMutation(c.config, OpDelete)
+	return &UniswapV3PoolSwapDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UniswapV3PoolSwapClient) DeleteOne(uvs *UniswapV3PoolSwap) *UniswapV3PoolSwapDeleteOne {
+	return c.DeleteOneID(uvs.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UniswapV3PoolSwapClient) DeleteOneID(id int) *UniswapV3PoolSwapDeleteOne {
+	builder := c.Delete().Where(uniswapv3poolswap.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UniswapV3PoolSwapDeleteOne{builder}
+}
+
+// Query returns a query builder for UniswapV3PoolSwap.
+func (c *UniswapV3PoolSwapClient) Query() *UniswapV3PoolSwapQuery {
+	return &UniswapV3PoolSwapQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UniswapV3PoolSwap entity by its id.
+func (c *UniswapV3PoolSwapClient) Get(ctx context.Context, id int) (*UniswapV3PoolSwap, error) {
+	return c.Query().Where(uniswapv3poolswap.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UniswapV3PoolSwapClient) GetX(ctx context.Context, id int) *UniswapV3PoolSwap {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvent queries the event edge of a UniswapV3PoolSwap.
+func (c *UniswapV3PoolSwapClient) QueryEvent(uvs *UniswapV3PoolSwap) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := uvs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uniswapv3poolswap.Table, uniswapv3poolswap.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, uniswapv3poolswap.EventTable, uniswapv3poolswap.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(uvs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UniswapV3PoolSwapClient) Hooks() []Hook {
+	return c.hooks.UniswapV3PoolSwap
 }
 
 // UniswapV3TransferClient is a client for the UniswapV3Transfer schema.

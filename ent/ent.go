@@ -13,7 +13,12 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -40,7 +45,12 @@ func columnChecker(table string) func(string) error {
 		uniswapv3collect.Table:          uniswapv3collect.ValidColumn,
 		uniswapv3decreaseliqudity.Table: uniswapv3decreaseliqudity.ValidColumn,
 		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,
+		uniswapv3poolburn.Table:         uniswapv3poolburn.ValidColumn,
 		uniswapv3poolcreated.Table:      uniswapv3poolcreated.ValidColumn,
+		uniswapv3poolflash.Table:        uniswapv3poolflash.ValidColumn,
+		uniswapv3poolinitialize.Table:   uniswapv3poolinitialize.ValidColumn,
+		uniswapv3poolmint.Table:         uniswapv3poolmint.ValidColumn,
+		uniswapv3poolswap.Table:         uniswapv3poolswap.ValidColumn,
 		uniswapv3transfer.Table:         uniswapv3transfer.ValidColumn,
 	}
 	check, ok := checks[table]

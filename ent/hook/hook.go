@@ -74,6 +74,19 @@ func (f UniswapV3IncreaseLiqudityFunc) Mutate(ctx context.Context, m ent.Mutatio
 	return f(ctx, mv)
 }
 
+// The UniswapV3PoolBurnFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolBurn mutator.
+type UniswapV3PoolBurnFunc func(context.Context, *ent.UniswapV3PoolBurnMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolBurnFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolBurnMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolBurnMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UniswapV3PoolCreatedFunc type is an adapter to allow the use of ordinary
 // function as UniswapV3PoolCreated mutator.
 type UniswapV3PoolCreatedFunc func(context.Context, *ent.UniswapV3PoolCreatedMutation) (ent.Value, error)
@@ -83,6 +96,58 @@ func (f UniswapV3PoolCreatedFunc) Mutate(ctx context.Context, m ent.Mutation) (e
 	mv, ok := m.(*ent.UniswapV3PoolCreatedMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolCreatedMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UniswapV3PoolFlashFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolFlash mutator.
+type UniswapV3PoolFlashFunc func(context.Context, *ent.UniswapV3PoolFlashMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolFlashFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolFlashMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolFlashMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UniswapV3PoolInitializeFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolInitialize mutator.
+type UniswapV3PoolInitializeFunc func(context.Context, *ent.UniswapV3PoolInitializeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolInitializeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolInitializeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolInitializeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UniswapV3PoolMintFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolMint mutator.
+type UniswapV3PoolMintFunc func(context.Context, *ent.UniswapV3PoolMintMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolMintFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolMintMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolMintMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UniswapV3PoolSwapFunc type is an adapter to allow the use of ordinary
+// function as UniswapV3PoolSwap mutator.
+type UniswapV3PoolSwapFunc func(context.Context, *ent.UniswapV3PoolSwapMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UniswapV3PoolSwapFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UniswapV3PoolSwapMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UniswapV3PoolSwapMutation", m)
 	}
 	return f(ctx, mv)
 }

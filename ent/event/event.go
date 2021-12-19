@@ -35,6 +35,16 @@ const (
 	EdgeTransfer = "transfer"
 	// EdgePoolCreated holds the string denoting the pool_created edge name in mutations.
 	EdgePoolCreated = "pool_created"
+	// EdgePoolInitialize holds the string denoting the pool_initialize edge name in mutations.
+	EdgePoolInitialize = "pool_initialize"
+	// EdgePoolSwap holds the string denoting the pool_swap edge name in mutations.
+	EdgePoolSwap = "pool_swap"
+	// EdgePoolMint holds the string denoting the pool_mint edge name in mutations.
+	EdgePoolMint = "pool_mint"
+	// EdgePoolBurn holds the string denoting the pool_burn edge name in mutations.
+	EdgePoolBurn = "pool_burn"
+	// EdgePoolFlash holds the string denoting the pool_flash edge name in mutations.
+	EdgePoolFlash = "pool_flash"
 	// Table holds the table name of the event in the database.
 	Table = "events"
 	// IncreaseLiquidityTable is the table that holds the increase_liquidity relation/edge.
@@ -72,6 +82,41 @@ const (
 	PoolCreatedInverseTable = "uniswap_v3pool_createds"
 	// PoolCreatedColumn is the table column denoting the pool_created relation/edge.
 	PoolCreatedColumn = "event_id"
+	// PoolInitializeTable is the table that holds the pool_initialize relation/edge.
+	PoolInitializeTable = "uniswap_v3pool_initializes"
+	// PoolInitializeInverseTable is the table name for the UniswapV3PoolInitialize entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolinitialize" package.
+	PoolInitializeInverseTable = "uniswap_v3pool_initializes"
+	// PoolInitializeColumn is the table column denoting the pool_initialize relation/edge.
+	PoolInitializeColumn = "event_id"
+	// PoolSwapTable is the table that holds the pool_swap relation/edge.
+	PoolSwapTable = "uniswap_v3pool_swaps"
+	// PoolSwapInverseTable is the table name for the UniswapV3PoolSwap entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolswap" package.
+	PoolSwapInverseTable = "uniswap_v3pool_swaps"
+	// PoolSwapColumn is the table column denoting the pool_swap relation/edge.
+	PoolSwapColumn = "event_id"
+	// PoolMintTable is the table that holds the pool_mint relation/edge.
+	PoolMintTable = "uniswap_v3pool_mints"
+	// PoolMintInverseTable is the table name for the UniswapV3PoolMint entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolmint" package.
+	PoolMintInverseTable = "uniswap_v3pool_mints"
+	// PoolMintColumn is the table column denoting the pool_mint relation/edge.
+	PoolMintColumn = "event_id"
+	// PoolBurnTable is the table that holds the pool_burn relation/edge.
+	PoolBurnTable = "uniswap_v3pool_burns"
+	// PoolBurnInverseTable is the table name for the UniswapV3PoolBurn entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolburn" package.
+	PoolBurnInverseTable = "uniswap_v3pool_burns"
+	// PoolBurnColumn is the table column denoting the pool_burn relation/edge.
+	PoolBurnColumn = "event_id"
+	// PoolFlashTable is the table that holds the pool_flash relation/edge.
+	PoolFlashTable = "uniswap_v3pool_flashes"
+	// PoolFlashInverseTable is the table name for the UniswapV3PoolFlash entity.
+	// It exists in this package in order to avoid circular dependency with the "uniswapv3poolflash" package.
+	PoolFlashInverseTable = "uniswap_v3pool_flashes"
+	// PoolFlashColumn is the table column denoting the pool_flash relation/edge.
+	PoolFlashColumn = "event_id"
 )
 
 // Columns holds all SQL columns for event fields.

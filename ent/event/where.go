@@ -1188,6 +1188,146 @@ func HasPoolCreatedWith(preds ...predicate.UniswapV3PoolCreated) predicate.Event
 	})
 }
 
+// HasPoolInitialize applies the HasEdge predicate on the "pool_initialize" edge.
+func HasPoolInitialize() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolInitializeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolInitializeTable, PoolInitializeColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolInitializeWith applies the HasEdge predicate on the "pool_initialize" edge with a given conditions (other predicates).
+func HasPoolInitializeWith(preds ...predicate.UniswapV3PoolInitialize) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolInitializeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolInitializeTable, PoolInitializeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPoolSwap applies the HasEdge predicate on the "pool_swap" edge.
+func HasPoolSwap() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolSwapTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolSwapTable, PoolSwapColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolSwapWith applies the HasEdge predicate on the "pool_swap" edge with a given conditions (other predicates).
+func HasPoolSwapWith(preds ...predicate.UniswapV3PoolSwap) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolSwapInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolSwapTable, PoolSwapColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPoolMint applies the HasEdge predicate on the "pool_mint" edge.
+func HasPoolMint() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolMintTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolMintTable, PoolMintColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolMintWith applies the HasEdge predicate on the "pool_mint" edge with a given conditions (other predicates).
+func HasPoolMintWith(preds ...predicate.UniswapV3PoolMint) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolMintInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolMintTable, PoolMintColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPoolBurn applies the HasEdge predicate on the "pool_burn" edge.
+func HasPoolBurn() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolBurnTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolBurnTable, PoolBurnColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolBurnWith applies the HasEdge predicate on the "pool_burn" edge with a given conditions (other predicates).
+func HasPoolBurnWith(preds ...predicate.UniswapV3PoolBurn) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolBurnInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolBurnTable, PoolBurnColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPoolFlash applies the HasEdge predicate on the "pool_flash" edge.
+func HasPoolFlash() predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolFlashTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolFlashTable, PoolFlashColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPoolFlashWith applies the HasEdge predicate on the "pool_flash" edge with a given conditions (other predicates).
+func HasPoolFlashWith(preds ...predicate.UniswapV3PoolFlash) predicate.Event {
+	return predicate.Event(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PoolFlashInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, PoolFlashTable, PoolFlashColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Event) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {

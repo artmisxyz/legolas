@@ -11,7 +11,12 @@ import (
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
 	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
 )
 
@@ -55,9 +60,19 @@ type EventEdges struct {
 	Transfer *UniswapV3Transfer `json:"transfer,omitempty"`
 	// PoolCreated holds the value of the pool_created edge.
 	PoolCreated *UniswapV3PoolCreated `json:"pool_created,omitempty"`
+	// PoolInitialize holds the value of the pool_initialize edge.
+	PoolInitialize *UniswapV3PoolInitialize `json:"pool_initialize,omitempty"`
+	// PoolSwap holds the value of the pool_swap edge.
+	PoolSwap *UniswapV3PoolSwap `json:"pool_swap,omitempty"`
+	// PoolMint holds the value of the pool_mint edge.
+	PoolMint *UniswapV3PoolMint `json:"pool_mint,omitempty"`
+	// PoolBurn holds the value of the pool_burn edge.
+	PoolBurn *UniswapV3PoolBurn `json:"pool_burn,omitempty"`
+	// PoolFlash holds the value of the pool_flash edge.
+	PoolFlash *UniswapV3PoolFlash `json:"pool_flash,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [10]bool
 }
 
 // IncreaseLiquidityOrErr returns the IncreaseLiquidity value or an error if the edge
@@ -128,6 +143,76 @@ func (e EventEdges) PoolCreatedOrErr() (*UniswapV3PoolCreated, error) {
 		return e.PoolCreated, nil
 	}
 	return nil, &NotLoadedError{edge: "pool_created"}
+}
+
+// PoolInitializeOrErr returns the PoolInitialize value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolInitializeOrErr() (*UniswapV3PoolInitialize, error) {
+	if e.loadedTypes[5] {
+		if e.PoolInitialize == nil {
+			// The edge pool_initialize was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolinitialize.Label}
+		}
+		return e.PoolInitialize, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_initialize"}
+}
+
+// PoolSwapOrErr returns the PoolSwap value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolSwapOrErr() (*UniswapV3PoolSwap, error) {
+	if e.loadedTypes[6] {
+		if e.PoolSwap == nil {
+			// The edge pool_swap was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolswap.Label}
+		}
+		return e.PoolSwap, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_swap"}
+}
+
+// PoolMintOrErr returns the PoolMint value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolMintOrErr() (*UniswapV3PoolMint, error) {
+	if e.loadedTypes[7] {
+		if e.PoolMint == nil {
+			// The edge pool_mint was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolmint.Label}
+		}
+		return e.PoolMint, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_mint"}
+}
+
+// PoolBurnOrErr returns the PoolBurn value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolBurnOrErr() (*UniswapV3PoolBurn, error) {
+	if e.loadedTypes[8] {
+		if e.PoolBurn == nil {
+			// The edge pool_burn was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolburn.Label}
+		}
+		return e.PoolBurn, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_burn"}
+}
+
+// PoolFlashOrErr returns the PoolFlash value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EventEdges) PoolFlashOrErr() (*UniswapV3PoolFlash, error) {
+	if e.loadedTypes[9] {
+		if e.PoolFlash == nil {
+			// The edge pool_flash was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: uniswapv3poolflash.Label}
+		}
+		return e.PoolFlash, nil
+	}
+	return nil, &NotLoadedError{edge: "pool_flash"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -242,6 +327,31 @@ func (e *Event) QueryTransfer() *UniswapV3TransferQuery {
 // QueryPoolCreated queries the "pool_created" edge of the Event entity.
 func (e *Event) QueryPoolCreated() *UniswapV3PoolCreatedQuery {
 	return (&EventClient{config: e.config}).QueryPoolCreated(e)
+}
+
+// QueryPoolInitialize queries the "pool_initialize" edge of the Event entity.
+func (e *Event) QueryPoolInitialize() *UniswapV3PoolInitializeQuery {
+	return (&EventClient{config: e.config}).QueryPoolInitialize(e)
+}
+
+// QueryPoolSwap queries the "pool_swap" edge of the Event entity.
+func (e *Event) QueryPoolSwap() *UniswapV3PoolSwapQuery {
+	return (&EventClient{config: e.config}).QueryPoolSwap(e)
+}
+
+// QueryPoolMint queries the "pool_mint" edge of the Event entity.
+func (e *Event) QueryPoolMint() *UniswapV3PoolMintQuery {
+	return (&EventClient{config: e.config}).QueryPoolMint(e)
+}
+
+// QueryPoolBurn queries the "pool_burn" edge of the Event entity.
+func (e *Event) QueryPoolBurn() *UniswapV3PoolBurnQuery {
+	return (&EventClient{config: e.config}).QueryPoolBurn(e)
+}
+
+// QueryPoolFlash queries the "pool_flash" edge of the Event entity.
+func (e *Event) QueryPoolFlash() *UniswapV3PoolFlashQuery {
+	return (&EventClient{config: e.config}).QueryPoolFlash(e)
 }
 
 // Update returns a builder for updating this Event.

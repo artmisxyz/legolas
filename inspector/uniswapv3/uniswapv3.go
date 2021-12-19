@@ -21,10 +21,11 @@ type uniswapV3 struct {
 const Name = "uniswapV3:inspector"
 
 const (
-	Factory    = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
-	SwapRouter = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+	Factory                    = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
+	SwapRouter                 = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
 	NonfungiblePositionManager = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
 	V3Migrator                 = "0xA5644E29708357803b5A882D272c41cC0dF92B34"
+	ETHUSDC                    = "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8"
 )
 
 func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) inspector.Inspector {
@@ -36,16 +37,21 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) insp
 
 	v.registerAddress(common.HexToAddress(Factory))
 	v.registerAddress(common.HexToAddress(NonfungiblePositionManager))
+	v.registerAddress(common.HexToAddress(ETHUSDC))
 
 	v.registerEventHandlers(
 		NewIncreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
 		NewDecreaseLiquidityEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
 		NewCollectEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
 		NewTransferEventHandler(common.HexToAddress(NonfungiblePositionManager), ws, db),
-		NewPoolCreatedEventHandler(common.HexToAddress(Factory), ws, db))
+		NewPoolCreatedEventHandler(common.HexToAddress(Factory), ws, db),
+		NewInitializeEventHandler(common.HexToAddress(ETHUSDC), ws, db),
+		NewSwapEventHandler(common.HexToAddress(ETHUSDC), ws, db),
+		NewMintEventHandler(common.HexToAddress(ETHUSDC), ws, db),
+		NewBurnEventHandler(common.HexToAddress(ETHUSDC), ws, db),
+		NewFlashEventHandler(common.HexToAddress(ETHUSDC), ws, db),
+	)
 
-	//v.registerEventHandlers(SwapRouter, "SwapRouter")
-	//v.registerEventHandlers(V3Migrator, "V3Migrator")
 	return v
 }
 
