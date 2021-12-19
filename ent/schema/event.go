@@ -34,5 +34,8 @@ func (Event) Edges() []ent.Edge {
 		edge.To("collect", UniswapV3Collect.Type).Unique().StorageKey(edge.Column("event_id")),
 		edge.To("transfer", UniswapV3Transfer.Type).Unique().StorageKey(edge.Column("event_id")),
 		edge.To("pool_created", UniswapV3PoolCreated.Type).Unique().StorageKey(edge.Column("event_id")),
+		edge.To("pool_initialize", UniswapV3PoolInitialize.Type).Unique().StorageKey(edge.Column("event_id")),
+		edge.To("pool_swap", UniswapV3PoolSwap.Type).Unique().StorageKey(edge.Column("event_id")),
+		edge.To("pool_mint", UniswapV3PoolMint.Type).Unique().StorageKey(edge.Column("event_id")),
 	}
 }

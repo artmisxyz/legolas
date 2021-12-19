@@ -7,6 +7,7 @@ import (
 	"github.com/artmisxyz/blockinspector/pkg/hashing"
 	"github.com/artmisxyz/uniswap-go/factory"
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
+	"github.com/artmisxyz/uniswap-go/pool"
 )
 
 type Storage interface {
@@ -15,6 +16,11 @@ type Storage interface {
 	CreateTransfer(event *nftpositionmanager.NftpositionmanagerTransfer) error
 	CreateCollect(event *nftpositionmanager.NftpositionmanagerCollect) error
 	CreatePoolCreated(event *factory.FactoryPoolCreated) error
+	CreatePoolInitialize(event *pool.PoolInitialize) error
+	CreatePoolSwap(event *pool.PoolSwap) error
+	CreatePoolBurn(event *pool.PoolBurn) error
+	CreatePoolFlash(event *pool.PoolFlash) error
+	CreatePoolMint(event *pool.PoolMint) error
 }
 
 type Postgres struct {
@@ -179,5 +185,43 @@ func (m *Postgres) CreatePoolCreated(event *factory.FactoryPoolCreated) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (m *Postgres) CreatePoolInitialize(event *pool.PoolInitialize) error {
+	log := event.Raw
+	hash := hashing.LogHash(log)
+	_, err := m.db.Event.Create().
+		SetAddress(log.Address.String()).
+		SetHash(hash).
+		SetBlockHash(log.BlockHash.String()).
+		SetIndex(log.Index).
+		SetBlockNumber(log.BlockNumber).
+		SetTxIndex(log.TxIndex).
+		SetTxHash(log.TxHash.String()).
+		SetName(PoolInitializeEventName).
+		SetSignature(PoolInitializeEventSignature).
+		Save(context.Background())
+	if err != nil {
+		return err
+	}
+
+
+	return nil
+}
+
+func (m *Postgres) CreatePoolSwap(event *pool.PoolSwap) error {
+	return nil
+}
+
+func (m *Postgres) CreatePoolBurn(event *pool.PoolBurn) error {
+	return nil
+}
+
+func (m *Postgres) CreatePoolFlash(event *pool.PoolFlash) error {
+	return nil
+}
+
+func (m *Postgres) CreatePoolMint(event *pool.PoolMint) error {
 	return nil
 }
