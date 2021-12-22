@@ -1,2 +1,2 @@
-# block-inspector
+# Legolas
 inspects Ethereum blocks
