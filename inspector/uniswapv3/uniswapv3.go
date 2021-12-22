@@ -2,8 +2,8 @@ package uniswapv3
 
 import (
 	"context"
-	"github.com/artmisxyz/blockinspector/ent"
-	"github.com/artmisxyz/blockinspector/inspector"
+	"github.com/artmisxyz/legolas/ent"
+	"github.com/artmisxyz/legolas/inspector"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"

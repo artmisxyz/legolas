@@ -9,9 +9,9 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/artmisxyz/blockinspector/ent/event"
-	"github.com/artmisxyz/blockinspector/ent/schema"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/schema"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
 )
 
 // UniswapV3PoolInitializeCreate is the builder for creating a UniswapV3PoolInitialize entity.

@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/artmisxyz/blockinspector/ent"
+	"github.com/artmisxyz/legolas/ent"
 )
 
 // The EventFunc type is an adapter to allow the use of ordinary

@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/artmisxyz/blockinspector/ent/predicate"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
+	"github.com/artmisxyz/legolas/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 )
 
 // UniswapV3CollectDelete is the builder for deleting a UniswapV3Collect entity.

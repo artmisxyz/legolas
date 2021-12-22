@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/artmisxyz/blockinspector/ent/position"
-	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/legolas/ent/position"
+	"github.com/artmisxyz/legolas/ent/schema"
 )
 
 // Position is the model entity for the Position schema.

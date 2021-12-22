@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/artmisxyz/blockinspector/ent/event"
-	"github.com/artmisxyz/blockinspector/ent/schema"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
+	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/schema"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolburn"
 )
 
 // UniswapV3PoolBurn is the model entity for the UniswapV3PoolBurn schema.

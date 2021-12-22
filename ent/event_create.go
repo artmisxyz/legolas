@@ -9,17 +9,17 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/artmisxyz/blockinspector/ent/event"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3decreaseliqudity"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3increaseliqudity"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
+	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
+	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
+	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolburn"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolswap"
+	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
 // EventCreate is the builder for creating a Event entity.

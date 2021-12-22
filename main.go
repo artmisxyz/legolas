@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/artmisxyz/blockinspector/syncer"
+	"github.com/artmisxyz/legolas/syncer"
 )
 
 func main() {

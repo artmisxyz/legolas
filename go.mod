@@ -1,4 +1,4 @@
-module github.com/artmisxyz/blockinspector
+module github.com/artmisxyz/legolas
 
 go 1.17
 

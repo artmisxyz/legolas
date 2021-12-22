@@ -4,8 +4,8 @@ package position
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/artmisxyz/blockinspector/ent/predicate"
-	"github.com/artmisxyz/blockinspector/ent/schema"
+	"github.com/artmisxyz/legolas/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/schema"
 )
 
 // ID filters vertices based on their ID field.

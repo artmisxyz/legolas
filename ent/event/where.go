@@ -5,7 +5,7 @@ package event
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/artmisxyz/blockinspector/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

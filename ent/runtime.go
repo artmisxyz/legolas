@@ -3,15 +3,15 @@
 package ent
 
 import (
-	"github.com/artmisxyz/blockinspector/ent/event"
-	"github.com/artmisxyz/blockinspector/ent/schema"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3collect"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolburn"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolcreated"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolflash"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolmint"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolswap"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3transfer"
+	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/schema"
+	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolburn"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolmint"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolswap"
+	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
 // The init function reads all schema descriptors with runtime code

@@ -2,9 +2,9 @@ package uniswapv3
 
 import (
 	"context"
-	"github.com/artmisxyz/blockinspector/ent"
-	"github.com/artmisxyz/blockinspector/ent/schema"
-	"github.com/artmisxyz/blockinspector/pkg/hashing"
+	"github.com/artmisxyz/legolas/ent"
+	"github.com/artmisxyz/legolas/ent/schema"
+	"github.com/artmisxyz/legolas/pkg/hashing"
 	"github.com/artmisxyz/uniswap-go/factory"
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
 	"github.com/artmisxyz/uniswap-go/pool"

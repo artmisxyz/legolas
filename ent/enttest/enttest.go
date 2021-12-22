@@ -5,9 +5,9 @@ package enttest
 import (
 	"context"
 
-	"github.com/artmisxyz/blockinspector/ent"
+	"github.com/artmisxyz/legolas/ent"
 	// required by schema hooks.
-	_ "github.com/artmisxyz/blockinspector/ent/runtime"
+	_ "github.com/artmisxyz/legolas/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

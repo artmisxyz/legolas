@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/artmisxyz/blockinspector/ent/position"
-	"github.com/artmisxyz/blockinspector/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/position"
+	"github.com/artmisxyz/legolas/ent/predicate"
 )
 
 // PositionQuery is the builder for querying Position entities.

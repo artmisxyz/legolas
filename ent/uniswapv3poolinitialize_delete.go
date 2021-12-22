@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/artmisxyz/blockinspector/ent/predicate"
-	"github.com/artmisxyz/blockinspector/ent/uniswapv3poolinitialize"
+	"github.com/artmisxyz/legolas/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
 )
 
 // UniswapV3PoolInitializeDelete is the builder for deleting a UniswapV3PoolInitialize entity.

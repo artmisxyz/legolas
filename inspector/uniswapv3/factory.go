@@ -1,8 +1,8 @@
 package uniswapv3
 
 import (
-	"github.com/artmisxyz/blockinspector/ent"
-	"github.com/artmisxyz/blockinspector/inspector"
+	"github.com/artmisxyz/legolas/ent"
+	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/factory"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
