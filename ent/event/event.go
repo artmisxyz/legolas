@@ -7,6 +7,8 @@ const (
 	Label = "event"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldTime holds the string denoting the time field in the database.
+	FieldTime = "time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldSignature holds the string denoting the signature field in the database.
@@ -120,6 +122,7 @@ const (
 // Columns holds all SQL columns for event fields.
 var Columns = []string{
 	FieldID,
+	FieldTime,
 	FieldName,
 	FieldSignature,
 	FieldAddress,

@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -25,6 +26,8 @@ type Event struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Time holds the value of the "time" field.
+	Time time.Time `json:"time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Signature holds the value of the "signature" field.
@@ -222,6 +225,8 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case event.FieldName, event.FieldSignature, event.FieldAddress, event.FieldTxHash, event.FieldBlockHash:
 			values[i] = new(sql.NullString)
+		case event.FieldTime:
+			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Event", columns[i])
 		}
@@ -243,6 +248,12 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			e.ID = int(value.Int64)
+		case event.FieldTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field time", values[i])
+			} else if value.Valid {
+				e.Time = value.Time
+			}
 		case event.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -369,6 +380,8 @@ func (e *Event) String() string {
 	var builder strings.Builder
 	builder.WriteString("Event(")
 	builder.WriteString(fmt.Sprintf("id=%v", e.ID))
+	builder.WriteString(", time=")
+	builder.WriteString(e.Time.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(e.Name)
 	builder.WriteString(", signature=")

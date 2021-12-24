@@ -16,6 +16,7 @@ type Event struct {
 // Fields of the Event.
 func (Event) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("time"),
 		field.String("name").NotEmpty(),
 		field.String("signature").NotEmpty(),
 		field.String("address").NotEmpty(),

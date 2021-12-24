@@ -20,6 +20,22 @@ const (
 	CollectEventSignature = "0x40d0efd1a53d60ecbf40971b9daf7dc90178c3aadc7aab1765632738fa8b8f01"
 )
 
+func (c *collectEventHandler) Name() string {
+	return CollectEventName
+}
+
+func (c *collectEventHandler) Signature() string {
+	return CollectEventSignature
+}
+
+func (c *collectEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	collect, err := c.binding.ParseCollect(log)
+	if err != nil {
+		return fmt.Errorf("error parsing collect. %w", err)
+	}
+	return c.state.CreateCollect(eventID, collect)
+}
+
 func NewCollectEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := nftpositionmanager.NewNftpositionmanager(address, backend)
 	if err != nil {
@@ -29,16 +45,4 @@ func NewCollectEventHandler(address common.Address, backend bind.ContractBackend
 		binding: binding,
 		state:   NewPostgres(db),
 	}
-}
-
-func (c *collectEventHandler) Save(log types.Log) error {
-	event, err := c.binding.ParseCollect(log)
-	if err != nil {
-		return fmt.Errorf("error parsing collect. %w", err)
-	}
-	return c.state.CreateCollect(event)
-}
-
-func (c *collectEventHandler) Signature() string {
-	return "0x40d0efd1a53d60ecbf40971b9daf7dc90178c3aadc7aab1765632738fa8b8f01"
 }

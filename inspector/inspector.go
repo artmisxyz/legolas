@@ -10,6 +10,7 @@ type Inspector interface {
 }
 
 type EventHandler interface {
+	Name() string
 	Signature() string
-	Save(log types.Log) error
+	ParseAndSavePayload(eventID int, log types.Log) error
 }

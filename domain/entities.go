@@ -1,14 +1,20 @@
 package domain
 
+import (
+	"time"
+)
+
 type Event struct {
-	Name        string `json:"name"`
-	Signature   string `json:"signature"`
-	Address     string `json:"address"`
-	BlockNumber uint64 `json:"block_number"`
-	TxHash      string `json:"transaction_hash"`
-	Index       uint   `json:"index"`
-	TxIndex     uint   `json:"transaction_index"`
-	BlockHash   string `json:"block_hash"`
+	ID          int       `json:"id"`
+	Time        time.Time `json:"time"`
+	Name        string    `json:"name"`
+	Signature   string    `json:"signature"`
+	Address     string    `json:"address"`
+	BlockNumber uint64    `json:"block_number"`
+	TxHash      string    `json:"transaction_hash"`
+	Index       uint      `json:"index"`
+	TxIndex     uint      `json:"transaction_index"`
+	BlockHash   string    `json:"block_hash"`
 }
 
 type Swap struct {

@@ -11,6 +11,7 @@ var (
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "signature", Type: field.TypeString},
 		{Name: "address", Type: field.TypeString},
@@ -29,12 +30,12 @@ var (
 			{
 				Name:    "event_address",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[3]},
+				Columns: []*schema.Column{EventsColumns[4]},
 			},
 			{
 				Name:    "event_index_tx_hash",
 				Unique:  true,
-				Columns: []*schema.Column{EventsColumns[8], EventsColumns[5]},
+				Columns: []*schema.Column{EventsColumns[9], EventsColumns[6]},
 			},
 		},
 	}

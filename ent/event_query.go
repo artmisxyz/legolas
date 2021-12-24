@@ -615,12 +615,12 @@ func (eq *EventQuery) WithPoolFlash(opts ...func(*UniswapV3PoolFlashQuery)) *Eve
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Time time.Time `json:"time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Event.Query().
-//		GroupBy(event.FieldName).
+//		GroupBy(event.FieldTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -642,11 +642,11 @@ func (eq *EventQuery) GroupBy(field string, fields ...string) *EventGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Time time.Time `json:"time,omitempty"`
 //	}
 //
 //	client.Event.Query().
-//		Select(event.FieldName).
+//		Select(event.FieldTime).
 //		Scan(ctx, &v)
 //
 func (eq *EventQuery) Select(fields ...string) *EventSelect {

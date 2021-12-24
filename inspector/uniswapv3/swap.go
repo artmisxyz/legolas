@@ -19,6 +19,22 @@ type swapEventHandler struct {
 	state   *Postgres
 }
 
+func (s *swapEventHandler) Name() string {
+	return PoolSwapEventName
+}
+
+func (s *swapEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	event, err := s.binding.ParseSwap(log)
+	if err != nil {
+		panic(err)
+	}
+	return s.state.CreatePoolSwap(eventID, event)
+}
+
+func (s *swapEventHandler) Signature() string {
+	return PoolSwapEventSignature
+}
+
 func NewSwapEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := pool.NewPool(address, backend)
 	if err != nil {
@@ -28,16 +44,4 @@ func NewSwapEventHandler(address common.Address, backend bind.ContractBackend, d
 		binding: binding,
 		state:   NewPostgres(db),
 	}
-}
-
-func (s *swapEventHandler) Signature() string {
-	return PoolSwapEventSignature
-}
-
-func (s *swapEventHandler) Save(log types.Log) error {
-	event, err := s.binding.ParseSwap(log)
-	if err != nil {
-		panic(err)
-	}
-	return s.state.CreatePoolSwap(event)
 }

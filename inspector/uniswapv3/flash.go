@@ -20,6 +20,22 @@ type flashEventHandler struct {
 	state   *Postgres
 }
 
+func (f *flashEventHandler) Name() string {
+	return PoolFlashEventName
+}
+
+func (f *flashEventHandler) Signature() string {
+	return PoolFlashEventSignature
+}
+
+func (f *flashEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	pf, err := f.binding.ParseFlash(log)
+	if err != nil {
+		return err
+	}
+	return f.state.CreatePoolFlash(eventID, pf)
+}
+
 func NewFlashEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := pool.NewPool(address, backend)
 	if err != nil {
@@ -29,16 +45,4 @@ func NewFlashEventHandler(address common.Address, backend bind.ContractBackend, 
 		binding: binding,
 		state:   NewPostgres(db),
 	}
-}
-
-func (f *flashEventHandler) Signature() string {
-	return PoolFlashEventSignature
-}
-
-func (f *flashEventHandler) Save(log types.Log) error {
-	event, err := f.binding.ParseFlash(log)
-	if err != nil {
-		return err
-	}
-	return f.state.CreatePoolFlash(event)
 }

@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -33,6 +34,12 @@ type EventUpdate struct {
 // Where appends a list predicates to the EventUpdate builder.
 func (eu *EventUpdate) Where(ps ...predicate.Event) *EventUpdate {
 	eu.mutation.Where(ps...)
+	return eu
+}
+
+// SetTime sets the "time" field.
+func (eu *EventUpdate) SetTime(t time.Time) *EventUpdate {
+	eu.mutation.SetTime(t)
 	return eu
 }
 
@@ -467,6 +474,13 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := eu.mutation.Time(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: event.FieldTime,
+		})
 	}
 	if value, ok := eu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -912,6 +926,12 @@ type EventUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *EventMutation
+}
+
+// SetTime sets the "time" field.
+func (euo *EventUpdateOne) SetTime(t time.Time) *EventUpdateOne {
+	euo.mutation.SetTime(t)
+	return euo
 }
 
 // SetName sets the "name" field.
@@ -1369,6 +1389,13 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := euo.mutation.Time(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: event.FieldTime,
+		})
 	}
 	if value, ok := euo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

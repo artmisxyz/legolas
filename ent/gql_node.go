@@ -60,14 +60,22 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     e.ID,
 		Type:   "Event",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(e.Name); err != nil {
+	if buf, err = json.Marshal(e.Time); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -75,7 +83,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.Signature); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "signature",
 		Value: string(buf),
@@ -83,7 +91,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.Address); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "address",
 		Value: string(buf),
@@ -91,7 +99,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.BlockNumber); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "uint64",
 		Name:  "block_number",
 		Value: string(buf),
@@ -99,7 +107,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.TxHash); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "string",
 		Name:  "tx_hash",
 		Value: string(buf),
@@ -107,7 +115,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.TxIndex); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "uint",
 		Name:  "tx_index",
 		Value: string(buf),
@@ -115,7 +123,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.BlockHash); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "block_hash",
 		Value: string(buf),
@@ -123,7 +131,7 @@ func (e *Event) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(e.Index); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "uint",
 		Name:  "index",
 		Value: string(buf),

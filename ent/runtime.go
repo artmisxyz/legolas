@@ -14,23 +14,23 @@ func init() {
 	eventFields := schema.Event{}.Fields()
 	_ = eventFields
 	// eventDescName is the schema descriptor for name field.
-	eventDescName := eventFields[0].Descriptor()
+	eventDescName := eventFields[1].Descriptor()
 	// event.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	event.NameValidator = eventDescName.Validators[0].(func(string) error)
 	// eventDescSignature is the schema descriptor for signature field.
-	eventDescSignature := eventFields[1].Descriptor()
+	eventDescSignature := eventFields[2].Descriptor()
 	// event.SignatureValidator is a validator for the "signature" field. It is called by the builders before save.
 	event.SignatureValidator = eventDescSignature.Validators[0].(func(string) error)
 	// eventDescAddress is the schema descriptor for address field.
-	eventDescAddress := eventFields[2].Descriptor()
+	eventDescAddress := eventFields[3].Descriptor()
 	// event.AddressValidator is a validator for the "address" field. It is called by the builders before save.
 	event.AddressValidator = eventDescAddress.Validators[0].(func(string) error)
 	// eventDescTxHash is the schema descriptor for tx_hash field.
-	eventDescTxHash := eventFields[4].Descriptor()
+	eventDescTxHash := eventFields[5].Descriptor()
 	// event.TxHashValidator is a validator for the "tx_hash" field. It is called by the builders before save.
 	event.TxHashValidator = eventDescTxHash.Validators[0].(func(string) error)
 	// eventDescBlockHash is the schema descriptor for block_hash field.
-	eventDescBlockHash := eventFields[6].Descriptor()
+	eventDescBlockHash := eventFields[7].Descriptor()
 	// event.BlockHashValidator is a validator for the "block_hash" field. It is called by the builders before save.
 	event.BlockHashValidator = eventDescBlockHash.Validators[0].(func(string) error)
 }

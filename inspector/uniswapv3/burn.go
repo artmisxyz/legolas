@@ -19,6 +19,22 @@ type burnEventHandler struct {
 	state   *Postgres
 }
 
+func (b *burnEventHandler) Name() string {
+	return PoolBurnEventName
+}
+
+func (b *burnEventHandler) Signature() string {
+	return PoolBurnEventSignature
+}
+
+func (b *burnEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	burn, err := b.binding.ParseBurn(log)
+	if err != nil {
+		return err
+	}
+	return b.state.CreatePoolBurn(eventID, burn)
+}
+
 func NewBurnEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := pool.NewPool(address, backend)
 	if err != nil {
@@ -28,16 +44,4 @@ func NewBurnEventHandler(address common.Address, backend bind.ContractBackend, d
 		state:   NewPostgres(db),
 		binding: binding,
 	}
-}
-
-func (b *burnEventHandler) Signature() string {
-	return PoolBurnEventSignature
-}
-
-func (b *burnEventHandler) Save(log types.Log) error {
-	event, err := b.binding.ParseBurn(log)
-	if err != nil {
-		return err
-	}
-	return b.state.CreatePoolBurn(event)
 }

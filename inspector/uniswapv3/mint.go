@@ -19,6 +19,22 @@ type mintEventHandler struct {
 	state   *Postgres
 }
 
+func (m *mintEventHandler) Name() string {
+	return PoolMintEventName
+}
+
+func (m *mintEventHandler) Signature() string {
+	return PoolMintEventSignature
+}
+
+func (m *mintEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	event, err := m.binding.ParseMint(log)
+	if err != nil {
+		return err
+	}
+	return m.state.CreatePoolMint(eventID, event)
+}
+
 func NewMintEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := pool.NewPool(address, backend)
 	if err != nil {
@@ -28,16 +44,4 @@ func NewMintEventHandler(address common.Address, backend bind.ContractBackend, d
 		binding: binding,
 		state:   NewPostgres(db),
 	}
-}
-
-func (m *mintEventHandler) Signature() string {
-	return PoolMintEventSignature
-}
-
-func (m *mintEventHandler) Save(log types.Log) error {
-	event, err := m.binding.ParseMint(log)
-	if err != nil {
-		return err
-	}
-	return m.state.CreatePoolMint(event)
 }

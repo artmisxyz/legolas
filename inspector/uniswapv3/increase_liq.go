@@ -20,6 +20,22 @@ type increaseLiquidityEventHandler struct {
 	storage *Postgres
 }
 
+func (i *increaseLiquidityEventHandler) Name() string {
+	return IncreaseLiquidityEventName
+}
+
+func (i *increaseLiquidityEventHandler) Signature() string {
+	return IncreaseLiquidityEventSignature
+}
+
+func (i *increaseLiquidityEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	il, err := i.binding.ParseIncreaseLiquidity(log)
+	if err != nil {
+		return fmt.Errorf("error parsing increase liquidity. %w", err)
+	}
+	return i.storage.CreateIncreaseLiquidity(eventID, il)
+}
+
 func NewIncreaseLiquidityEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := nftpositionmanager.NewNftpositionmanager(address, backend)
 	if err != nil {
@@ -29,16 +45,4 @@ func NewIncreaseLiquidityEventHandler(address common.Address, backend bind.Contr
 		binding: binding,
 		storage: NewPostgres(db),
 	}
-}
-
-func (i *increaseLiquidityEventHandler) Signature() string {
-	return IncreaseLiquidityEventSignature
-}
-
-func (i *increaseLiquidityEventHandler) Save(log types.Log) error {
-	event, err := i.binding.ParseIncreaseLiquidity(log)
-	if err != nil {
-		return fmt.Errorf("error parsing increase liquidity. %w", err)
-	}
-	return i.storage.CreateIncreaseLiquidity(event)
 }

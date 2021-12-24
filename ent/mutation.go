@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
@@ -51,6 +52,7 @@ type EventMutation struct {
 	op                        Op
 	typ                       string
 	id                        *int
+	time                      *time.Time
 	name                      *string
 	signature                 *string
 	address                   *string
@@ -165,6 +167,42 @@ func (m *EventMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetTime sets the "time" field.
+func (m *EventMutation) SetTime(t time.Time) {
+	m.time = &t
+}
+
+// Time returns the value of the "time" field in the mutation.
+func (m *EventMutation) Time() (r time.Time, exists bool) {
+	v := m.time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTime returns the old "time" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTime: %w", err)
+	}
+	return oldValue.Time, nil
+}
+
+// ResetTime resets all changes to the "time" field.
+func (m *EventMutation) ResetTime() {
+	m.time = nil
 }
 
 // SetName sets the "name" field.
@@ -924,7 +962,10 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
+	if m.time != nil {
+		fields = append(fields, event.FieldTime)
+	}
 	if m.name != nil {
 		fields = append(fields, event.FieldName)
 	}
@@ -957,6 +998,8 @@ func (m *EventMutation) Fields() []string {
 // schema.
 func (m *EventMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case event.FieldTime:
+		return m.Time()
 	case event.FieldName:
 		return m.Name()
 	case event.FieldSignature:
@@ -982,6 +1025,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case event.FieldTime:
+		return m.OldTime(ctx)
 	case event.FieldName:
 		return m.OldName(ctx)
 	case event.FieldSignature:
@@ -1007,6 +1052,13 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *EventMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case event.FieldTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTime(v)
+		return nil
 	case event.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -1151,6 +1203,9 @@ func (m *EventMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *EventMutation) ResetField(name string) error {
 	switch name {
+	case event.FieldTime:
+		m.ResetTime()
+		return nil
 	case event.FieldName:
 		m.ResetName()
 		return nil

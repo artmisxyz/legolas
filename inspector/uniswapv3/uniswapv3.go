@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
+	"time"
 )
 
 type uniswapV3 struct {
@@ -16,6 +17,7 @@ type uniswapV3 struct {
 	ws            *ethclient.Client
 	eventHandlers map[string]inspector.EventHandler
 	addresses     []common.Address
+	storage       *Postgres
 }
 
 const Name = "uniswapV3:inspector"
@@ -33,6 +35,7 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) insp
 		logger:        logger.Named(Name),
 		ws:            ws,
 		eventHandlers: make(map[string]inspector.EventHandler),
+		storage:       NewPostgres(db),
 	}
 
 	v.registerAddress(common.HexToAddress(Factory))
@@ -68,6 +71,7 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 	if err != nil {
 		return err
 	}
+	t := time.Unix(int64(block.Time()), 0)
 
 	for _, log := range logs {
 		eventHandler, ok := v.eventHandlers[log.Topics[0].String()]
@@ -79,7 +83,11 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 					zap.Uint("event_index", log.Index))
 			continue
 		}
-		err := eventHandler.Save(log)
+		e, err := v.storage.CreateEvent(t, eventHandler.Name(), eventHandler.Signature(), log)
+		if err != nil {
+			return err
+		}
+		err = eventHandler.ParseAndSavePayload(e.ID, log)
 		if err != nil {
 			return err
 		}

@@ -19,6 +19,22 @@ type initializeEventHandler struct {
 	state   *Postgres
 }
 
+func (i *initializeEventHandler) Name() string {
+	return PoolInitializeEventName
+}
+
+func (i *initializeEventHandler) Signature() string {
+	return PoolInitializeEventSignature
+}
+
+func (i *initializeEventHandler) ParseAndSavePayload(eventID int, log types.Log) error {
+	event, err := i.binding.ParseInitialize(log)
+	if err != nil {
+		return err
+	}
+	return i.state.CreatePoolInitialize(eventID, event)
+}
+
 func NewInitializeEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {
 	binding, err := pool.NewPool(address, backend)
 	if err != nil {
@@ -28,16 +44,4 @@ func NewInitializeEventHandler(address common.Address, backend bind.ContractBack
 		binding: binding,
 		state:   NewPostgres(db),
 	}
-}
-
-func (i *initializeEventHandler) Signature() string {
-	return PoolInitializeEventSignature
-}
-
-func (i *initializeEventHandler) Save(log types.Log) error {
-	event, err := i.binding.ParseInitialize(log)
-	if err != nil {
-		return err
-	}
-	return i.state.CreatePoolInitialize(event)
 }
