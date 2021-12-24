@@ -54,10 +54,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// FromValidator is a validator for the "from" field. It is called by the builders before save.
-	FromValidator func(string) error
-	// ToValidator is a validator for the "to" field. It is called by the builders before save.
-	ToValidator func(string) error
-)

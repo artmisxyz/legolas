@@ -16,7 +16,7 @@ const (
 
 type mintEventHandler struct {
 	binding *pool.Pool
-	state   Storage
+	state   *Postgres
 }
 
 func NewMintEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {

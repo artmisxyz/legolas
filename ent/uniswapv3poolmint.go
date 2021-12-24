@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolmint"
 )
 
@@ -20,15 +19,15 @@ type UniswapV3PoolMint struct {
 	// Owner holds the value of the "owner" field.
 	Owner string `json:"owner,omitempty"`
 	// TickLower holds the value of the "tick_lower" field.
-	TickLower *schema.BigInt `json:"tick_lower,omitempty"`
+	TickLower string `json:"tick_lower,omitempty"`
 	// TickUpper holds the value of the "tick_upper" field.
-	TickUpper *schema.BigInt `json:"tick_upper,omitempty"`
+	TickUpper string `json:"tick_upper,omitempty"`
 	// Amount holds the value of the "amount" field.
-	Amount *schema.BigInt `json:"amount,omitempty"`
+	Amount string `json:"amount,omitempty"`
 	// Amount0 holds the value of the "amount0" field.
-	Amount0 *schema.BigInt `json:"amount0,omitempty"`
+	Amount0 string `json:"amount0,omitempty"`
 	// Amount1 holds the value of the "amount1" field.
-	Amount1 *schema.BigInt `json:"amount1,omitempty"`
+	Amount1 string `json:"amount1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3PoolMintQuery when eager-loading is set.
 	Edges    UniswapV3PoolMintEdges `json:"edges"`
@@ -63,11 +62,9 @@ func (*UniswapV3PoolMint) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3poolmint.FieldTickLower, uniswapv3poolmint.FieldTickUpper, uniswapv3poolmint.FieldAmount, uniswapv3poolmint.FieldAmount0, uniswapv3poolmint.FieldAmount1:
-			values[i] = new(schema.BigInt)
 		case uniswapv3poolmint.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3poolmint.FieldOwner:
+		case uniswapv3poolmint.FieldOwner, uniswapv3poolmint.FieldTickLower, uniswapv3poolmint.FieldTickUpper, uniswapv3poolmint.FieldAmount, uniswapv3poolmint.FieldAmount0, uniswapv3poolmint.FieldAmount1:
 			values[i] = new(sql.NullString)
 		case uniswapv3poolmint.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -99,34 +96,34 @@ func (uvm *UniswapV3PoolMint) assignValues(columns []string, values []interface{
 				uvm.Owner = value.String
 			}
 		case uniswapv3poolmint.FieldTickLower:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tick_lower", values[i])
-			} else if value != nil {
-				uvm.TickLower = value
+			} else if value.Valid {
+				uvm.TickLower = value.String
 			}
 		case uniswapv3poolmint.FieldTickUpper:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tick_upper", values[i])
-			} else if value != nil {
-				uvm.TickUpper = value
+			} else if value.Valid {
+				uvm.TickUpper = value.String
 			}
 		case uniswapv3poolmint.FieldAmount:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
-			} else if value != nil {
-				uvm.Amount = value
+			} else if value.Valid {
+				uvm.Amount = value.String
 			}
 		case uniswapv3poolmint.FieldAmount0:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount0", values[i])
-			} else if value != nil {
-				uvm.Amount0 = value
+			} else if value.Valid {
+				uvm.Amount0 = value.String
 			}
 		case uniswapv3poolmint.FieldAmount1:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount1", values[i])
-			} else if value != nil {
-				uvm.Amount1 = value
+			} else if value.Valid {
+				uvm.Amount1 = value.String
 			}
 		case uniswapv3poolmint.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -171,15 +168,15 @@ func (uvm *UniswapV3PoolMint) String() string {
 	builder.WriteString(", owner=")
 	builder.WriteString(uvm.Owner)
 	builder.WriteString(", tick_lower=")
-	builder.WriteString(fmt.Sprintf("%v", uvm.TickLower))
+	builder.WriteString(uvm.TickLower)
 	builder.WriteString(", tick_upper=")
-	builder.WriteString(fmt.Sprintf("%v", uvm.TickUpper))
+	builder.WriteString(uvm.TickUpper)
 	builder.WriteString(", amount=")
-	builder.WriteString(fmt.Sprintf("%v", uvm.Amount))
+	builder.WriteString(uvm.Amount)
 	builder.WriteString(", amount0=")
-	builder.WriteString(fmt.Sprintf("%v", uvm.Amount0))
+	builder.WriteString(uvm.Amount0)
 	builder.WriteString(", amount1=")
-	builder.WriteString(fmt.Sprintf("%v", uvm.Amount1))
+	builder.WriteString(uvm.Amount1)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -60,12 +60,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// Token0Validator is a validator for the "token0" field. It is called by the builders before save.
-	Token0Validator func(string) error
-	// Token1Validator is a validator for the "token1" field. It is called by the builders before save.
-	Token1Validator func(string) error
-	// PoolValidator is a validator for the "pool" field. It is called by the builders before save.
-	PoolValidator func(string) error
-)

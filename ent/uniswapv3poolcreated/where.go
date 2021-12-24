@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 )
 
 // ID filters vertices based on their ID field.
@@ -107,14 +106,14 @@ func Token1(v string) predicate.UniswapV3PoolCreated {
 }
 
 // Fee applies equality check predicate on the "fee" field. It's identical to FeeEQ.
-func Fee(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func Fee(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFee), v))
 	})
 }
 
 // TickSpacing applies equality check predicate on the "tick_spacing" field. It's identical to TickSpacingEQ.
-func TickSpacing(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacing(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickSpacing), v))
 	})
@@ -350,21 +349,21 @@ func Token1ContainsFold(v string) predicate.UniswapV3PoolCreated {
 }
 
 // FeeEQ applies the EQ predicate on the "fee" field.
-func FeeEQ(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeEQ(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldFee), v))
 	})
 }
 
 // FeeNEQ applies the NEQ predicate on the "fee" field.
-func FeeNEQ(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeNEQ(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldFee), v))
 	})
 }
 
 // FeeIn applies the In predicate on the "fee" field.
-func FeeIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeIn(vs ...string) predicate.UniswapV3PoolCreated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -381,7 +380,7 @@ func FeeIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
 }
 
 // FeeNotIn applies the NotIn predicate on the "fee" field.
-func FeeNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeNotIn(vs ...string) predicate.UniswapV3PoolCreated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -398,89 +397,84 @@ func FeeNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
 }
 
 // FeeGT applies the GT predicate on the "fee" field.
-func FeeGT(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeGT(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldFee), v))
 	})
 }
 
 // FeeGTE applies the GTE predicate on the "fee" field.
-func FeeGTE(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeGTE(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldFee), v))
 	})
 }
 
 // FeeLT applies the LT predicate on the "fee" field.
-func FeeLT(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeLT(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldFee), v))
 	})
 }
 
 // FeeLTE applies the LTE predicate on the "fee" field.
-func FeeLTE(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func FeeLTE(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldFee), v))
 	})
 }
 
 // FeeContains applies the Contains predicate on the "fee" field.
-func FeeContains(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func FeeContains(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldFee), vc))
+		s.Where(sql.Contains(s.C(FieldFee), v))
 	})
 }
 
 // FeeHasPrefix applies the HasPrefix predicate on the "fee" field.
-func FeeHasPrefix(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func FeeHasPrefix(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldFee), vc))
+		s.Where(sql.HasPrefix(s.C(FieldFee), v))
 	})
 }
 
 // FeeHasSuffix applies the HasSuffix predicate on the "fee" field.
-func FeeHasSuffix(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func FeeHasSuffix(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldFee), vc))
+		s.Where(sql.HasSuffix(s.C(FieldFee), v))
 	})
 }
 
 // FeeEqualFold applies the EqualFold predicate on the "fee" field.
-func FeeEqualFold(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func FeeEqualFold(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldFee), vc))
+		s.Where(sql.EqualFold(s.C(FieldFee), v))
 	})
 }
 
 // FeeContainsFold applies the ContainsFold predicate on the "fee" field.
-func FeeContainsFold(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func FeeContainsFold(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldFee), vc))
+		s.Where(sql.ContainsFold(s.C(FieldFee), v))
 	})
 }
 
 // TickSpacingEQ applies the EQ predicate on the "tick_spacing" field.
-func TickSpacingEQ(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingEQ(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingNEQ applies the NEQ predicate on the "tick_spacing" field.
-func TickSpacingNEQ(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingNEQ(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingIn applies the In predicate on the "tick_spacing" field.
-func TickSpacingIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingIn(vs ...string) predicate.UniswapV3PoolCreated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -497,7 +491,7 @@ func TickSpacingIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
 }
 
 // TickSpacingNotIn applies the NotIn predicate on the "tick_spacing" field.
-func TickSpacingNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingNotIn(vs ...string) predicate.UniswapV3PoolCreated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -514,70 +508,65 @@ func TickSpacingNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolCreated {
 }
 
 // TickSpacingGT applies the GT predicate on the "tick_spacing" field.
-func TickSpacingGT(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingGT(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingGTE applies the GTE predicate on the "tick_spacing" field.
-func TickSpacingGTE(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingGTE(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingLT applies the LT predicate on the "tick_spacing" field.
-func TickSpacingLT(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingLT(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingLTE applies the LTE predicate on the "tick_spacing" field.
-func TickSpacingLTE(v *schema.BigInt) predicate.UniswapV3PoolCreated {
+func TickSpacingLTE(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingContains applies the Contains predicate on the "tick_spacing" field.
-func TickSpacingContains(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func TickSpacingContains(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTickSpacing), vc))
+		s.Where(sql.Contains(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingHasPrefix applies the HasPrefix predicate on the "tick_spacing" field.
-func TickSpacingHasPrefix(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func TickSpacingHasPrefix(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTickSpacing), vc))
+		s.Where(sql.HasPrefix(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingHasSuffix applies the HasSuffix predicate on the "tick_spacing" field.
-func TickSpacingHasSuffix(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func TickSpacingHasSuffix(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTickSpacing), vc))
+		s.Where(sql.HasSuffix(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingEqualFold applies the EqualFold predicate on the "tick_spacing" field.
-func TickSpacingEqualFold(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func TickSpacingEqualFold(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTickSpacing), vc))
+		s.Where(sql.EqualFold(s.C(FieldTickSpacing), v))
 	})
 }
 
 // TickSpacingContainsFold applies the ContainsFold predicate on the "tick_spacing" field.
-func TickSpacingContainsFold(v *schema.BigInt) predicate.UniswapV3PoolCreated {
-	vc := v.String()
+func TickSpacingContainsFold(v string) predicate.UniswapV3PoolCreated {
 	return predicate.UniswapV3PoolCreated(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTickSpacing), vc))
+		s.Where(sql.ContainsFold(s.C(FieldTickSpacing), v))
 	})
 }
 

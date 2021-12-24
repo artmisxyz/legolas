@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
@@ -18,7 +17,7 @@ type UniswapV3Transfer struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// TokenID holds the value of the "token_id" field.
-	TokenID *schema.BigInt `json:"token_id,omitempty"`
+	TokenID string `json:"token_id,omitempty"`
 	// From holds the value of the "from" field.
 	From string `json:"from,omitempty"`
 	// To holds the value of the "to" field.
@@ -57,11 +56,9 @@ func (*UniswapV3Transfer) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3transfer.FieldTokenID:
-			values[i] = new(schema.BigInt)
 		case uniswapv3transfer.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3transfer.FieldFrom, uniswapv3transfer.FieldTo:
+		case uniswapv3transfer.FieldTokenID, uniswapv3transfer.FieldFrom, uniswapv3transfer.FieldTo:
 			values[i] = new(sql.NullString)
 		case uniswapv3transfer.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -87,10 +84,10 @@ func (uv *UniswapV3Transfer) assignValues(columns []string, values []interface{}
 			}
 			uv.ID = int(value.Int64)
 		case uniswapv3transfer.FieldTokenID:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token_id", values[i])
-			} else if value != nil {
-				uv.TokenID = value
+			} else if value.Valid {
+				uv.TokenID = value.String
 			}
 		case uniswapv3transfer.FieldFrom:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -145,7 +142,7 @@ func (uv *UniswapV3Transfer) String() string {
 	builder.WriteString("UniswapV3Transfer(")
 	builder.WriteString(fmt.Sprintf("id=%v", uv.ID))
 	builder.WriteString(", token_id=")
-	builder.WriteString(fmt.Sprintf("%v", uv.TokenID))
+	builder.WriteString(uv.TokenID)
 	builder.WriteString(", from=")
 	builder.WriteString(uv.From)
 	builder.WriteString(", to=")

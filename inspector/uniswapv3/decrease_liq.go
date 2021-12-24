@@ -12,7 +12,7 @@ import (
 
 type decreaseLiquidityEventHandler struct {
 	binding *nftpositionmanager.Nftpositionmanager
-	state   Storage
+	state   *Postgres
 }
 
 const (

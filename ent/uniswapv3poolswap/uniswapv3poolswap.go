@@ -66,10 +66,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// SenderValidator is a validator for the "sender" field. It is called by the builders before save.
-	SenderValidator func(string) error
-	// RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
-	RecipientValidator func(string) error
-)

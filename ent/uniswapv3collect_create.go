@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 )
 
@@ -22,8 +21,8 @@ type UniswapV3CollectCreate struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvc *UniswapV3CollectCreate) SetTokenID(si *schema.BigInt) *UniswapV3CollectCreate {
-	uvc.mutation.SetTokenID(si)
+func (uvc *UniswapV3CollectCreate) SetTokenID(s string) *UniswapV3CollectCreate {
+	uvc.mutation.SetTokenID(s)
 	return uvc
 }
 
@@ -34,14 +33,14 @@ func (uvc *UniswapV3CollectCreate) SetRecipient(s string) *UniswapV3CollectCreat
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvc *UniswapV3CollectCreate) SetAmount0(si *schema.BigInt) *UniswapV3CollectCreate {
-	uvc.mutation.SetAmount0(si)
+func (uvc *UniswapV3CollectCreate) SetAmount0(s string) *UniswapV3CollectCreate {
+	uvc.mutation.SetAmount0(s)
 	return uvc
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvc *UniswapV3CollectCreate) SetAmount1(si *schema.BigInt) *UniswapV3CollectCreate {
-	uvc.mutation.SetAmount1(si)
+func (uvc *UniswapV3CollectCreate) SetAmount1(s string) *UniswapV3CollectCreate {
+	uvc.mutation.SetAmount1(s)
 	return uvc
 }
 
@@ -131,11 +130,6 @@ func (uvc *UniswapV3CollectCreate) check() error {
 	}
 	if _, ok := uvc.mutation.Recipient(); !ok {
 		return &ValidationError{Name: "recipient", err: errors.New(`ent: missing required field "recipient"`)}
-	}
-	if v, ok := uvc.mutation.Recipient(); ok {
-		if err := uniswapv3collect.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf(`ent: validator failed for field "recipient": %w`, err)}
-		}
 	}
 	if _, ok := uvc.mutation.Amount0(); !ok {
 		return &ValidationError{Name: "amount0", err: errors.New(`ent: missing required field "amount0"`)}

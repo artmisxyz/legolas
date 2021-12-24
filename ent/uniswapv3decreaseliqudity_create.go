@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 )
 
@@ -22,26 +21,26 @@ type UniswapV3DecreaseLiqudityCreate struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvlc *UniswapV3DecreaseLiqudityCreate) SetTokenID(si *schema.BigInt) *UniswapV3DecreaseLiqudityCreate {
-	uvlc.mutation.SetTokenID(si)
+func (uvlc *UniswapV3DecreaseLiqudityCreate) SetTokenID(s string) *UniswapV3DecreaseLiqudityCreate {
+	uvlc.mutation.SetTokenID(s)
 	return uvlc
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvlc *UniswapV3DecreaseLiqudityCreate) SetLiquidity(si *schema.BigInt) *UniswapV3DecreaseLiqudityCreate {
-	uvlc.mutation.SetLiquidity(si)
+func (uvlc *UniswapV3DecreaseLiqudityCreate) SetLiquidity(s string) *UniswapV3DecreaseLiqudityCreate {
+	uvlc.mutation.SetLiquidity(s)
 	return uvlc
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvlc *UniswapV3DecreaseLiqudityCreate) SetAmount0(si *schema.BigInt) *UniswapV3DecreaseLiqudityCreate {
-	uvlc.mutation.SetAmount0(si)
+func (uvlc *UniswapV3DecreaseLiqudityCreate) SetAmount0(s string) *UniswapV3DecreaseLiqudityCreate {
+	uvlc.mutation.SetAmount0(s)
 	return uvlc
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvlc *UniswapV3DecreaseLiqudityCreate) SetAmount1(si *schema.BigInt) *UniswapV3DecreaseLiqudityCreate {
-	uvlc.mutation.SetAmount1(si)
+func (uvlc *UniswapV3DecreaseLiqudityCreate) SetAmount1(s string) *UniswapV3DecreaseLiqudityCreate {
+	uvlc.mutation.SetAmount1(s)
 	return uvlc
 }
 

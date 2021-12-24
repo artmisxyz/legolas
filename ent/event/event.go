@@ -23,8 +23,6 @@ const (
 	FieldBlockHash = "block_hash"
 	// FieldIndex holds the string denoting the index field in the database.
 	FieldIndex = "index"
-	// FieldHash holds the string denoting the hash field in the database.
-	FieldHash = "hash"
 	// EdgeIncreaseLiquidity holds the string denoting the increase_liquidity edge name in mutations.
 	EdgeIncreaseLiquidity = "increase_liquidity"
 	// EdgeDecreaseLiquidity holds the string denoting the decrease_liquidity edge name in mutations.
@@ -130,7 +128,6 @@ var Columns = []string{
 	FieldTxIndex,
 	FieldBlockHash,
 	FieldIndex,
-	FieldHash,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -154,6 +151,4 @@ var (
 	TxHashValidator func(string) error
 	// BlockHashValidator is a validator for the "block_hash" field. It is called by the builders before save.
 	BlockHashValidator func(string) error
-	// HashValidator is a validator for the "hash" field. It is called by the builders before save.
-	HashValidator func(string) error
 )

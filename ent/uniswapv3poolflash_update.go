@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
 )
 
@@ -42,26 +41,26 @@ func (uvfu *UniswapV3PoolFlashUpdate) SetRecipient(s string) *UniswapV3PoolFlash
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvfu *UniswapV3PoolFlashUpdate) SetAmount0(si *schema.BigInt) *UniswapV3PoolFlashUpdate {
-	uvfu.mutation.SetAmount0(si)
+func (uvfu *UniswapV3PoolFlashUpdate) SetAmount0(s string) *UniswapV3PoolFlashUpdate {
+	uvfu.mutation.SetAmount0(s)
 	return uvfu
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvfu *UniswapV3PoolFlashUpdate) SetAmount1(si *schema.BigInt) *UniswapV3PoolFlashUpdate {
-	uvfu.mutation.SetAmount1(si)
+func (uvfu *UniswapV3PoolFlashUpdate) SetAmount1(s string) *UniswapV3PoolFlashUpdate {
+	uvfu.mutation.SetAmount1(s)
 	return uvfu
 }
 
 // SetPaid0 sets the "paid0" field.
-func (uvfu *UniswapV3PoolFlashUpdate) SetPaid0(si *schema.BigInt) *UniswapV3PoolFlashUpdate {
-	uvfu.mutation.SetPaid0(si)
+func (uvfu *UniswapV3PoolFlashUpdate) SetPaid0(s string) *UniswapV3PoolFlashUpdate {
+	uvfu.mutation.SetPaid0(s)
 	return uvfu
 }
 
 // SetPaid1 sets the "paid1" field.
-func (uvfu *UniswapV3PoolFlashUpdate) SetPaid1(si *schema.BigInt) *UniswapV3PoolFlashUpdate {
-	uvfu.mutation.SetPaid1(si)
+func (uvfu *UniswapV3PoolFlashUpdate) SetPaid1(s string) *UniswapV3PoolFlashUpdate {
+	uvfu.mutation.SetPaid1(s)
 	return uvfu
 }
 
@@ -149,16 +148,6 @@ func (uvfu *UniswapV3PoolFlashUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvfu *UniswapV3PoolFlashUpdate) check() error {
-	if v, ok := uvfu.mutation.Sender(); ok {
-		if err := uniswapv3poolflash.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf("ent: validator failed for field \"sender\": %w", err)}
-		}
-	}
-	if v, ok := uvfu.mutation.Recipient(); ok {
-		if err := uniswapv3poolflash.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvfu.mutation.EventID(); uvfu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -292,26 +281,26 @@ func (uvfuo *UniswapV3PoolFlashUpdateOne) SetRecipient(s string) *UniswapV3PoolF
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvfuo *UniswapV3PoolFlashUpdateOne) SetAmount0(si *schema.BigInt) *UniswapV3PoolFlashUpdateOne {
-	uvfuo.mutation.SetAmount0(si)
+func (uvfuo *UniswapV3PoolFlashUpdateOne) SetAmount0(s string) *UniswapV3PoolFlashUpdateOne {
+	uvfuo.mutation.SetAmount0(s)
 	return uvfuo
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvfuo *UniswapV3PoolFlashUpdateOne) SetAmount1(si *schema.BigInt) *UniswapV3PoolFlashUpdateOne {
-	uvfuo.mutation.SetAmount1(si)
+func (uvfuo *UniswapV3PoolFlashUpdateOne) SetAmount1(s string) *UniswapV3PoolFlashUpdateOne {
+	uvfuo.mutation.SetAmount1(s)
 	return uvfuo
 }
 
 // SetPaid0 sets the "paid0" field.
-func (uvfuo *UniswapV3PoolFlashUpdateOne) SetPaid0(si *schema.BigInt) *UniswapV3PoolFlashUpdateOne {
-	uvfuo.mutation.SetPaid0(si)
+func (uvfuo *UniswapV3PoolFlashUpdateOne) SetPaid0(s string) *UniswapV3PoolFlashUpdateOne {
+	uvfuo.mutation.SetPaid0(s)
 	return uvfuo
 }
 
 // SetPaid1 sets the "paid1" field.
-func (uvfuo *UniswapV3PoolFlashUpdateOne) SetPaid1(si *schema.BigInt) *UniswapV3PoolFlashUpdateOne {
-	uvfuo.mutation.SetPaid1(si)
+func (uvfuo *UniswapV3PoolFlashUpdateOne) SetPaid1(s string) *UniswapV3PoolFlashUpdateOne {
+	uvfuo.mutation.SetPaid1(s)
 	return uvfuo
 }
 
@@ -406,16 +395,6 @@ func (uvfuo *UniswapV3PoolFlashUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvfuo *UniswapV3PoolFlashUpdateOne) check() error {
-	if v, ok := uvfuo.mutation.Sender(); ok {
-		if err := uniswapv3poolflash.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf("ent: validator failed for field \"sender\": %w", err)}
-		}
-	}
-	if v, ok := uvfuo.mutation.Recipient(); ok {
-		if err := uniswapv3poolflash.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvfuo.mutation.EventID(); uvfuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

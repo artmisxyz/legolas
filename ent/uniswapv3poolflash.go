@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
 )
 
@@ -22,13 +21,13 @@ type UniswapV3PoolFlash struct {
 	// Recipient holds the value of the "recipient" field.
 	Recipient string `json:"recipient,omitempty"`
 	// Amount0 holds the value of the "amount0" field.
-	Amount0 *schema.BigInt `json:"amount0,omitempty"`
+	Amount0 string `json:"amount0,omitempty"`
 	// Amount1 holds the value of the "amount1" field.
-	Amount1 *schema.BigInt `json:"amount1,omitempty"`
+	Amount1 string `json:"amount1,omitempty"`
 	// Paid0 holds the value of the "paid0" field.
-	Paid0 *schema.BigInt `json:"paid0,omitempty"`
+	Paid0 string `json:"paid0,omitempty"`
 	// Paid1 holds the value of the "paid1" field.
-	Paid1 *schema.BigInt `json:"paid1,omitempty"`
+	Paid1 string `json:"paid1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3PoolFlashQuery when eager-loading is set.
 	Edges    UniswapV3PoolFlashEdges `json:"edges"`
@@ -63,11 +62,9 @@ func (*UniswapV3PoolFlash) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3poolflash.FieldAmount0, uniswapv3poolflash.FieldAmount1, uniswapv3poolflash.FieldPaid0, uniswapv3poolflash.FieldPaid1:
-			values[i] = new(schema.BigInt)
 		case uniswapv3poolflash.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3poolflash.FieldSender, uniswapv3poolflash.FieldRecipient:
+		case uniswapv3poolflash.FieldSender, uniswapv3poolflash.FieldRecipient, uniswapv3poolflash.FieldAmount0, uniswapv3poolflash.FieldAmount1, uniswapv3poolflash.FieldPaid0, uniswapv3poolflash.FieldPaid1:
 			values[i] = new(sql.NullString)
 		case uniswapv3poolflash.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -105,28 +102,28 @@ func (uvf *UniswapV3PoolFlash) assignValues(columns []string, values []interface
 				uvf.Recipient = value.String
 			}
 		case uniswapv3poolflash.FieldAmount0:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount0", values[i])
-			} else if value != nil {
-				uvf.Amount0 = value
+			} else if value.Valid {
+				uvf.Amount0 = value.String
 			}
 		case uniswapv3poolflash.FieldAmount1:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount1", values[i])
-			} else if value != nil {
-				uvf.Amount1 = value
+			} else if value.Valid {
+				uvf.Amount1 = value.String
 			}
 		case uniswapv3poolflash.FieldPaid0:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field paid0", values[i])
-			} else if value != nil {
-				uvf.Paid0 = value
+			} else if value.Valid {
+				uvf.Paid0 = value.String
 			}
 		case uniswapv3poolflash.FieldPaid1:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field paid1", values[i])
-			} else if value != nil {
-				uvf.Paid1 = value
+			} else if value.Valid {
+				uvf.Paid1 = value.String
 			}
 		case uniswapv3poolflash.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -173,13 +170,13 @@ func (uvf *UniswapV3PoolFlash) String() string {
 	builder.WriteString(", recipient=")
 	builder.WriteString(uvf.Recipient)
 	builder.WriteString(", amount0=")
-	builder.WriteString(fmt.Sprintf("%v", uvf.Amount0))
+	builder.WriteString(uvf.Amount0)
 	builder.WriteString(", amount1=")
-	builder.WriteString(fmt.Sprintf("%v", uvf.Amount1))
+	builder.WriteString(uvf.Amount1)
 	builder.WriteString(", paid0=")
-	builder.WriteString(fmt.Sprintf("%v", uvf.Paid0))
+	builder.WriteString(uvf.Paid0)
 	builder.WriteString(", paid1=")
-	builder.WriteString(fmt.Sprintf("%v", uvf.Paid1))
+	builder.WriteString(uvf.Paid1)
 	builder.WriteByte(')')
 	return builder.String()
 }

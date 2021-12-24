@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
@@ -22,8 +21,8 @@ type UniswapV3TransferCreate struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvc *UniswapV3TransferCreate) SetTokenID(si *schema.BigInt) *UniswapV3TransferCreate {
-	uvc.mutation.SetTokenID(si)
+func (uvc *UniswapV3TransferCreate) SetTokenID(s string) *UniswapV3TransferCreate {
+	uvc.mutation.SetTokenID(s)
 	return uvc
 }
 
@@ -126,18 +125,8 @@ func (uvc *UniswapV3TransferCreate) check() error {
 	if _, ok := uvc.mutation.From(); !ok {
 		return &ValidationError{Name: "from", err: errors.New(`ent: missing required field "from"`)}
 	}
-	if v, ok := uvc.mutation.From(); ok {
-		if err := uniswapv3transfer.FromValidator(v); err != nil {
-			return &ValidationError{Name: "from", err: fmt.Errorf(`ent: validator failed for field "from": %w`, err)}
-		}
-	}
 	if _, ok := uvc.mutation.To(); !ok {
 		return &ValidationError{Name: "to", err: errors.New(`ent: missing required field "to"`)}
-	}
-	if v, ok := uvc.mutation.To(); ok {
-		if err := uniswapv3transfer.ToValidator(v); err != nil {
-			return &ValidationError{Name: "to", err: fmt.Errorf(`ent: validator failed for field "to": %w`, err)}
-		}
 	}
 	if _, ok := uvc.mutation.EventID(); !ok {
 		return &ValidationError{Name: "event", err: errors.New("ent: missing required edge \"event\"")}

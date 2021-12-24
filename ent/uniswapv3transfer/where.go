@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 )
 
 // ID filters vertices based on their ID field.
@@ -93,7 +92,7 @@ func IDLTE(id int) predicate.UniswapV3Transfer {
 }
 
 // TokenID applies equality check predicate on the "token_id" field. It's identical to TokenIDEQ.
-func TokenID(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenID(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTokenID), v))
 	})
@@ -114,21 +113,21 @@ func To(v string) predicate.UniswapV3Transfer {
 }
 
 // TokenIDEQ applies the EQ predicate on the "token_id" field.
-func TokenIDEQ(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDEQ(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDNEQ applies the NEQ predicate on the "token_id" field.
-func TokenIDNEQ(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDNEQ(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDIn applies the In predicate on the "token_id" field.
-func TokenIDIn(vs ...*schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDIn(vs ...string) predicate.UniswapV3Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -145,7 +144,7 @@ func TokenIDIn(vs ...*schema.BigInt) predicate.UniswapV3Transfer {
 }
 
 // TokenIDNotIn applies the NotIn predicate on the "token_id" field.
-func TokenIDNotIn(vs ...*schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDNotIn(vs ...string) predicate.UniswapV3Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -162,70 +161,65 @@ func TokenIDNotIn(vs ...*schema.BigInt) predicate.UniswapV3Transfer {
 }
 
 // TokenIDGT applies the GT predicate on the "token_id" field.
-func TokenIDGT(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDGT(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDGTE applies the GTE predicate on the "token_id" field.
-func TokenIDGTE(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDGTE(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDLT applies the LT predicate on the "token_id" field.
-func TokenIDLT(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDLT(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDLTE applies the LTE predicate on the "token_id" field.
-func TokenIDLTE(v *schema.BigInt) predicate.UniswapV3Transfer {
+func TokenIDLTE(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDContains applies the Contains predicate on the "token_id" field.
-func TokenIDContains(v *schema.BigInt) predicate.UniswapV3Transfer {
-	vc := v.String()
+func TokenIDContains(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTokenID), vc))
+		s.Where(sql.Contains(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDHasPrefix applies the HasPrefix predicate on the "token_id" field.
-func TokenIDHasPrefix(v *schema.BigInt) predicate.UniswapV3Transfer {
-	vc := v.String()
+func TokenIDHasPrefix(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTokenID), vc))
+		s.Where(sql.HasPrefix(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDHasSuffix applies the HasSuffix predicate on the "token_id" field.
-func TokenIDHasSuffix(v *schema.BigInt) predicate.UniswapV3Transfer {
-	vc := v.String()
+func TokenIDHasSuffix(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTokenID), vc))
+		s.Where(sql.HasSuffix(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDEqualFold applies the EqualFold predicate on the "token_id" field.
-func TokenIDEqualFold(v *schema.BigInt) predicate.UniswapV3Transfer {
-	vc := v.String()
+func TokenIDEqualFold(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTokenID), vc))
+		s.Where(sql.EqualFold(s.C(FieldTokenID), v))
 	})
 }
 
 // TokenIDContainsFold applies the ContainsFold predicate on the "token_id" field.
-func TokenIDContainsFold(v *schema.BigInt) predicate.UniswapV3Transfer {
-	vc := v.String()
+func TokenIDContainsFold(v string) predicate.UniswapV3Transfer {
 	return predicate.UniswapV3Transfer(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTokenID), vc))
+		s.Where(sql.ContainsFold(s.C(FieldTokenID), v))
 	})
 }
 

@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -15,19 +14,11 @@ type UniswapV3PoolCreated struct {
 // Fields of the UniswapV3PoolCreated.
 func (UniswapV3PoolCreated) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("token0").NotEmpty(),
-		field.String("token1").NotEmpty(),
-		field.String("fee").GoType(new(BigInt)).
-			SchemaType(map[string]string{
-				dialect.Postgres: "numeric(18, 0)",
-				dialect.SQLite:   "numeric(18, 0)",
-			}),
-		field.String("tick_spacing").GoType(new(BigInt)).
-			SchemaType(map[string]string{
-				dialect.Postgres: "numeric(18, 0)",
-				dialect.SQLite:   "numeric(18, 0)",
-			}),
-		field.String("pool").NotEmpty().Unique(),
+		field.String("token0"),
+		field.String("token1"),
+		BigIntField("fee"),
+		BigIntField("tick_spacing"),
+		field.String("pool").Unique(),
 	}
 }
 

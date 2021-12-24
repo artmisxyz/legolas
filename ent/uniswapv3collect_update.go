@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 )
 
@@ -30,8 +29,8 @@ func (uvu *UniswapV3CollectUpdate) Where(ps ...predicate.UniswapV3Collect) *Unis
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvu *UniswapV3CollectUpdate) SetTokenID(si *schema.BigInt) *UniswapV3CollectUpdate {
-	uvu.mutation.SetTokenID(si)
+func (uvu *UniswapV3CollectUpdate) SetTokenID(s string) *UniswapV3CollectUpdate {
+	uvu.mutation.SetTokenID(s)
 	return uvu
 }
 
@@ -42,14 +41,14 @@ func (uvu *UniswapV3CollectUpdate) SetRecipient(s string) *UniswapV3CollectUpdat
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvu *UniswapV3CollectUpdate) SetAmount0(si *schema.BigInt) *UniswapV3CollectUpdate {
-	uvu.mutation.SetAmount0(si)
+func (uvu *UniswapV3CollectUpdate) SetAmount0(s string) *UniswapV3CollectUpdate {
+	uvu.mutation.SetAmount0(s)
 	return uvu
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvu *UniswapV3CollectUpdate) SetAmount1(si *schema.BigInt) *UniswapV3CollectUpdate {
-	uvu.mutation.SetAmount1(si)
+func (uvu *UniswapV3CollectUpdate) SetAmount1(s string) *UniswapV3CollectUpdate {
+	uvu.mutation.SetAmount1(s)
 	return uvu
 }
 
@@ -137,11 +136,6 @@ func (uvu *UniswapV3CollectUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvu *UniswapV3CollectUpdate) check() error {
-	if v, ok := uvu.mutation.Recipient(); ok {
-		if err := uniswapv3collect.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvu.mutation.EventID(); uvu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -249,8 +243,8 @@ type UniswapV3CollectUpdateOne struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvuo *UniswapV3CollectUpdateOne) SetTokenID(si *schema.BigInt) *UniswapV3CollectUpdateOne {
-	uvuo.mutation.SetTokenID(si)
+func (uvuo *UniswapV3CollectUpdateOne) SetTokenID(s string) *UniswapV3CollectUpdateOne {
+	uvuo.mutation.SetTokenID(s)
 	return uvuo
 }
 
@@ -261,14 +255,14 @@ func (uvuo *UniswapV3CollectUpdateOne) SetRecipient(s string) *UniswapV3CollectU
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvuo *UniswapV3CollectUpdateOne) SetAmount0(si *schema.BigInt) *UniswapV3CollectUpdateOne {
-	uvuo.mutation.SetAmount0(si)
+func (uvuo *UniswapV3CollectUpdateOne) SetAmount0(s string) *UniswapV3CollectUpdateOne {
+	uvuo.mutation.SetAmount0(s)
 	return uvuo
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvuo *UniswapV3CollectUpdateOne) SetAmount1(si *schema.BigInt) *UniswapV3CollectUpdateOne {
-	uvuo.mutation.SetAmount1(si)
+func (uvuo *UniswapV3CollectUpdateOne) SetAmount1(s string) *UniswapV3CollectUpdateOne {
+	uvuo.mutation.SetAmount1(s)
 	return uvuo
 }
 
@@ -363,11 +357,6 @@ func (uvuo *UniswapV3CollectUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvuo *UniswapV3CollectUpdateOne) check() error {
-	if v, ok := uvuo.mutation.Recipient(); ok {
-		if err := uniswapv3collect.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvuo.mutation.EventID(); uvuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

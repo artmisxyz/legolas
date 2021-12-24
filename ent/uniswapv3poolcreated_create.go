@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
 )
 
@@ -34,14 +33,14 @@ func (uvcc *UniswapV3PoolCreatedCreate) SetToken1(s string) *UniswapV3PoolCreate
 }
 
 // SetFee sets the "fee" field.
-func (uvcc *UniswapV3PoolCreatedCreate) SetFee(si *schema.BigInt) *UniswapV3PoolCreatedCreate {
-	uvcc.mutation.SetFee(si)
+func (uvcc *UniswapV3PoolCreatedCreate) SetFee(s string) *UniswapV3PoolCreatedCreate {
+	uvcc.mutation.SetFee(s)
 	return uvcc
 }
 
 // SetTickSpacing sets the "tick_spacing" field.
-func (uvcc *UniswapV3PoolCreatedCreate) SetTickSpacing(si *schema.BigInt) *UniswapV3PoolCreatedCreate {
-	uvcc.mutation.SetTickSpacing(si)
+func (uvcc *UniswapV3PoolCreatedCreate) SetTickSpacing(s string) *UniswapV3PoolCreatedCreate {
+	uvcc.mutation.SetTickSpacing(s)
 	return uvcc
 }
 
@@ -135,18 +134,8 @@ func (uvcc *UniswapV3PoolCreatedCreate) check() error {
 	if _, ok := uvcc.mutation.Token0(); !ok {
 		return &ValidationError{Name: "token0", err: errors.New(`ent: missing required field "token0"`)}
 	}
-	if v, ok := uvcc.mutation.Token0(); ok {
-		if err := uniswapv3poolcreated.Token0Validator(v); err != nil {
-			return &ValidationError{Name: "token0", err: fmt.Errorf(`ent: validator failed for field "token0": %w`, err)}
-		}
-	}
 	if _, ok := uvcc.mutation.Token1(); !ok {
 		return &ValidationError{Name: "token1", err: errors.New(`ent: missing required field "token1"`)}
-	}
-	if v, ok := uvcc.mutation.Token1(); ok {
-		if err := uniswapv3poolcreated.Token1Validator(v); err != nil {
-			return &ValidationError{Name: "token1", err: fmt.Errorf(`ent: validator failed for field "token1": %w`, err)}
-		}
 	}
 	if _, ok := uvcc.mutation.Fee(); !ok {
 		return &ValidationError{Name: "fee", err: errors.New(`ent: missing required field "fee"`)}
@@ -156,11 +145,6 @@ func (uvcc *UniswapV3PoolCreatedCreate) check() error {
 	}
 	if _, ok := uvcc.mutation.Pool(); !ok {
 		return &ValidationError{Name: "pool", err: errors.New(`ent: missing required field "pool"`)}
-	}
-	if v, ok := uvcc.mutation.Pool(); ok {
-		if err := uniswapv3poolcreated.PoolValidator(v); err != nil {
-			return &ValidationError{Name: "pool", err: fmt.Errorf(`ent: validator failed for field "pool": %w`, err)}
-		}
 	}
 	if _, ok := uvcc.mutation.EventID(); !ok {
 		return &ValidationError{Name: "event", err: errors.New("ent: missing required edge \"event\"")}

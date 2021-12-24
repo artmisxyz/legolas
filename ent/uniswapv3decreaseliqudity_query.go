@@ -291,7 +291,7 @@ func (uvlq *UniswapV3DecreaseLiqudityQuery) WithEvent(opts ...func(*EventQuery))
 // Example:
 //
 //	var v []struct {
-//		TokenID *schema.BigInt `json:"token_id,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -318,7 +318,7 @@ func (uvlq *UniswapV3DecreaseLiqudityQuery) GroupBy(field string, fields ...stri
 // Example:
 //
 //	var v []struct {
-//		TokenID *schema.BigInt `json:"token_id,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //	}
 //
 //	client.UniswapV3DecreaseLiqudity.Query().

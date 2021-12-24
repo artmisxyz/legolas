@@ -8,9 +8,7 @@ import (
 	"sync"
 
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/position"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
@@ -35,7 +33,6 @@ const (
 
 	// Node types.
 	TypeEvent                     = "Event"
-	TypePosition                  = "Position"
 	TypeUniswapV3Collect          = "UniswapV3Collect"
 	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
@@ -65,7 +62,6 @@ type EventMutation struct {
 	block_hash                *string
 	index                     *uint
 	addindex                  *uint
-	hash                      *string
 	clearedFields             map[string]struct{}
 	increase_liquidity        *int
 	clearedincrease_liquidity bool
@@ -519,42 +515,6 @@ func (m *EventMutation) ResetIndex() {
 	m.addindex = nil
 }
 
-// SetHash sets the "hash" field.
-func (m *EventMutation) SetHash(s string) {
-	m.hash = &s
-}
-
-// Hash returns the value of the "hash" field in the mutation.
-func (m *EventMutation) Hash() (r string, exists bool) {
-	v := m.hash
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHash returns the old "hash" field's value of the Event entity.
-// If the Event object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldHash(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldHash is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldHash requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHash: %w", err)
-	}
-	return oldValue.Hash, nil
-}
-
-// ResetHash resets all changes to the "hash" field.
-func (m *EventMutation) ResetHash() {
-	m.hash = nil
-}
-
 // SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by id.
 func (m *EventMutation) SetIncreaseLiquidityID(id int) {
 	m.increase_liquidity = &id
@@ -964,7 +924,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, event.FieldName)
 	}
@@ -988,9 +948,6 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.index != nil {
 		fields = append(fields, event.FieldIndex)
-	}
-	if m.hash != nil {
-		fields = append(fields, event.FieldHash)
 	}
 	return fields
 }
@@ -1016,8 +973,6 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.BlockHash()
 	case event.FieldIndex:
 		return m.Index()
-	case event.FieldHash:
-		return m.Hash()
 	}
 	return nil, false
 }
@@ -1043,8 +998,6 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldBlockHash(ctx)
 	case event.FieldIndex:
 		return m.OldIndex(ctx)
-	case event.FieldHash:
-		return m.OldHash(ctx)
 	}
 	return nil, fmt.Errorf("unknown Event field %s", name)
 }
@@ -1109,13 +1062,6 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIndex(v)
-		return nil
-	case event.FieldHash:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHash(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Event field %s", name)
@@ -1228,9 +1174,6 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldIndex:
 		m.ResetIndex()
-		return nil
-	case event.FieldHash:
-		m.ResetHash()
 		return nil
 	}
 	return fmt.Errorf("unknown Event field %s", name)
@@ -1474,1226 +1417,16 @@ func (m *EventMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Event edge %s", name)
 }
 
-// PositionMutation represents an operation that mutates the Position nodes in the graph.
-type PositionMutation struct {
-	config
-	op                          Op
-	typ                         string
-	id                          *int
-	token                       **schema.BigInt
-	owner                       *[]byte
-	pool                        *[]byte
-	token0                      *[]byte
-	token1                      *[]byte
-	tick_lower                  **schema.BigInt
-	tick_upper                  **schema.BigInt
-	liquidity                   **schema.BigInt
-	deposited_token0            **schema.BigInt
-	deposited_token1            **schema.BigInt
-	withdrawn_token0            **schema.BigInt
-	withdrawn_token1            **schema.BigInt
-	collected_token0            **schema.BigInt
-	collected_token1            **schema.BigInt
-	collected_fees_token0       **schema.BigInt
-	collected_fees_token1       **schema.BigInt
-	fee_growth_inside0_lastX128 **schema.BigInt
-	fee_growth_inside1_lastX128 **schema.BigInt
-	clearedFields               map[string]struct{}
-	done                        bool
-	oldValue                    func(context.Context) (*Position, error)
-	predicates                  []predicate.Position
-}
-
-var _ ent.Mutation = (*PositionMutation)(nil)
-
-// positionOption allows management of the mutation configuration using functional options.
-type positionOption func(*PositionMutation)
-
-// newPositionMutation creates new mutation for the Position entity.
-func newPositionMutation(c config, op Op, opts ...positionOption) *PositionMutation {
-	m := &PositionMutation{
-		config:        c,
-		op:            op,
-		typ:           TypePosition,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withPositionID sets the ID field of the mutation.
-func withPositionID(id int) positionOption {
-	return func(m *PositionMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Position
-		)
-		m.oldValue = func(ctx context.Context) (*Position, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Position.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withPosition sets the old Position of the mutation.
-func withPosition(node *Position) positionOption {
-	return func(m *PositionMutation) {
-		m.oldValue = func(context.Context) (*Position, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m PositionMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m PositionMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *PositionMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetToken sets the "token" field.
-func (m *PositionMutation) SetToken(si *schema.BigInt) {
-	m.token = &si
-}
-
-// Token returns the value of the "token" field in the mutation.
-func (m *PositionMutation) Token() (r *schema.BigInt, exists bool) {
-	v := m.token
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldToken returns the old "token" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldToken(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldToken is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldToken requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldToken: %w", err)
-	}
-	return oldValue.Token, nil
-}
-
-// ResetToken resets all changes to the "token" field.
-func (m *PositionMutation) ResetToken() {
-	m.token = nil
-}
-
-// SetOwner sets the "owner" field.
-func (m *PositionMutation) SetOwner(b []byte) {
-	m.owner = &b
-}
-
-// Owner returns the value of the "owner" field in the mutation.
-func (m *PositionMutation) Owner() (r []byte, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOwner returns the old "owner" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldOwner(ctx context.Context) (v []byte, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldOwner is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldOwner requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
-	}
-	return oldValue.Owner, nil
-}
-
-// ResetOwner resets all changes to the "owner" field.
-func (m *PositionMutation) ResetOwner() {
-	m.owner = nil
-}
-
-// SetPool sets the "pool" field.
-func (m *PositionMutation) SetPool(b []byte) {
-	m.pool = &b
-}
-
-// Pool returns the value of the "pool" field in the mutation.
-func (m *PositionMutation) Pool() (r []byte, exists bool) {
-	v := m.pool
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPool returns the old "pool" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldPool(ctx context.Context) (v []byte, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPool is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPool requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPool: %w", err)
-	}
-	return oldValue.Pool, nil
-}
-
-// ResetPool resets all changes to the "pool" field.
-func (m *PositionMutation) ResetPool() {
-	m.pool = nil
-}
-
-// SetToken0 sets the "token0" field.
-func (m *PositionMutation) SetToken0(b []byte) {
-	m.token0 = &b
-}
-
-// Token0 returns the value of the "token0" field in the mutation.
-func (m *PositionMutation) Token0() (r []byte, exists bool) {
-	v := m.token0
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldToken0 returns the old "token0" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldToken0(ctx context.Context) (v []byte, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldToken0 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldToken0 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldToken0: %w", err)
-	}
-	return oldValue.Token0, nil
-}
-
-// ResetToken0 resets all changes to the "token0" field.
-func (m *PositionMutation) ResetToken0() {
-	m.token0 = nil
-}
-
-// SetToken1 sets the "token1" field.
-func (m *PositionMutation) SetToken1(b []byte) {
-	m.token1 = &b
-}
-
-// Token1 returns the value of the "token1" field in the mutation.
-func (m *PositionMutation) Token1() (r []byte, exists bool) {
-	v := m.token1
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldToken1 returns the old "token1" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldToken1(ctx context.Context) (v []byte, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldToken1 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldToken1 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldToken1: %w", err)
-	}
-	return oldValue.Token1, nil
-}
-
-// ResetToken1 resets all changes to the "token1" field.
-func (m *PositionMutation) ResetToken1() {
-	m.token1 = nil
-}
-
-// SetTickLower sets the "tick_lower" field.
-func (m *PositionMutation) SetTickLower(si *schema.BigInt) {
-	m.tick_lower = &si
-}
-
-// TickLower returns the value of the "tick_lower" field in the mutation.
-func (m *PositionMutation) TickLower() (r *schema.BigInt, exists bool) {
-	v := m.tick_lower
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTickLower returns the old "tick_lower" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldTickLower is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldTickLower requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTickLower: %w", err)
-	}
-	return oldValue.TickLower, nil
-}
-
-// ResetTickLower resets all changes to the "tick_lower" field.
-func (m *PositionMutation) ResetTickLower() {
-	m.tick_lower = nil
-}
-
-// SetTickUpper sets the "tick_upper" field.
-func (m *PositionMutation) SetTickUpper(si *schema.BigInt) {
-	m.tick_upper = &si
-}
-
-// TickUpper returns the value of the "tick_upper" field in the mutation.
-func (m *PositionMutation) TickUpper() (r *schema.BigInt, exists bool) {
-	v := m.tick_upper
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTickUpper returns the old "tick_upper" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldTickUpper is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldTickUpper requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTickUpper: %w", err)
-	}
-	return oldValue.TickUpper, nil
-}
-
-// ResetTickUpper resets all changes to the "tick_upper" field.
-func (m *PositionMutation) ResetTickUpper() {
-	m.tick_upper = nil
-}
-
-// SetLiquidity sets the "liquidity" field.
-func (m *PositionMutation) SetLiquidity(si *schema.BigInt) {
-	m.liquidity = &si
-}
-
-// Liquidity returns the value of the "liquidity" field in the mutation.
-func (m *PositionMutation) Liquidity() (r *schema.BigInt, exists bool) {
-	v := m.liquidity
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLiquidity returns the old "liquidity" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldLiquidity requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLiquidity: %w", err)
-	}
-	return oldValue.Liquidity, nil
-}
-
-// ResetLiquidity resets all changes to the "liquidity" field.
-func (m *PositionMutation) ResetLiquidity() {
-	m.liquidity = nil
-}
-
-// SetDepositedToken0 sets the "deposited_token0" field.
-func (m *PositionMutation) SetDepositedToken0(si *schema.BigInt) {
-	m.deposited_token0 = &si
-}
-
-// DepositedToken0 returns the value of the "deposited_token0" field in the mutation.
-func (m *PositionMutation) DepositedToken0() (r *schema.BigInt, exists bool) {
-	v := m.deposited_token0
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDepositedToken0 returns the old "deposited_token0" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldDepositedToken0(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDepositedToken0 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDepositedToken0 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDepositedToken0: %w", err)
-	}
-	return oldValue.DepositedToken0, nil
-}
-
-// ResetDepositedToken0 resets all changes to the "deposited_token0" field.
-func (m *PositionMutation) ResetDepositedToken0() {
-	m.deposited_token0 = nil
-}
-
-// SetDepositedToken1 sets the "deposited_token1" field.
-func (m *PositionMutation) SetDepositedToken1(si *schema.BigInt) {
-	m.deposited_token1 = &si
-}
-
-// DepositedToken1 returns the value of the "deposited_token1" field in the mutation.
-func (m *PositionMutation) DepositedToken1() (r *schema.BigInt, exists bool) {
-	v := m.deposited_token1
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDepositedToken1 returns the old "deposited_token1" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldDepositedToken1(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDepositedToken1 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDepositedToken1 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDepositedToken1: %w", err)
-	}
-	return oldValue.DepositedToken1, nil
-}
-
-// ResetDepositedToken1 resets all changes to the "deposited_token1" field.
-func (m *PositionMutation) ResetDepositedToken1() {
-	m.deposited_token1 = nil
-}
-
-// SetWithdrawnToken0 sets the "withdrawn_token0" field.
-func (m *PositionMutation) SetWithdrawnToken0(si *schema.BigInt) {
-	m.withdrawn_token0 = &si
-}
-
-// WithdrawnToken0 returns the value of the "withdrawn_token0" field in the mutation.
-func (m *PositionMutation) WithdrawnToken0() (r *schema.BigInt, exists bool) {
-	v := m.withdrawn_token0
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldWithdrawnToken0 returns the old "withdrawn_token0" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldWithdrawnToken0(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldWithdrawnToken0 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldWithdrawnToken0 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldWithdrawnToken0: %w", err)
-	}
-	return oldValue.WithdrawnToken0, nil
-}
-
-// ResetWithdrawnToken0 resets all changes to the "withdrawn_token0" field.
-func (m *PositionMutation) ResetWithdrawnToken0() {
-	m.withdrawn_token0 = nil
-}
-
-// SetWithdrawnToken1 sets the "withdrawn_token1" field.
-func (m *PositionMutation) SetWithdrawnToken1(si *schema.BigInt) {
-	m.withdrawn_token1 = &si
-}
-
-// WithdrawnToken1 returns the value of the "withdrawn_token1" field in the mutation.
-func (m *PositionMutation) WithdrawnToken1() (r *schema.BigInt, exists bool) {
-	v := m.withdrawn_token1
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldWithdrawnToken1 returns the old "withdrawn_token1" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldWithdrawnToken1(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldWithdrawnToken1 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldWithdrawnToken1 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldWithdrawnToken1: %w", err)
-	}
-	return oldValue.WithdrawnToken1, nil
-}
-
-// ResetWithdrawnToken1 resets all changes to the "withdrawn_token1" field.
-func (m *PositionMutation) ResetWithdrawnToken1() {
-	m.withdrawn_token1 = nil
-}
-
-// SetCollectedToken0 sets the "collected_token0" field.
-func (m *PositionMutation) SetCollectedToken0(si *schema.BigInt) {
-	m.collected_token0 = &si
-}
-
-// CollectedToken0 returns the value of the "collected_token0" field in the mutation.
-func (m *PositionMutation) CollectedToken0() (r *schema.BigInt, exists bool) {
-	v := m.collected_token0
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCollectedToken0 returns the old "collected_token0" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldCollectedToken0(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCollectedToken0 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCollectedToken0 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCollectedToken0: %w", err)
-	}
-	return oldValue.CollectedToken0, nil
-}
-
-// ResetCollectedToken0 resets all changes to the "collected_token0" field.
-func (m *PositionMutation) ResetCollectedToken0() {
-	m.collected_token0 = nil
-}
-
-// SetCollectedToken1 sets the "collected_token1" field.
-func (m *PositionMutation) SetCollectedToken1(si *schema.BigInt) {
-	m.collected_token1 = &si
-}
-
-// CollectedToken1 returns the value of the "collected_token1" field in the mutation.
-func (m *PositionMutation) CollectedToken1() (r *schema.BigInt, exists bool) {
-	v := m.collected_token1
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCollectedToken1 returns the old "collected_token1" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldCollectedToken1(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCollectedToken1 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCollectedToken1 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCollectedToken1: %w", err)
-	}
-	return oldValue.CollectedToken1, nil
-}
-
-// ResetCollectedToken1 resets all changes to the "collected_token1" field.
-func (m *PositionMutation) ResetCollectedToken1() {
-	m.collected_token1 = nil
-}
-
-// SetCollectedFeesToken0 sets the "collected_fees_token0" field.
-func (m *PositionMutation) SetCollectedFeesToken0(si *schema.BigInt) {
-	m.collected_fees_token0 = &si
-}
-
-// CollectedFeesToken0 returns the value of the "collected_fees_token0" field in the mutation.
-func (m *PositionMutation) CollectedFeesToken0() (r *schema.BigInt, exists bool) {
-	v := m.collected_fees_token0
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCollectedFeesToken0 returns the old "collected_fees_token0" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldCollectedFeesToken0(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCollectedFeesToken0 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCollectedFeesToken0 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCollectedFeesToken0: %w", err)
-	}
-	return oldValue.CollectedFeesToken0, nil
-}
-
-// ResetCollectedFeesToken0 resets all changes to the "collected_fees_token0" field.
-func (m *PositionMutation) ResetCollectedFeesToken0() {
-	m.collected_fees_token0 = nil
-}
-
-// SetCollectedFeesToken1 sets the "collected_fees_token1" field.
-func (m *PositionMutation) SetCollectedFeesToken1(si *schema.BigInt) {
-	m.collected_fees_token1 = &si
-}
-
-// CollectedFeesToken1 returns the value of the "collected_fees_token1" field in the mutation.
-func (m *PositionMutation) CollectedFeesToken1() (r *schema.BigInt, exists bool) {
-	v := m.collected_fees_token1
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCollectedFeesToken1 returns the old "collected_fees_token1" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldCollectedFeesToken1(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCollectedFeesToken1 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCollectedFeesToken1 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCollectedFeesToken1: %w", err)
-	}
-	return oldValue.CollectedFeesToken1, nil
-}
-
-// ResetCollectedFeesToken1 resets all changes to the "collected_fees_token1" field.
-func (m *PositionMutation) ResetCollectedFeesToken1() {
-	m.collected_fees_token1 = nil
-}
-
-// SetFeeGrowthInside0LastX128 sets the "fee_growth_inside0_lastX128" field.
-func (m *PositionMutation) SetFeeGrowthInside0LastX128(si *schema.BigInt) {
-	m.fee_growth_inside0_lastX128 = &si
-}
-
-// FeeGrowthInside0LastX128 returns the value of the "fee_growth_inside0_lastX128" field in the mutation.
-func (m *PositionMutation) FeeGrowthInside0LastX128() (r *schema.BigInt, exists bool) {
-	v := m.fee_growth_inside0_lastX128
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldFeeGrowthInside0LastX128 returns the old "fee_growth_inside0_lastX128" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldFeeGrowthInside0LastX128(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldFeeGrowthInside0LastX128 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldFeeGrowthInside0LastX128 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFeeGrowthInside0LastX128: %w", err)
-	}
-	return oldValue.FeeGrowthInside0LastX128, nil
-}
-
-// ResetFeeGrowthInside0LastX128 resets all changes to the "fee_growth_inside0_lastX128" field.
-func (m *PositionMutation) ResetFeeGrowthInside0LastX128() {
-	m.fee_growth_inside0_lastX128 = nil
-}
-
-// SetFeeGrowthInside1LastX128 sets the "fee_growth_inside1_lastX128" field.
-func (m *PositionMutation) SetFeeGrowthInside1LastX128(si *schema.BigInt) {
-	m.fee_growth_inside1_lastX128 = &si
-}
-
-// FeeGrowthInside1LastX128 returns the value of the "fee_growth_inside1_lastX128" field in the mutation.
-func (m *PositionMutation) FeeGrowthInside1LastX128() (r *schema.BigInt, exists bool) {
-	v := m.fee_growth_inside1_lastX128
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldFeeGrowthInside1LastX128 returns the old "fee_growth_inside1_lastX128" field's value of the Position entity.
-// If the Position object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PositionMutation) OldFeeGrowthInside1LastX128(ctx context.Context) (v *schema.BigInt, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldFeeGrowthInside1LastX128 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldFeeGrowthInside1LastX128 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFeeGrowthInside1LastX128: %w", err)
-	}
-	return oldValue.FeeGrowthInside1LastX128, nil
-}
-
-// ResetFeeGrowthInside1LastX128 resets all changes to the "fee_growth_inside1_lastX128" field.
-func (m *PositionMutation) ResetFeeGrowthInside1LastX128() {
-	m.fee_growth_inside1_lastX128 = nil
-}
-
-// Where appends a list predicates to the PositionMutation builder.
-func (m *PositionMutation) Where(ps ...predicate.Position) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// Op returns the operation name.
-func (m *PositionMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (Position).
-func (m *PositionMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *PositionMutation) Fields() []string {
-	fields := make([]string, 0, 18)
-	if m.token != nil {
-		fields = append(fields, position.FieldToken)
-	}
-	if m.owner != nil {
-		fields = append(fields, position.FieldOwner)
-	}
-	if m.pool != nil {
-		fields = append(fields, position.FieldPool)
-	}
-	if m.token0 != nil {
-		fields = append(fields, position.FieldToken0)
-	}
-	if m.token1 != nil {
-		fields = append(fields, position.FieldToken1)
-	}
-	if m.tick_lower != nil {
-		fields = append(fields, position.FieldTickLower)
-	}
-	if m.tick_upper != nil {
-		fields = append(fields, position.FieldTickUpper)
-	}
-	if m.liquidity != nil {
-		fields = append(fields, position.FieldLiquidity)
-	}
-	if m.deposited_token0 != nil {
-		fields = append(fields, position.FieldDepositedToken0)
-	}
-	if m.deposited_token1 != nil {
-		fields = append(fields, position.FieldDepositedToken1)
-	}
-	if m.withdrawn_token0 != nil {
-		fields = append(fields, position.FieldWithdrawnToken0)
-	}
-	if m.withdrawn_token1 != nil {
-		fields = append(fields, position.FieldWithdrawnToken1)
-	}
-	if m.collected_token0 != nil {
-		fields = append(fields, position.FieldCollectedToken0)
-	}
-	if m.collected_token1 != nil {
-		fields = append(fields, position.FieldCollectedToken1)
-	}
-	if m.collected_fees_token0 != nil {
-		fields = append(fields, position.FieldCollectedFeesToken0)
-	}
-	if m.collected_fees_token1 != nil {
-		fields = append(fields, position.FieldCollectedFeesToken1)
-	}
-	if m.fee_growth_inside0_lastX128 != nil {
-		fields = append(fields, position.FieldFeeGrowthInside0LastX128)
-	}
-	if m.fee_growth_inside1_lastX128 != nil {
-		fields = append(fields, position.FieldFeeGrowthInside1LastX128)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *PositionMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case position.FieldToken:
-		return m.Token()
-	case position.FieldOwner:
-		return m.Owner()
-	case position.FieldPool:
-		return m.Pool()
-	case position.FieldToken0:
-		return m.Token0()
-	case position.FieldToken1:
-		return m.Token1()
-	case position.FieldTickLower:
-		return m.TickLower()
-	case position.FieldTickUpper:
-		return m.TickUpper()
-	case position.FieldLiquidity:
-		return m.Liquidity()
-	case position.FieldDepositedToken0:
-		return m.DepositedToken0()
-	case position.FieldDepositedToken1:
-		return m.DepositedToken1()
-	case position.FieldWithdrawnToken0:
-		return m.WithdrawnToken0()
-	case position.FieldWithdrawnToken1:
-		return m.WithdrawnToken1()
-	case position.FieldCollectedToken0:
-		return m.CollectedToken0()
-	case position.FieldCollectedToken1:
-		return m.CollectedToken1()
-	case position.FieldCollectedFeesToken0:
-		return m.CollectedFeesToken0()
-	case position.FieldCollectedFeesToken1:
-		return m.CollectedFeesToken1()
-	case position.FieldFeeGrowthInside0LastX128:
-		return m.FeeGrowthInside0LastX128()
-	case position.FieldFeeGrowthInside1LastX128:
-		return m.FeeGrowthInside1LastX128()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *PositionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case position.FieldToken:
-		return m.OldToken(ctx)
-	case position.FieldOwner:
-		return m.OldOwner(ctx)
-	case position.FieldPool:
-		return m.OldPool(ctx)
-	case position.FieldToken0:
-		return m.OldToken0(ctx)
-	case position.FieldToken1:
-		return m.OldToken1(ctx)
-	case position.FieldTickLower:
-		return m.OldTickLower(ctx)
-	case position.FieldTickUpper:
-		return m.OldTickUpper(ctx)
-	case position.FieldLiquidity:
-		return m.OldLiquidity(ctx)
-	case position.FieldDepositedToken0:
-		return m.OldDepositedToken0(ctx)
-	case position.FieldDepositedToken1:
-		return m.OldDepositedToken1(ctx)
-	case position.FieldWithdrawnToken0:
-		return m.OldWithdrawnToken0(ctx)
-	case position.FieldWithdrawnToken1:
-		return m.OldWithdrawnToken1(ctx)
-	case position.FieldCollectedToken0:
-		return m.OldCollectedToken0(ctx)
-	case position.FieldCollectedToken1:
-		return m.OldCollectedToken1(ctx)
-	case position.FieldCollectedFeesToken0:
-		return m.OldCollectedFeesToken0(ctx)
-	case position.FieldCollectedFeesToken1:
-		return m.OldCollectedFeesToken1(ctx)
-	case position.FieldFeeGrowthInside0LastX128:
-		return m.OldFeeGrowthInside0LastX128(ctx)
-	case position.FieldFeeGrowthInside1LastX128:
-		return m.OldFeeGrowthInside1LastX128(ctx)
-	}
-	return nil, fmt.Errorf("unknown Position field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *PositionMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case position.FieldToken:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetToken(v)
-		return nil
-	case position.FieldOwner:
-		v, ok := value.([]byte)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOwner(v)
-		return nil
-	case position.FieldPool:
-		v, ok := value.([]byte)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPool(v)
-		return nil
-	case position.FieldToken0:
-		v, ok := value.([]byte)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetToken0(v)
-		return nil
-	case position.FieldToken1:
-		v, ok := value.([]byte)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetToken1(v)
-		return nil
-	case position.FieldTickLower:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTickLower(v)
-		return nil
-	case position.FieldTickUpper:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTickUpper(v)
-		return nil
-	case position.FieldLiquidity:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLiquidity(v)
-		return nil
-	case position.FieldDepositedToken0:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDepositedToken0(v)
-		return nil
-	case position.FieldDepositedToken1:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDepositedToken1(v)
-		return nil
-	case position.FieldWithdrawnToken0:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetWithdrawnToken0(v)
-		return nil
-	case position.FieldWithdrawnToken1:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetWithdrawnToken1(v)
-		return nil
-	case position.FieldCollectedToken0:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCollectedToken0(v)
-		return nil
-	case position.FieldCollectedToken1:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCollectedToken1(v)
-		return nil
-	case position.FieldCollectedFeesToken0:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCollectedFeesToken0(v)
-		return nil
-	case position.FieldCollectedFeesToken1:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCollectedFeesToken1(v)
-		return nil
-	case position.FieldFeeGrowthInside0LastX128:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetFeeGrowthInside0LastX128(v)
-		return nil
-	case position.FieldFeeGrowthInside1LastX128:
-		v, ok := value.(*schema.BigInt)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetFeeGrowthInside1LastX128(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Position field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *PositionMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *PositionMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *PositionMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Position numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *PositionMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *PositionMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *PositionMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Position nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *PositionMutation) ResetField(name string) error {
-	switch name {
-	case position.FieldToken:
-		m.ResetToken()
-		return nil
-	case position.FieldOwner:
-		m.ResetOwner()
-		return nil
-	case position.FieldPool:
-		m.ResetPool()
-		return nil
-	case position.FieldToken0:
-		m.ResetToken0()
-		return nil
-	case position.FieldToken1:
-		m.ResetToken1()
-		return nil
-	case position.FieldTickLower:
-		m.ResetTickLower()
-		return nil
-	case position.FieldTickUpper:
-		m.ResetTickUpper()
-		return nil
-	case position.FieldLiquidity:
-		m.ResetLiquidity()
-		return nil
-	case position.FieldDepositedToken0:
-		m.ResetDepositedToken0()
-		return nil
-	case position.FieldDepositedToken1:
-		m.ResetDepositedToken1()
-		return nil
-	case position.FieldWithdrawnToken0:
-		m.ResetWithdrawnToken0()
-		return nil
-	case position.FieldWithdrawnToken1:
-		m.ResetWithdrawnToken1()
-		return nil
-	case position.FieldCollectedToken0:
-		m.ResetCollectedToken0()
-		return nil
-	case position.FieldCollectedToken1:
-		m.ResetCollectedToken1()
-		return nil
-	case position.FieldCollectedFeesToken0:
-		m.ResetCollectedFeesToken0()
-		return nil
-	case position.FieldCollectedFeesToken1:
-		m.ResetCollectedFeesToken1()
-		return nil
-	case position.FieldFeeGrowthInside0LastX128:
-		m.ResetFeeGrowthInside0LastX128()
-		return nil
-	case position.FieldFeeGrowthInside1LastX128:
-		m.ResetFeeGrowthInside1LastX128()
-		return nil
-	}
-	return fmt.Errorf("unknown Position field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *PositionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *PositionMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *PositionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *PositionMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *PositionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *PositionMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *PositionMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Position unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *PositionMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Position edge %s", name)
-}
-
 // UniswapV3CollectMutation represents an operation that mutates the UniswapV3Collect nodes in the graph.
 type UniswapV3CollectMutation struct {
 	config
 	op            Op
 	typ           string
 	id            *int
-	token_id      **schema.BigInt
+	token_id      *string
 	recipient     *string
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
+	amount0       *string
+	amount1       *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -2782,12 +1515,12 @@ func (m *UniswapV3CollectMutation) ID() (id int, exists bool) {
 }
 
 // SetTokenID sets the "token_id" field.
-func (m *UniswapV3CollectMutation) SetTokenID(si *schema.BigInt) {
-	m.token_id = &si
+func (m *UniswapV3CollectMutation) SetTokenID(s string) {
+	m.token_id = &s
 }
 
 // TokenID returns the value of the "token_id" field in the mutation.
-func (m *UniswapV3CollectMutation) TokenID() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3CollectMutation) TokenID() (r string, exists bool) {
 	v := m.token_id
 	if v == nil {
 		return
@@ -2798,7 +1531,7 @@ func (m *UniswapV3CollectMutation) TokenID() (r *schema.BigInt, exists bool) {
 // OldTokenID returns the old "token_id" field's value of the UniswapV3Collect entity.
 // If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3CollectMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3CollectMutation) OldTokenID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
 	}
@@ -2854,12 +1587,12 @@ func (m *UniswapV3CollectMutation) ResetRecipient() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3CollectMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3CollectMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3CollectMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3CollectMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -2870,7 +1603,7 @@ func (m *UniswapV3CollectMutation) Amount0() (r *schema.BigInt, exists bool) {
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3Collect entity.
 // If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3CollectMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3CollectMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -2890,12 +1623,12 @@ func (m *UniswapV3CollectMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3CollectMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3CollectMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3CollectMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3CollectMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -2906,7 +1639,7 @@ func (m *UniswapV3CollectMutation) Amount1() (r *schema.BigInt, exists bool) {
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3Collect entity.
 // If the UniswapV3Collect object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3CollectMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3CollectMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -3039,7 +1772,7 @@ func (m *UniswapV3CollectMutation) OldField(ctx context.Context, name string) (e
 func (m *UniswapV3CollectMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case uniswapv3collect.FieldTokenID:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3053,14 +1786,14 @@ func (m *UniswapV3CollectMutation) SetField(name string, value ent.Value) error 
 		m.SetRecipient(v)
 		return nil
 	case uniswapv3collect.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3collect.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3213,10 +1946,10 @@ type UniswapV3DecreaseLiqudityMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	token_id      **schema.BigInt
-	liquidity     **schema.BigInt
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
+	token_id      *string
+	liquidity     *string
+	amount0       *string
+	amount1       *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -3305,12 +2038,12 @@ func (m *UniswapV3DecreaseLiqudityMutation) ID() (id int, exists bool) {
 }
 
 // SetTokenID sets the "token_id" field.
-func (m *UniswapV3DecreaseLiqudityMutation) SetTokenID(si *schema.BigInt) {
-	m.token_id = &si
+func (m *UniswapV3DecreaseLiqudityMutation) SetTokenID(s string) {
+	m.token_id = &s
 }
 
 // TokenID returns the value of the "token_id" field in the mutation.
-func (m *UniswapV3DecreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3DecreaseLiqudityMutation) TokenID() (r string, exists bool) {
 	v := m.token_id
 	if v == nil {
 		return
@@ -3321,7 +2054,7 @@ func (m *UniswapV3DecreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists 
 // OldTokenID returns the old "token_id" field's value of the UniswapV3DecreaseLiqudity entity.
 // If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3DecreaseLiqudityMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3DecreaseLiqudityMutation) OldTokenID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
 	}
@@ -3341,12 +2074,12 @@ func (m *UniswapV3DecreaseLiqudityMutation) ResetTokenID() {
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (m *UniswapV3DecreaseLiqudityMutation) SetLiquidity(si *schema.BigInt) {
-	m.liquidity = &si
+func (m *UniswapV3DecreaseLiqudityMutation) SetLiquidity(s string) {
+	m.liquidity = &s
 }
 
 // Liquidity returns the value of the "liquidity" field in the mutation.
-func (m *UniswapV3DecreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3DecreaseLiqudityMutation) Liquidity() (r string, exists bool) {
 	v := m.liquidity
 	if v == nil {
 		return
@@ -3357,7 +2090,7 @@ func (m *UniswapV3DecreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exist
 // OldLiquidity returns the old "liquidity" field's value of the UniswapV3DecreaseLiqudity entity.
 // If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3DecreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3DecreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
 	}
@@ -3377,12 +2110,12 @@ func (m *UniswapV3DecreaseLiqudityMutation) ResetLiquidity() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3DecreaseLiqudityMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3DecreaseLiqudityMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3DecreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3DecreaseLiqudityMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -3393,7 +2126,7 @@ func (m *UniswapV3DecreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists 
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3DecreaseLiqudity entity.
 // If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3DecreaseLiqudityMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3DecreaseLiqudityMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -3413,12 +2146,12 @@ func (m *UniswapV3DecreaseLiqudityMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3DecreaseLiqudityMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3DecreaseLiqudityMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3DecreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3DecreaseLiqudityMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -3429,7 +2162,7 @@ func (m *UniswapV3DecreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists 
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3DecreaseLiqudity entity.
 // If the UniswapV3DecreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3DecreaseLiqudityMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3DecreaseLiqudityMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -3562,28 +2295,28 @@ func (m *UniswapV3DecreaseLiqudityMutation) OldField(ctx context.Context, name s
 func (m *UniswapV3DecreaseLiqudityMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case uniswapv3decreaseliqudity.FieldTokenID:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTokenID(v)
 		return nil
 	case uniswapv3decreaseliqudity.FieldLiquidity:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLiquidity(v)
 		return nil
 	case uniswapv3decreaseliqudity.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3decreaseliqudity.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3736,10 +2469,10 @@ type UniswapV3IncreaseLiqudityMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	token_id      **schema.BigInt
-	liquidity     **schema.BigInt
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
+	token_id      *string
+	liquidity     *string
+	amount0       *string
+	amount1       *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -3828,12 +2561,12 @@ func (m *UniswapV3IncreaseLiqudityMutation) ID() (id int, exists bool) {
 }
 
 // SetTokenID sets the "token_id" field.
-func (m *UniswapV3IncreaseLiqudityMutation) SetTokenID(si *schema.BigInt) {
-	m.token_id = &si
+func (m *UniswapV3IncreaseLiqudityMutation) SetTokenID(s string) {
+	m.token_id = &s
 }
 
 // TokenID returns the value of the "token_id" field in the mutation.
-func (m *UniswapV3IncreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3IncreaseLiqudityMutation) TokenID() (r string, exists bool) {
 	v := m.token_id
 	if v == nil {
 		return
@@ -3844,7 +2577,7 @@ func (m *UniswapV3IncreaseLiqudityMutation) TokenID() (r *schema.BigInt, exists 
 // OldTokenID returns the old "token_id" field's value of the UniswapV3IncreaseLiqudity entity.
 // If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3IncreaseLiqudityMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3IncreaseLiqudityMutation) OldTokenID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
 	}
@@ -3864,12 +2597,12 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetTokenID() {
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (m *UniswapV3IncreaseLiqudityMutation) SetLiquidity(si *schema.BigInt) {
-	m.liquidity = &si
+func (m *UniswapV3IncreaseLiqudityMutation) SetLiquidity(s string) {
+	m.liquidity = &s
 }
 
 // Liquidity returns the value of the "liquidity" field in the mutation.
-func (m *UniswapV3IncreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3IncreaseLiqudityMutation) Liquidity() (r string, exists bool) {
 	v := m.liquidity
 	if v == nil {
 		return
@@ -3880,7 +2613,7 @@ func (m *UniswapV3IncreaseLiqudityMutation) Liquidity() (r *schema.BigInt, exist
 // OldLiquidity returns the old "liquidity" field's value of the UniswapV3IncreaseLiqudity entity.
 // If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3IncreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3IncreaseLiqudityMutation) OldLiquidity(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
 	}
@@ -3900,12 +2633,12 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetLiquidity() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3IncreaseLiqudityMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3IncreaseLiqudityMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3IncreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3IncreaseLiqudityMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -3916,7 +2649,7 @@ func (m *UniswapV3IncreaseLiqudityMutation) Amount0() (r *schema.BigInt, exists 
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3IncreaseLiqudity entity.
 // If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3IncreaseLiqudityMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3IncreaseLiqudityMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -3936,12 +2669,12 @@ func (m *UniswapV3IncreaseLiqudityMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3IncreaseLiqudityMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3IncreaseLiqudityMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3IncreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3IncreaseLiqudityMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -3952,7 +2685,7 @@ func (m *UniswapV3IncreaseLiqudityMutation) Amount1() (r *schema.BigInt, exists 
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3IncreaseLiqudity entity.
 // If the UniswapV3IncreaseLiqudity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3IncreaseLiqudityMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3IncreaseLiqudityMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -4085,28 +2818,28 @@ func (m *UniswapV3IncreaseLiqudityMutation) OldField(ctx context.Context, name s
 func (m *UniswapV3IncreaseLiqudityMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case uniswapv3increaseliqudity.FieldTokenID:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTokenID(v)
 		return nil
 	case uniswapv3increaseliqudity.FieldLiquidity:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLiquidity(v)
 		return nil
 	case uniswapv3increaseliqudity.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3increaseliqudity.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4260,11 +2993,11 @@ type UniswapV3PoolBurnMutation struct {
 	typ           string
 	id            *int
 	owner         *string
-	tick_lower    **schema.BigInt
-	tick_upper    **schema.BigInt
-	amount        **schema.BigInt
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
+	tick_lower    *string
+	tick_upper    *string
+	amount        *string
+	amount0       *string
+	amount1       *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -4389,12 +3122,12 @@ func (m *UniswapV3PoolBurnMutation) ResetOwner() {
 }
 
 // SetTickLower sets the "tick_lower" field.
-func (m *UniswapV3PoolBurnMutation) SetTickLower(si *schema.BigInt) {
-	m.tick_lower = &si
+func (m *UniswapV3PoolBurnMutation) SetTickLower(s string) {
+	m.tick_lower = &s
 }
 
 // TickLower returns the value of the "tick_lower" field in the mutation.
-func (m *UniswapV3PoolBurnMutation) TickLower() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolBurnMutation) TickLower() (r string, exists bool) {
 	v := m.tick_lower
 	if v == nil {
 		return
@@ -4405,7 +3138,7 @@ func (m *UniswapV3PoolBurnMutation) TickLower() (r *schema.BigInt, exists bool) 
 // OldTickLower returns the old "tick_lower" field's value of the UniswapV3PoolBurn entity.
 // If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolBurnMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolBurnMutation) OldTickLower(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTickLower is only allowed on UpdateOne operations")
 	}
@@ -4425,12 +3158,12 @@ func (m *UniswapV3PoolBurnMutation) ResetTickLower() {
 }
 
 // SetTickUpper sets the "tick_upper" field.
-func (m *UniswapV3PoolBurnMutation) SetTickUpper(si *schema.BigInt) {
-	m.tick_upper = &si
+func (m *UniswapV3PoolBurnMutation) SetTickUpper(s string) {
+	m.tick_upper = &s
 }
 
 // TickUpper returns the value of the "tick_upper" field in the mutation.
-func (m *UniswapV3PoolBurnMutation) TickUpper() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolBurnMutation) TickUpper() (r string, exists bool) {
 	v := m.tick_upper
 	if v == nil {
 		return
@@ -4441,7 +3174,7 @@ func (m *UniswapV3PoolBurnMutation) TickUpper() (r *schema.BigInt, exists bool) 
 // OldTickUpper returns the old "tick_upper" field's value of the UniswapV3PoolBurn entity.
 // If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolBurnMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolBurnMutation) OldTickUpper(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTickUpper is only allowed on UpdateOne operations")
 	}
@@ -4461,12 +3194,12 @@ func (m *UniswapV3PoolBurnMutation) ResetTickUpper() {
 }
 
 // SetAmount sets the "amount" field.
-func (m *UniswapV3PoolBurnMutation) SetAmount(si *schema.BigInt) {
-	m.amount = &si
+func (m *UniswapV3PoolBurnMutation) SetAmount(s string) {
+	m.amount = &s
 }
 
 // Amount returns the value of the "amount" field in the mutation.
-func (m *UniswapV3PoolBurnMutation) Amount() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolBurnMutation) Amount() (r string, exists bool) {
 	v := m.amount
 	if v == nil {
 		return
@@ -4477,7 +3210,7 @@ func (m *UniswapV3PoolBurnMutation) Amount() (r *schema.BigInt, exists bool) {
 // OldAmount returns the old "amount" field's value of the UniswapV3PoolBurn entity.
 // If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolBurnMutation) OldAmount(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolBurnMutation) OldAmount(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount is only allowed on UpdateOne operations")
 	}
@@ -4497,12 +3230,12 @@ func (m *UniswapV3PoolBurnMutation) ResetAmount() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3PoolBurnMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3PoolBurnMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3PoolBurnMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolBurnMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -4513,7 +3246,7 @@ func (m *UniswapV3PoolBurnMutation) Amount0() (r *schema.BigInt, exists bool) {
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolBurn entity.
 // If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolBurnMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolBurnMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -4533,12 +3266,12 @@ func (m *UniswapV3PoolBurnMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3PoolBurnMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3PoolBurnMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3PoolBurnMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolBurnMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -4549,7 +3282,7 @@ func (m *UniswapV3PoolBurnMutation) Amount1() (r *schema.BigInt, exists bool) {
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolBurn entity.
 // If the UniswapV3PoolBurn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolBurnMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolBurnMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -4703,35 +3436,35 @@ func (m *UniswapV3PoolBurnMutation) SetField(name string, value ent.Value) error
 		m.SetOwner(v)
 		return nil
 	case uniswapv3poolburn.FieldTickLower:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTickLower(v)
 		return nil
 	case uniswapv3poolburn.FieldTickUpper:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTickUpper(v)
 		return nil
 	case uniswapv3poolburn.FieldAmount:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount(v)
 		return nil
 	case uniswapv3poolburn.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3poolburn.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4892,8 +3625,8 @@ type UniswapV3PoolCreatedMutation struct {
 	id            *int
 	token0        *string
 	token1        *string
-	fee           **schema.BigInt
-	tick_spacing  **schema.BigInt
+	fee           *string
+	tick_spacing  *string
 	pool          *string
 	clearedFields map[string]struct{}
 	event         *int
@@ -5055,12 +3788,12 @@ func (m *UniswapV3PoolCreatedMutation) ResetToken1() {
 }
 
 // SetFee sets the "fee" field.
-func (m *UniswapV3PoolCreatedMutation) SetFee(si *schema.BigInt) {
-	m.fee = &si
+func (m *UniswapV3PoolCreatedMutation) SetFee(s string) {
+	m.fee = &s
 }
 
 // Fee returns the value of the "fee" field in the mutation.
-func (m *UniswapV3PoolCreatedMutation) Fee() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolCreatedMutation) Fee() (r string, exists bool) {
 	v := m.fee
 	if v == nil {
 		return
@@ -5071,7 +3804,7 @@ func (m *UniswapV3PoolCreatedMutation) Fee() (r *schema.BigInt, exists bool) {
 // OldFee returns the old "fee" field's value of the UniswapV3PoolCreated entity.
 // If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolCreatedMutation) OldFee(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolCreatedMutation) OldFee(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldFee is only allowed on UpdateOne operations")
 	}
@@ -5091,12 +3824,12 @@ func (m *UniswapV3PoolCreatedMutation) ResetFee() {
 }
 
 // SetTickSpacing sets the "tick_spacing" field.
-func (m *UniswapV3PoolCreatedMutation) SetTickSpacing(si *schema.BigInt) {
-	m.tick_spacing = &si
+func (m *UniswapV3PoolCreatedMutation) SetTickSpacing(s string) {
+	m.tick_spacing = &s
 }
 
 // TickSpacing returns the value of the "tick_spacing" field in the mutation.
-func (m *UniswapV3PoolCreatedMutation) TickSpacing() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolCreatedMutation) TickSpacing() (r string, exists bool) {
 	v := m.tick_spacing
 	if v == nil {
 		return
@@ -5107,7 +3840,7 @@ func (m *UniswapV3PoolCreatedMutation) TickSpacing() (r *schema.BigInt, exists b
 // OldTickSpacing returns the old "tick_spacing" field's value of the UniswapV3PoolCreated entity.
 // If the UniswapV3PoolCreated object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolCreatedMutation) OldTickSpacing(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolCreatedMutation) OldTickSpacing(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTickSpacing is only allowed on UpdateOne operations")
 	}
@@ -5297,14 +4030,14 @@ func (m *UniswapV3PoolCreatedMutation) SetField(name string, value ent.Value) er
 		m.SetToken1(v)
 		return nil
 	case uniswapv3poolcreated.FieldFee:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFee(v)
 		return nil
 	case uniswapv3poolcreated.FieldTickSpacing:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5469,10 +4202,10 @@ type UniswapV3PoolFlashMutation struct {
 	id            *int
 	sender        *string
 	recipient     *string
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
-	paid0         **schema.BigInt
-	paid1         **schema.BigInt
+	amount0       *string
+	amount1       *string
+	paid0         *string
+	paid1         *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -5633,12 +4366,12 @@ func (m *UniswapV3PoolFlashMutation) ResetRecipient() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3PoolFlashMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3PoolFlashMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3PoolFlashMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolFlashMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -5649,7 +4382,7 @@ func (m *UniswapV3PoolFlashMutation) Amount0() (r *schema.BigInt, exists bool) {
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolFlash entity.
 // If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolFlashMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolFlashMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -5669,12 +4402,12 @@ func (m *UniswapV3PoolFlashMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3PoolFlashMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3PoolFlashMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3PoolFlashMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolFlashMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -5685,7 +4418,7 @@ func (m *UniswapV3PoolFlashMutation) Amount1() (r *schema.BigInt, exists bool) {
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolFlash entity.
 // If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolFlashMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolFlashMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -5705,12 +4438,12 @@ func (m *UniswapV3PoolFlashMutation) ResetAmount1() {
 }
 
 // SetPaid0 sets the "paid0" field.
-func (m *UniswapV3PoolFlashMutation) SetPaid0(si *schema.BigInt) {
-	m.paid0 = &si
+func (m *UniswapV3PoolFlashMutation) SetPaid0(s string) {
+	m.paid0 = &s
 }
 
 // Paid0 returns the value of the "paid0" field in the mutation.
-func (m *UniswapV3PoolFlashMutation) Paid0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolFlashMutation) Paid0() (r string, exists bool) {
 	v := m.paid0
 	if v == nil {
 		return
@@ -5721,7 +4454,7 @@ func (m *UniswapV3PoolFlashMutation) Paid0() (r *schema.BigInt, exists bool) {
 // OldPaid0 returns the old "paid0" field's value of the UniswapV3PoolFlash entity.
 // If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolFlashMutation) OldPaid0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolFlashMutation) OldPaid0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPaid0 is only allowed on UpdateOne operations")
 	}
@@ -5741,12 +4474,12 @@ func (m *UniswapV3PoolFlashMutation) ResetPaid0() {
 }
 
 // SetPaid1 sets the "paid1" field.
-func (m *UniswapV3PoolFlashMutation) SetPaid1(si *schema.BigInt) {
-	m.paid1 = &si
+func (m *UniswapV3PoolFlashMutation) SetPaid1(s string) {
+	m.paid1 = &s
 }
 
 // Paid1 returns the value of the "paid1" field in the mutation.
-func (m *UniswapV3PoolFlashMutation) Paid1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolFlashMutation) Paid1() (r string, exists bool) {
 	v := m.paid1
 	if v == nil {
 		return
@@ -5757,7 +4490,7 @@ func (m *UniswapV3PoolFlashMutation) Paid1() (r *schema.BigInt, exists bool) {
 // OldPaid1 returns the old "paid1" field's value of the UniswapV3PoolFlash entity.
 // If the UniswapV3PoolFlash object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolFlashMutation) OldPaid1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolFlashMutation) OldPaid1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPaid1 is only allowed on UpdateOne operations")
 	}
@@ -5918,28 +4651,28 @@ func (m *UniswapV3PoolFlashMutation) SetField(name string, value ent.Value) erro
 		m.SetRecipient(v)
 		return nil
 	case uniswapv3poolflash.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3poolflash.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount1(v)
 		return nil
 	case uniswapv3poolflash.FieldPaid0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaid0(v)
 		return nil
 	case uniswapv3poolflash.FieldPaid1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -6098,8 +4831,8 @@ type UniswapV3PoolInitializeMutation struct {
 	op             Op
 	typ            string
 	id             *int
-	sqrt_price_x96 **schema.BigInt
-	tick           **schema.BigInt
+	sqrt_price_x96 *string
+	tick           *string
 	clearedFields  map[string]struct{}
 	event          *int
 	clearedevent   bool
@@ -6188,12 +4921,12 @@ func (m *UniswapV3PoolInitializeMutation) ID() (id int, exists bool) {
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (m *UniswapV3PoolInitializeMutation) SetSqrtPriceX96(si *schema.BigInt) {
-	m.sqrt_price_x96 = &si
+func (m *UniswapV3PoolInitializeMutation) SetSqrtPriceX96(s string) {
+	m.sqrt_price_x96 = &s
 }
 
 // SqrtPriceX96 returns the value of the "sqrt_price_x96" field in the mutation.
-func (m *UniswapV3PoolInitializeMutation) SqrtPriceX96() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolInitializeMutation) SqrtPriceX96() (r string, exists bool) {
 	v := m.sqrt_price_x96
 	if v == nil {
 		return
@@ -6204,7 +4937,7 @@ func (m *UniswapV3PoolInitializeMutation) SqrtPriceX96() (r *schema.BigInt, exis
 // OldSqrtPriceX96 returns the old "sqrt_price_x96" field's value of the UniswapV3PoolInitialize entity.
 // If the UniswapV3PoolInitialize object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolInitializeMutation) OldSqrtPriceX96(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolInitializeMutation) OldSqrtPriceX96(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldSqrtPriceX96 is only allowed on UpdateOne operations")
 	}
@@ -6224,12 +4957,12 @@ func (m *UniswapV3PoolInitializeMutation) ResetSqrtPriceX96() {
 }
 
 // SetTick sets the "tick" field.
-func (m *UniswapV3PoolInitializeMutation) SetTick(si *schema.BigInt) {
-	m.tick = &si
+func (m *UniswapV3PoolInitializeMutation) SetTick(s string) {
+	m.tick = &s
 }
 
 // Tick returns the value of the "tick" field in the mutation.
-func (m *UniswapV3PoolInitializeMutation) Tick() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolInitializeMutation) Tick() (r string, exists bool) {
 	v := m.tick
 	if v == nil {
 		return
@@ -6240,7 +4973,7 @@ func (m *UniswapV3PoolInitializeMutation) Tick() (r *schema.BigInt, exists bool)
 // OldTick returns the old "tick" field's value of the UniswapV3PoolInitialize entity.
 // If the UniswapV3PoolInitialize object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolInitializeMutation) OldTick(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolInitializeMutation) OldTick(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTick is only allowed on UpdateOne operations")
 	}
@@ -6359,14 +5092,14 @@ func (m *UniswapV3PoolInitializeMutation) OldField(ctx context.Context, name str
 func (m *UniswapV3PoolInitializeMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case uniswapv3poolinitialize.FieldSqrtPriceX96:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSqrtPriceX96(v)
 		return nil
 	case uniswapv3poolinitialize.FieldTick:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -6514,11 +5247,11 @@ type UniswapV3PoolMintMutation struct {
 	typ           string
 	id            *int
 	owner         *string
-	tick_lower    **schema.BigInt
-	tick_upper    **schema.BigInt
-	amount        **schema.BigInt
-	amount0       **schema.BigInt
-	amount1       **schema.BigInt
+	tick_lower    *string
+	tick_upper    *string
+	amount        *string
+	amount0       *string
+	amount1       *string
 	clearedFields map[string]struct{}
 	event         *int
 	clearedevent  bool
@@ -6643,12 +5376,12 @@ func (m *UniswapV3PoolMintMutation) ResetOwner() {
 }
 
 // SetTickLower sets the "tick_lower" field.
-func (m *UniswapV3PoolMintMutation) SetTickLower(si *schema.BigInt) {
-	m.tick_lower = &si
+func (m *UniswapV3PoolMintMutation) SetTickLower(s string) {
+	m.tick_lower = &s
 }
 
 // TickLower returns the value of the "tick_lower" field in the mutation.
-func (m *UniswapV3PoolMintMutation) TickLower() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolMintMutation) TickLower() (r string, exists bool) {
 	v := m.tick_lower
 	if v == nil {
 		return
@@ -6659,7 +5392,7 @@ func (m *UniswapV3PoolMintMutation) TickLower() (r *schema.BigInt, exists bool) 
 // OldTickLower returns the old "tick_lower" field's value of the UniswapV3PoolMint entity.
 // If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolMintMutation) OldTickLower(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolMintMutation) OldTickLower(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTickLower is only allowed on UpdateOne operations")
 	}
@@ -6679,12 +5412,12 @@ func (m *UniswapV3PoolMintMutation) ResetTickLower() {
 }
 
 // SetTickUpper sets the "tick_upper" field.
-func (m *UniswapV3PoolMintMutation) SetTickUpper(si *schema.BigInt) {
-	m.tick_upper = &si
+func (m *UniswapV3PoolMintMutation) SetTickUpper(s string) {
+	m.tick_upper = &s
 }
 
 // TickUpper returns the value of the "tick_upper" field in the mutation.
-func (m *UniswapV3PoolMintMutation) TickUpper() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolMintMutation) TickUpper() (r string, exists bool) {
 	v := m.tick_upper
 	if v == nil {
 		return
@@ -6695,7 +5428,7 @@ func (m *UniswapV3PoolMintMutation) TickUpper() (r *schema.BigInt, exists bool) 
 // OldTickUpper returns the old "tick_upper" field's value of the UniswapV3PoolMint entity.
 // If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolMintMutation) OldTickUpper(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolMintMutation) OldTickUpper(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTickUpper is only allowed on UpdateOne operations")
 	}
@@ -6715,12 +5448,12 @@ func (m *UniswapV3PoolMintMutation) ResetTickUpper() {
 }
 
 // SetAmount sets the "amount" field.
-func (m *UniswapV3PoolMintMutation) SetAmount(si *schema.BigInt) {
-	m.amount = &si
+func (m *UniswapV3PoolMintMutation) SetAmount(s string) {
+	m.amount = &s
 }
 
 // Amount returns the value of the "amount" field in the mutation.
-func (m *UniswapV3PoolMintMutation) Amount() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolMintMutation) Amount() (r string, exists bool) {
 	v := m.amount
 	if v == nil {
 		return
@@ -6731,7 +5464,7 @@ func (m *UniswapV3PoolMintMutation) Amount() (r *schema.BigInt, exists bool) {
 // OldAmount returns the old "amount" field's value of the UniswapV3PoolMint entity.
 // If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolMintMutation) OldAmount(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolMintMutation) OldAmount(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount is only allowed on UpdateOne operations")
 	}
@@ -6751,12 +5484,12 @@ func (m *UniswapV3PoolMintMutation) ResetAmount() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3PoolMintMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3PoolMintMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3PoolMintMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolMintMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -6767,7 +5500,7 @@ func (m *UniswapV3PoolMintMutation) Amount0() (r *schema.BigInt, exists bool) {
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolMint entity.
 // If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolMintMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolMintMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -6787,12 +5520,12 @@ func (m *UniswapV3PoolMintMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3PoolMintMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3PoolMintMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3PoolMintMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolMintMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -6803,7 +5536,7 @@ func (m *UniswapV3PoolMintMutation) Amount1() (r *schema.BigInt, exists bool) {
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolMint entity.
 // If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolMintMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolMintMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -6957,35 +5690,35 @@ func (m *UniswapV3PoolMintMutation) SetField(name string, value ent.Value) error
 		m.SetOwner(v)
 		return nil
 	case uniswapv3poolmint.FieldTickLower:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTickLower(v)
 		return nil
 	case uniswapv3poolmint.FieldTickUpper:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTickUpper(v)
 		return nil
 	case uniswapv3poolmint.FieldAmount:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount(v)
 		return nil
 	case uniswapv3poolmint.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3poolmint.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -7146,11 +5879,11 @@ type UniswapV3PoolSwapMutation struct {
 	id             *int
 	sender         *string
 	recipient      *string
-	amount0        **schema.BigInt
-	amount1        **schema.BigInt
-	sqrt_price_x96 **schema.BigInt
-	liquidity      **schema.BigInt
-	tick           **schema.BigInt
+	amount0        *string
+	amount1        *string
+	sqrt_price_x96 *string
+	liquidity      *string
+	tick           *string
 	clearedFields  map[string]struct{}
 	event          *int
 	clearedevent   bool
@@ -7311,12 +6044,12 @@ func (m *UniswapV3PoolSwapMutation) ResetRecipient() {
 }
 
 // SetAmount0 sets the "amount0" field.
-func (m *UniswapV3PoolSwapMutation) SetAmount0(si *schema.BigInt) {
-	m.amount0 = &si
+func (m *UniswapV3PoolSwapMutation) SetAmount0(s string) {
+	m.amount0 = &s
 }
 
 // Amount0 returns the value of the "amount0" field in the mutation.
-func (m *UniswapV3PoolSwapMutation) Amount0() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolSwapMutation) Amount0() (r string, exists bool) {
 	v := m.amount0
 	if v == nil {
 		return
@@ -7327,7 +6060,7 @@ func (m *UniswapV3PoolSwapMutation) Amount0() (r *schema.BigInt, exists bool) {
 // OldAmount0 returns the old "amount0" field's value of the UniswapV3PoolSwap entity.
 // If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolSwapMutation) OldAmount0(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolSwapMutation) OldAmount0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount0 is only allowed on UpdateOne operations")
 	}
@@ -7347,12 +6080,12 @@ func (m *UniswapV3PoolSwapMutation) ResetAmount0() {
 }
 
 // SetAmount1 sets the "amount1" field.
-func (m *UniswapV3PoolSwapMutation) SetAmount1(si *schema.BigInt) {
-	m.amount1 = &si
+func (m *UniswapV3PoolSwapMutation) SetAmount1(s string) {
+	m.amount1 = &s
 }
 
 // Amount1 returns the value of the "amount1" field in the mutation.
-func (m *UniswapV3PoolSwapMutation) Amount1() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolSwapMutation) Amount1() (r string, exists bool) {
 	v := m.amount1
 	if v == nil {
 		return
@@ -7363,7 +6096,7 @@ func (m *UniswapV3PoolSwapMutation) Amount1() (r *schema.BigInt, exists bool) {
 // OldAmount1 returns the old "amount1" field's value of the UniswapV3PoolSwap entity.
 // If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolSwapMutation) OldAmount1(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolSwapMutation) OldAmount1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAmount1 is only allowed on UpdateOne operations")
 	}
@@ -7383,12 +6116,12 @@ func (m *UniswapV3PoolSwapMutation) ResetAmount1() {
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (m *UniswapV3PoolSwapMutation) SetSqrtPriceX96(si *schema.BigInt) {
-	m.sqrt_price_x96 = &si
+func (m *UniswapV3PoolSwapMutation) SetSqrtPriceX96(s string) {
+	m.sqrt_price_x96 = &s
 }
 
 // SqrtPriceX96 returns the value of the "sqrt_price_x96" field in the mutation.
-func (m *UniswapV3PoolSwapMutation) SqrtPriceX96() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolSwapMutation) SqrtPriceX96() (r string, exists bool) {
 	v := m.sqrt_price_x96
 	if v == nil {
 		return
@@ -7399,7 +6132,7 @@ func (m *UniswapV3PoolSwapMutation) SqrtPriceX96() (r *schema.BigInt, exists boo
 // OldSqrtPriceX96 returns the old "sqrt_price_x96" field's value of the UniswapV3PoolSwap entity.
 // If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolSwapMutation) OldSqrtPriceX96(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolSwapMutation) OldSqrtPriceX96(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldSqrtPriceX96 is only allowed on UpdateOne operations")
 	}
@@ -7419,12 +6152,12 @@ func (m *UniswapV3PoolSwapMutation) ResetSqrtPriceX96() {
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (m *UniswapV3PoolSwapMutation) SetLiquidity(si *schema.BigInt) {
-	m.liquidity = &si
+func (m *UniswapV3PoolSwapMutation) SetLiquidity(s string) {
+	m.liquidity = &s
 }
 
 // Liquidity returns the value of the "liquidity" field in the mutation.
-func (m *UniswapV3PoolSwapMutation) Liquidity() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolSwapMutation) Liquidity() (r string, exists bool) {
 	v := m.liquidity
 	if v == nil {
 		return
@@ -7435,7 +6168,7 @@ func (m *UniswapV3PoolSwapMutation) Liquidity() (r *schema.BigInt, exists bool) 
 // OldLiquidity returns the old "liquidity" field's value of the UniswapV3PoolSwap entity.
 // If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolSwapMutation) OldLiquidity(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolSwapMutation) OldLiquidity(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLiquidity is only allowed on UpdateOne operations")
 	}
@@ -7455,12 +6188,12 @@ func (m *UniswapV3PoolSwapMutation) ResetLiquidity() {
 }
 
 // SetTick sets the "tick" field.
-func (m *UniswapV3PoolSwapMutation) SetTick(si *schema.BigInt) {
-	m.tick = &si
+func (m *UniswapV3PoolSwapMutation) SetTick(s string) {
+	m.tick = &s
 }
 
 // Tick returns the value of the "tick" field in the mutation.
-func (m *UniswapV3PoolSwapMutation) Tick() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3PoolSwapMutation) Tick() (r string, exists bool) {
 	v := m.tick
 	if v == nil {
 		return
@@ -7471,7 +6204,7 @@ func (m *UniswapV3PoolSwapMutation) Tick() (r *schema.BigInt, exists bool) {
 // OldTick returns the old "tick" field's value of the UniswapV3PoolSwap entity.
 // If the UniswapV3PoolSwap object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3PoolSwapMutation) OldTick(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3PoolSwapMutation) OldTick(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTick is only allowed on UpdateOne operations")
 	}
@@ -7639,35 +6372,35 @@ func (m *UniswapV3PoolSwapMutation) SetField(name string, value ent.Value) error
 		m.SetRecipient(v)
 		return nil
 	case uniswapv3poolswap.FieldAmount0:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount0(v)
 		return nil
 	case uniswapv3poolswap.FieldAmount1:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount1(v)
 		return nil
 	case uniswapv3poolswap.FieldSqrtPriceX96:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSqrtPriceX96(v)
 		return nil
 	case uniswapv3poolswap.FieldLiquidity:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLiquidity(v)
 		return nil
 	case uniswapv3poolswap.FieldTick:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -7829,7 +6562,7 @@ type UniswapV3TransferMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	token_id      **schema.BigInt
+	token_id      *string
 	from          *string
 	to            *string
 	clearedFields map[string]struct{}
@@ -7920,12 +6653,12 @@ func (m *UniswapV3TransferMutation) ID() (id int, exists bool) {
 }
 
 // SetTokenID sets the "token_id" field.
-func (m *UniswapV3TransferMutation) SetTokenID(si *schema.BigInt) {
-	m.token_id = &si
+func (m *UniswapV3TransferMutation) SetTokenID(s string) {
+	m.token_id = &s
 }
 
 // TokenID returns the value of the "token_id" field in the mutation.
-func (m *UniswapV3TransferMutation) TokenID() (r *schema.BigInt, exists bool) {
+func (m *UniswapV3TransferMutation) TokenID() (r string, exists bool) {
 	v := m.token_id
 	if v == nil {
 		return
@@ -7936,7 +6669,7 @@ func (m *UniswapV3TransferMutation) TokenID() (r *schema.BigInt, exists bool) {
 // OldTokenID returns the old "token_id" field's value of the UniswapV3Transfer entity.
 // If the UniswapV3Transfer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UniswapV3TransferMutation) OldTokenID(ctx context.Context) (v *schema.BigInt, err error) {
+func (m *UniswapV3TransferMutation) OldTokenID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTokenID is only allowed on UpdateOne operations")
 	}
@@ -8134,7 +6867,7 @@ func (m *UniswapV3TransferMutation) OldField(ctx context.Context, name string) (
 func (m *UniswapV3TransferMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case uniswapv3transfer.FieldTokenID:
-		v, ok := value.(*schema.BigInt)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

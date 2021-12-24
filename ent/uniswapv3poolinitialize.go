@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
 )
 
@@ -18,9 +17,9 @@ type UniswapV3PoolInitialize struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// SqrtPriceX96 holds the value of the "sqrt_price_x96" field.
-	SqrtPriceX96 *schema.BigInt `json:"sqrt_price_x96,omitempty"`
+	SqrtPriceX96 string `json:"sqrt_price_x96,omitempty"`
 	// Tick holds the value of the "tick" field.
-	Tick *schema.BigInt `json:"tick,omitempty"`
+	Tick string `json:"tick,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3PoolInitializeQuery when eager-loading is set.
 	Edges    UniswapV3PoolInitializeEdges `json:"edges"`
@@ -55,10 +54,10 @@ func (*UniswapV3PoolInitialize) scanValues(columns []string) ([]interface{}, err
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3poolinitialize.FieldSqrtPriceX96, uniswapv3poolinitialize.FieldTick:
-			values[i] = new(schema.BigInt)
 		case uniswapv3poolinitialize.FieldID:
 			values[i] = new(sql.NullInt64)
+		case uniswapv3poolinitialize.FieldSqrtPriceX96, uniswapv3poolinitialize.FieldTick:
+			values[i] = new(sql.NullString)
 		case uniswapv3poolinitialize.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
 		default:
@@ -83,16 +82,16 @@ func (uvi *UniswapV3PoolInitialize) assignValues(columns []string, values []inte
 			}
 			uvi.ID = int(value.Int64)
 		case uniswapv3poolinitialize.FieldSqrtPriceX96:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sqrt_price_x96", values[i])
-			} else if value != nil {
-				uvi.SqrtPriceX96 = value
+			} else if value.Valid {
+				uvi.SqrtPriceX96 = value.String
 			}
 		case uniswapv3poolinitialize.FieldTick:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tick", values[i])
-			} else if value != nil {
-				uvi.Tick = value
+			} else if value.Valid {
+				uvi.Tick = value.String
 			}
 		case uniswapv3poolinitialize.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -135,9 +134,9 @@ func (uvi *UniswapV3PoolInitialize) String() string {
 	builder.WriteString("UniswapV3PoolInitialize(")
 	builder.WriteString(fmt.Sprintf("id=%v", uvi.ID))
 	builder.WriteString(", sqrt_price_x96=")
-	builder.WriteString(fmt.Sprintf("%v", uvi.SqrtPriceX96))
+	builder.WriteString(uvi.SqrtPriceX96)
 	builder.WriteString(", tick=")
-	builder.WriteString(fmt.Sprintf("%v", uvi.Tick))
+	builder.WriteString(uvi.Tick)
 	builder.WriteByte(')')
 	return builder.String()
 }

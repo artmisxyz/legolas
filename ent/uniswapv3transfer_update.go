@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
@@ -30,8 +29,8 @@ func (uvu *UniswapV3TransferUpdate) Where(ps ...predicate.UniswapV3Transfer) *Un
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvu *UniswapV3TransferUpdate) SetTokenID(si *schema.BigInt) *UniswapV3TransferUpdate {
-	uvu.mutation.SetTokenID(si)
+func (uvu *UniswapV3TransferUpdate) SetTokenID(s string) *UniswapV3TransferUpdate {
+	uvu.mutation.SetTokenID(s)
 	return uvu
 }
 
@@ -131,16 +130,6 @@ func (uvu *UniswapV3TransferUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvu *UniswapV3TransferUpdate) check() error {
-	if v, ok := uvu.mutation.From(); ok {
-		if err := uniswapv3transfer.FromValidator(v); err != nil {
-			return &ValidationError{Name: "from", err: fmt.Errorf("ent: validator failed for field \"from\": %w", err)}
-		}
-	}
-	if v, ok := uvu.mutation.To(); ok {
-		if err := uniswapv3transfer.ToValidator(v); err != nil {
-			return &ValidationError{Name: "to", err: fmt.Errorf("ent: validator failed for field \"to\": %w", err)}
-		}
-	}
 	if _, ok := uvu.mutation.EventID(); uvu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -241,8 +230,8 @@ type UniswapV3TransferUpdateOne struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvuo *UniswapV3TransferUpdateOne) SetTokenID(si *schema.BigInt) *UniswapV3TransferUpdateOne {
-	uvuo.mutation.SetTokenID(si)
+func (uvuo *UniswapV3TransferUpdateOne) SetTokenID(s string) *UniswapV3TransferUpdateOne {
+	uvuo.mutation.SetTokenID(s)
 	return uvuo
 }
 
@@ -349,16 +338,6 @@ func (uvuo *UniswapV3TransferUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvuo *UniswapV3TransferUpdateOne) check() error {
-	if v, ok := uvuo.mutation.From(); ok {
-		if err := uniswapv3transfer.FromValidator(v); err != nil {
-			return &ValidationError{Name: "from", err: fmt.Errorf("ent: validator failed for field \"from\": %w", err)}
-		}
-	}
-	if v, ok := uvuo.mutation.To(); ok {
-		if err := uniswapv3transfer.ToValidator(v); err != nil {
-			return &ValidationError{Name: "to", err: fmt.Errorf("ent: validator failed for field \"to\": %w", err)}
-		}
-	}
 	if _, ok := uvuo.mutation.EventID(); uvuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

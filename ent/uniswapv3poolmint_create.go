@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolmint"
 )
 
@@ -28,32 +27,32 @@ func (uvmc *UniswapV3PoolMintCreate) SetOwner(s string) *UniswapV3PoolMintCreate
 }
 
 // SetTickLower sets the "tick_lower" field.
-func (uvmc *UniswapV3PoolMintCreate) SetTickLower(si *schema.BigInt) *UniswapV3PoolMintCreate {
-	uvmc.mutation.SetTickLower(si)
+func (uvmc *UniswapV3PoolMintCreate) SetTickLower(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetTickLower(s)
 	return uvmc
 }
 
 // SetTickUpper sets the "tick_upper" field.
-func (uvmc *UniswapV3PoolMintCreate) SetTickUpper(si *schema.BigInt) *UniswapV3PoolMintCreate {
-	uvmc.mutation.SetTickUpper(si)
+func (uvmc *UniswapV3PoolMintCreate) SetTickUpper(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetTickUpper(s)
 	return uvmc
 }
 
 // SetAmount sets the "amount" field.
-func (uvmc *UniswapV3PoolMintCreate) SetAmount(si *schema.BigInt) *UniswapV3PoolMintCreate {
-	uvmc.mutation.SetAmount(si)
+func (uvmc *UniswapV3PoolMintCreate) SetAmount(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetAmount(s)
 	return uvmc
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvmc *UniswapV3PoolMintCreate) SetAmount0(si *schema.BigInt) *UniswapV3PoolMintCreate {
-	uvmc.mutation.SetAmount0(si)
+func (uvmc *UniswapV3PoolMintCreate) SetAmount0(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetAmount0(s)
 	return uvmc
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvmc *UniswapV3PoolMintCreate) SetAmount1(si *schema.BigInt) *UniswapV3PoolMintCreate {
-	uvmc.mutation.SetAmount1(si)
+func (uvmc *UniswapV3PoolMintCreate) SetAmount1(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetAmount1(s)
 	return uvmc
 }
 
@@ -140,11 +139,6 @@ func (uvmc *UniswapV3PoolMintCreate) ExecX(ctx context.Context) {
 func (uvmc *UniswapV3PoolMintCreate) check() error {
 	if _, ok := uvmc.mutation.Owner(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "owner"`)}
-	}
-	if v, ok := uvmc.mutation.Owner(); ok {
-		if err := uniswapv3poolmint.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "owner": %w`, err)}
-		}
 	}
 	if _, ok := uvmc.mutation.TickLower(); !ok {
 		return &ValidationError{Name: "tick_lower", err: errors.New(`ent: missing required field "tick_lower"`)}

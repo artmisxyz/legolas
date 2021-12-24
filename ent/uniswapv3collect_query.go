@@ -291,7 +291,7 @@ func (uvq *UniswapV3CollectQuery) WithEvent(opts ...func(*EventQuery)) *UniswapV
 // Example:
 //
 //	var v []struct {
-//		TokenID *schema.BigInt `json:"token_id,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -318,7 +318,7 @@ func (uvq *UniswapV3CollectQuery) GroupBy(field string, fields ...string) *Unisw
 // Example:
 //
 //	var v []struct {
-//		TokenID *schema.BigInt `json:"token_id,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //	}
 //
 //	client.UniswapV3Collect.Query().

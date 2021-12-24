@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
 )
 
@@ -42,14 +41,14 @@ func (uvcu *UniswapV3PoolCreatedUpdate) SetToken1(s string) *UniswapV3PoolCreate
 }
 
 // SetFee sets the "fee" field.
-func (uvcu *UniswapV3PoolCreatedUpdate) SetFee(si *schema.BigInt) *UniswapV3PoolCreatedUpdate {
-	uvcu.mutation.SetFee(si)
+func (uvcu *UniswapV3PoolCreatedUpdate) SetFee(s string) *UniswapV3PoolCreatedUpdate {
+	uvcu.mutation.SetFee(s)
 	return uvcu
 }
 
 // SetTickSpacing sets the "tick_spacing" field.
-func (uvcu *UniswapV3PoolCreatedUpdate) SetTickSpacing(si *schema.BigInt) *UniswapV3PoolCreatedUpdate {
-	uvcu.mutation.SetTickSpacing(si)
+func (uvcu *UniswapV3PoolCreatedUpdate) SetTickSpacing(s string) *UniswapV3PoolCreatedUpdate {
+	uvcu.mutation.SetTickSpacing(s)
 	return uvcu
 }
 
@@ -143,21 +142,6 @@ func (uvcu *UniswapV3PoolCreatedUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvcu *UniswapV3PoolCreatedUpdate) check() error {
-	if v, ok := uvcu.mutation.Token0(); ok {
-		if err := uniswapv3poolcreated.Token0Validator(v); err != nil {
-			return &ValidationError{Name: "token0", err: fmt.Errorf("ent: validator failed for field \"token0\": %w", err)}
-		}
-	}
-	if v, ok := uvcu.mutation.Token1(); ok {
-		if err := uniswapv3poolcreated.Token1Validator(v); err != nil {
-			return &ValidationError{Name: "token1", err: fmt.Errorf("ent: validator failed for field \"token1\": %w", err)}
-		}
-	}
-	if v, ok := uvcu.mutation.Pool(); ok {
-		if err := uniswapv3poolcreated.PoolValidator(v); err != nil {
-			return &ValidationError{Name: "pool", err: fmt.Errorf("ent: validator failed for field \"pool\": %w", err)}
-		}
-	}
 	if _, ok := uvcu.mutation.EventID(); uvcu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -284,14 +268,14 @@ func (uvcuo *UniswapV3PoolCreatedUpdateOne) SetToken1(s string) *UniswapV3PoolCr
 }
 
 // SetFee sets the "fee" field.
-func (uvcuo *UniswapV3PoolCreatedUpdateOne) SetFee(si *schema.BigInt) *UniswapV3PoolCreatedUpdateOne {
-	uvcuo.mutation.SetFee(si)
+func (uvcuo *UniswapV3PoolCreatedUpdateOne) SetFee(s string) *UniswapV3PoolCreatedUpdateOne {
+	uvcuo.mutation.SetFee(s)
 	return uvcuo
 }
 
 // SetTickSpacing sets the "tick_spacing" field.
-func (uvcuo *UniswapV3PoolCreatedUpdateOne) SetTickSpacing(si *schema.BigInt) *UniswapV3PoolCreatedUpdateOne {
-	uvcuo.mutation.SetTickSpacing(si)
+func (uvcuo *UniswapV3PoolCreatedUpdateOne) SetTickSpacing(s string) *UniswapV3PoolCreatedUpdateOne {
+	uvcuo.mutation.SetTickSpacing(s)
 	return uvcuo
 }
 
@@ -392,21 +376,6 @@ func (uvcuo *UniswapV3PoolCreatedUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvcuo *UniswapV3PoolCreatedUpdateOne) check() error {
-	if v, ok := uvcuo.mutation.Token0(); ok {
-		if err := uniswapv3poolcreated.Token0Validator(v); err != nil {
-			return &ValidationError{Name: "token0", err: fmt.Errorf("ent: validator failed for field \"token0\": %w", err)}
-		}
-	}
-	if v, ok := uvcuo.mutation.Token1(); ok {
-		if err := uniswapv3poolcreated.Token1Validator(v); err != nil {
-			return &ValidationError{Name: "token1", err: fmt.Errorf("ent: validator failed for field \"token1\": %w", err)}
-		}
-	}
-	if v, ok := uvcuo.mutation.Pool(); ok {
-		if err := uniswapv3poolcreated.PoolValidator(v); err != nil {
-			return &ValidationError{Name: "pool", err: fmt.Errorf("ent: validator failed for field \"pool\": %w", err)}
-		}
-	}
 	if _, ok := uvcuo.mutation.EventID(); uvcuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

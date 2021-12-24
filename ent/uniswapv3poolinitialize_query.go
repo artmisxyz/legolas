@@ -291,7 +291,7 @@ func (uviq *UniswapV3PoolInitializeQuery) WithEvent(opts ...func(*EventQuery)) *
 // Example:
 //
 //	var v []struct {
-//		SqrtPriceX96 *schema.BigInt `json:"sqrt_price_x96,omitempty"`
+//		SqrtPriceX96 string `json:"sqrt_price_x96,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -318,7 +318,7 @@ func (uviq *UniswapV3PoolInitializeQuery) GroupBy(field string, fields ...string
 // Example:
 //
 //	var v []struct {
-//		SqrtPriceX96 *schema.BigInt `json:"sqrt_price_x96,omitempty"`
+//		SqrtPriceX96 string `json:"sqrt_price_x96,omitempty"`
 //	}
 //
 //	client.UniswapV3PoolInitialize.Query().

@@ -11,7 +11,7 @@ import (
 
 type poolCreatedEventHandler struct {
 	binding *factory.Factory
-	storage Storage
+	storage *Postgres
 }
 
 const (

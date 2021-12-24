@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
 )
 
@@ -30,26 +29,26 @@ func (uvlu *UniswapV3IncreaseLiqudityUpdate) Where(ps ...predicate.UniswapV3Incr
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetTokenID(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.SetTokenID(si)
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetTokenID(s string) *UniswapV3IncreaseLiqudityUpdate {
+	uvlu.mutation.SetTokenID(s)
 	return uvlu
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetLiquidity(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.SetLiquidity(si)
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetLiquidity(s string) *UniswapV3IncreaseLiqudityUpdate {
+	uvlu.mutation.SetLiquidity(s)
 	return uvlu
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetAmount0(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.SetAmount0(si)
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetAmount0(s string) *UniswapV3IncreaseLiqudityUpdate {
+	uvlu.mutation.SetAmount0(s)
 	return uvlu
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetAmount1(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdate {
-	uvlu.mutation.SetAmount1(si)
+func (uvlu *UniswapV3IncreaseLiqudityUpdate) SetAmount1(s string) *UniswapV3IncreaseLiqudityUpdate {
+	uvlu.mutation.SetAmount1(s)
 	return uvlu
 }
 
@@ -244,26 +243,26 @@ type UniswapV3IncreaseLiqudityUpdateOne struct {
 }
 
 // SetTokenID sets the "token_id" field.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetTokenID(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.SetTokenID(si)
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetTokenID(s string) *UniswapV3IncreaseLiqudityUpdateOne {
+	uvluo.mutation.SetTokenID(s)
 	return uvluo
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetLiquidity(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.SetLiquidity(si)
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetLiquidity(s string) *UniswapV3IncreaseLiqudityUpdateOne {
+	uvluo.mutation.SetLiquidity(s)
 	return uvluo
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetAmount0(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.SetAmount0(si)
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetAmount0(s string) *UniswapV3IncreaseLiqudityUpdateOne {
+	uvluo.mutation.SetAmount0(s)
 	return uvluo
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetAmount1(si *schema.BigInt) *UniswapV3IncreaseLiqudityUpdateOne {
-	uvluo.mutation.SetAmount1(si)
+func (uvluo *UniswapV3IncreaseLiqudityUpdateOne) SetAmount1(s string) *UniswapV3IncreaseLiqudityUpdateOne {
+	uvluo.mutation.SetAmount1(s)
 	return uvluo
 }
 

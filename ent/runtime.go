@@ -5,13 +5,6 @@ package ent
 import (
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/schema"
-	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
-	"github.com/artmisxyz/legolas/ent/uniswapv3poolburn"
-	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
-	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
-	"github.com/artmisxyz/legolas/ent/uniswapv3poolmint"
-	"github.com/artmisxyz/legolas/ent/uniswapv3poolswap"
-	"github.com/artmisxyz/legolas/ent/uniswapv3transfer"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -40,70 +33,4 @@ func init() {
 	eventDescBlockHash := eventFields[6].Descriptor()
 	// event.BlockHashValidator is a validator for the "block_hash" field. It is called by the builders before save.
 	event.BlockHashValidator = eventDescBlockHash.Validators[0].(func(string) error)
-	// eventDescHash is the schema descriptor for hash field.
-	eventDescHash := eventFields[8].Descriptor()
-	// event.HashValidator is a validator for the "hash" field. It is called by the builders before save.
-	event.HashValidator = eventDescHash.Validators[0].(func(string) error)
-	uniswapv3collectFields := schema.UniswapV3Collect{}.Fields()
-	_ = uniswapv3collectFields
-	// uniswapv3collectDescRecipient is the schema descriptor for recipient field.
-	uniswapv3collectDescRecipient := uniswapv3collectFields[1].Descriptor()
-	// uniswapv3collect.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
-	uniswapv3collect.RecipientValidator = uniswapv3collectDescRecipient.Validators[0].(func(string) error)
-	uniswapv3poolburnFields := schema.UniswapV3PoolBurn{}.Fields()
-	_ = uniswapv3poolburnFields
-	// uniswapv3poolburnDescOwner is the schema descriptor for owner field.
-	uniswapv3poolburnDescOwner := uniswapv3poolburnFields[0].Descriptor()
-	// uniswapv3poolburn.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	uniswapv3poolburn.OwnerValidator = uniswapv3poolburnDescOwner.Validators[0].(func(string) error)
-	uniswapv3poolcreatedFields := schema.UniswapV3PoolCreated{}.Fields()
-	_ = uniswapv3poolcreatedFields
-	// uniswapv3poolcreatedDescToken0 is the schema descriptor for token0 field.
-	uniswapv3poolcreatedDescToken0 := uniswapv3poolcreatedFields[0].Descriptor()
-	// uniswapv3poolcreated.Token0Validator is a validator for the "token0" field. It is called by the builders before save.
-	uniswapv3poolcreated.Token0Validator = uniswapv3poolcreatedDescToken0.Validators[0].(func(string) error)
-	// uniswapv3poolcreatedDescToken1 is the schema descriptor for token1 field.
-	uniswapv3poolcreatedDescToken1 := uniswapv3poolcreatedFields[1].Descriptor()
-	// uniswapv3poolcreated.Token1Validator is a validator for the "token1" field. It is called by the builders before save.
-	uniswapv3poolcreated.Token1Validator = uniswapv3poolcreatedDescToken1.Validators[0].(func(string) error)
-	// uniswapv3poolcreatedDescPool is the schema descriptor for pool field.
-	uniswapv3poolcreatedDescPool := uniswapv3poolcreatedFields[4].Descriptor()
-	// uniswapv3poolcreated.PoolValidator is a validator for the "pool" field. It is called by the builders before save.
-	uniswapv3poolcreated.PoolValidator = uniswapv3poolcreatedDescPool.Validators[0].(func(string) error)
-	uniswapv3poolflashFields := schema.UniswapV3PoolFlash{}.Fields()
-	_ = uniswapv3poolflashFields
-	// uniswapv3poolflashDescSender is the schema descriptor for sender field.
-	uniswapv3poolflashDescSender := uniswapv3poolflashFields[0].Descriptor()
-	// uniswapv3poolflash.SenderValidator is a validator for the "sender" field. It is called by the builders before save.
-	uniswapv3poolflash.SenderValidator = uniswapv3poolflashDescSender.Validators[0].(func(string) error)
-	// uniswapv3poolflashDescRecipient is the schema descriptor for recipient field.
-	uniswapv3poolflashDescRecipient := uniswapv3poolflashFields[1].Descriptor()
-	// uniswapv3poolflash.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
-	uniswapv3poolflash.RecipientValidator = uniswapv3poolflashDescRecipient.Validators[0].(func(string) error)
-	uniswapv3poolmintFields := schema.UniswapV3PoolMint{}.Fields()
-	_ = uniswapv3poolmintFields
-	// uniswapv3poolmintDescOwner is the schema descriptor for owner field.
-	uniswapv3poolmintDescOwner := uniswapv3poolmintFields[0].Descriptor()
-	// uniswapv3poolmint.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	uniswapv3poolmint.OwnerValidator = uniswapv3poolmintDescOwner.Validators[0].(func(string) error)
-	uniswapv3poolswapFields := schema.UniswapV3PoolSwap{}.Fields()
-	_ = uniswapv3poolswapFields
-	// uniswapv3poolswapDescSender is the schema descriptor for sender field.
-	uniswapv3poolswapDescSender := uniswapv3poolswapFields[0].Descriptor()
-	// uniswapv3poolswap.SenderValidator is a validator for the "sender" field. It is called by the builders before save.
-	uniswapv3poolswap.SenderValidator = uniswapv3poolswapDescSender.Validators[0].(func(string) error)
-	// uniswapv3poolswapDescRecipient is the schema descriptor for recipient field.
-	uniswapv3poolswapDescRecipient := uniswapv3poolswapFields[1].Descriptor()
-	// uniswapv3poolswap.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
-	uniswapv3poolswap.RecipientValidator = uniswapv3poolswapDescRecipient.Validators[0].(func(string) error)
-	uniswapv3transferFields := schema.UniswapV3Transfer{}.Fields()
-	_ = uniswapv3transferFields
-	// uniswapv3transferDescFrom is the schema descriptor for from field.
-	uniswapv3transferDescFrom := uniswapv3transferFields[1].Descriptor()
-	// uniswapv3transfer.FromValidator is a validator for the "from" field. It is called by the builders before save.
-	uniswapv3transfer.FromValidator = uniswapv3transferDescFrom.Validators[0].(func(string) error)
-	// uniswapv3transferDescTo is the schema descriptor for to field.
-	uniswapv3transferDescTo := uniswapv3transferFields[2].Descriptor()
-	// uniswapv3transfer.ToValidator is a validator for the "to" field. It is called by the builders before save.
-	uniswapv3transfer.ToValidator = uniswapv3transferDescTo.Validators[0].(func(string) error)
 }

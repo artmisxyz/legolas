@@ -16,7 +16,7 @@ const (
 
 type swapEventHandler struct {
 	binding *pool.Pool
-	state   Storage
+	state   *Postgres
 }
 
 func NewSwapEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {

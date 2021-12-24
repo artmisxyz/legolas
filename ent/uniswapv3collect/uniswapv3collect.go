@@ -57,8 +57,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
-	RecipientValidator func(string) error
-)

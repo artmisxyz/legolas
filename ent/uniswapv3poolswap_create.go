@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolswap"
 )
 
@@ -34,32 +33,32 @@ func (uvsc *UniswapV3PoolSwapCreate) SetRecipient(s string) *UniswapV3PoolSwapCr
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvsc *UniswapV3PoolSwapCreate) SetAmount0(si *schema.BigInt) *UniswapV3PoolSwapCreate {
-	uvsc.mutation.SetAmount0(si)
+func (uvsc *UniswapV3PoolSwapCreate) SetAmount0(s string) *UniswapV3PoolSwapCreate {
+	uvsc.mutation.SetAmount0(s)
 	return uvsc
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvsc *UniswapV3PoolSwapCreate) SetAmount1(si *schema.BigInt) *UniswapV3PoolSwapCreate {
-	uvsc.mutation.SetAmount1(si)
+func (uvsc *UniswapV3PoolSwapCreate) SetAmount1(s string) *UniswapV3PoolSwapCreate {
+	uvsc.mutation.SetAmount1(s)
 	return uvsc
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uvsc *UniswapV3PoolSwapCreate) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolSwapCreate {
-	uvsc.mutation.SetSqrtPriceX96(si)
+func (uvsc *UniswapV3PoolSwapCreate) SetSqrtPriceX96(s string) *UniswapV3PoolSwapCreate {
+	uvsc.mutation.SetSqrtPriceX96(s)
 	return uvsc
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvsc *UniswapV3PoolSwapCreate) SetLiquidity(si *schema.BigInt) *UniswapV3PoolSwapCreate {
-	uvsc.mutation.SetLiquidity(si)
+func (uvsc *UniswapV3PoolSwapCreate) SetLiquidity(s string) *UniswapV3PoolSwapCreate {
+	uvsc.mutation.SetLiquidity(s)
 	return uvsc
 }
 
 // SetTick sets the "tick" field.
-func (uvsc *UniswapV3PoolSwapCreate) SetTick(si *schema.BigInt) *UniswapV3PoolSwapCreate {
-	uvsc.mutation.SetTick(si)
+func (uvsc *UniswapV3PoolSwapCreate) SetTick(s string) *UniswapV3PoolSwapCreate {
+	uvsc.mutation.SetTick(s)
 	return uvsc
 }
 
@@ -147,18 +146,8 @@ func (uvsc *UniswapV3PoolSwapCreate) check() error {
 	if _, ok := uvsc.mutation.Sender(); !ok {
 		return &ValidationError{Name: "sender", err: errors.New(`ent: missing required field "sender"`)}
 	}
-	if v, ok := uvsc.mutation.Sender(); ok {
-		if err := uniswapv3poolswap.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "sender": %w`, err)}
-		}
-	}
 	if _, ok := uvsc.mutation.Recipient(); !ok {
 		return &ValidationError{Name: "recipient", err: errors.New(`ent: missing required field "recipient"`)}
-	}
-	if v, ok := uvsc.mutation.Recipient(); ok {
-		if err := uniswapv3poolswap.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf(`ent: validator failed for field "recipient": %w`, err)}
-		}
 	}
 	if _, ok := uvsc.mutation.Amount0(); !ok {
 		return &ValidationError{Name: "amount0", err: errors.New(`ent: missing required field "amount0"`)}

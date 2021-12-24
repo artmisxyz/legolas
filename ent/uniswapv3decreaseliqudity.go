@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 )
 
@@ -18,13 +17,13 @@ type UniswapV3DecreaseLiqudity struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// TokenID holds the value of the "token_id" field.
-	TokenID *schema.BigInt `json:"token_id,omitempty"`
+	TokenID string `json:"token_id,omitempty"`
 	// Liquidity holds the value of the "liquidity" field.
-	Liquidity *schema.BigInt `json:"liquidity,omitempty"`
+	Liquidity string `json:"liquidity,omitempty"`
 	// Amount0 holds the value of the "amount0" field.
-	Amount0 *schema.BigInt `json:"amount0,omitempty"`
+	Amount0 string `json:"amount0,omitempty"`
 	// Amount1 holds the value of the "amount1" field.
-	Amount1 *schema.BigInt `json:"amount1,omitempty"`
+	Amount1 string `json:"amount1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3DecreaseLiqudityQuery when eager-loading is set.
 	Edges    UniswapV3DecreaseLiqudityEdges `json:"edges"`
@@ -59,10 +58,10 @@ func (*UniswapV3DecreaseLiqudity) scanValues(columns []string) ([]interface{}, e
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3decreaseliqudity.FieldTokenID, uniswapv3decreaseliqudity.FieldLiquidity, uniswapv3decreaseliqudity.FieldAmount0, uniswapv3decreaseliqudity.FieldAmount1:
-			values[i] = new(schema.BigInt)
 		case uniswapv3decreaseliqudity.FieldID:
 			values[i] = new(sql.NullInt64)
+		case uniswapv3decreaseliqudity.FieldTokenID, uniswapv3decreaseliqudity.FieldLiquidity, uniswapv3decreaseliqudity.FieldAmount0, uniswapv3decreaseliqudity.FieldAmount1:
+			values[i] = new(sql.NullString)
 		case uniswapv3decreaseliqudity.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
 		default:
@@ -87,28 +86,28 @@ func (uvl *UniswapV3DecreaseLiqudity) assignValues(columns []string, values []in
 			}
 			uvl.ID = int(value.Int64)
 		case uniswapv3decreaseliqudity.FieldTokenID:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token_id", values[i])
-			} else if value != nil {
-				uvl.TokenID = value
+			} else if value.Valid {
+				uvl.TokenID = value.String
 			}
 		case uniswapv3decreaseliqudity.FieldLiquidity:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field liquidity", values[i])
-			} else if value != nil {
-				uvl.Liquidity = value
+			} else if value.Valid {
+				uvl.Liquidity = value.String
 			}
 		case uniswapv3decreaseliqudity.FieldAmount0:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount0", values[i])
-			} else if value != nil {
-				uvl.Amount0 = value
+			} else if value.Valid {
+				uvl.Amount0 = value.String
 			}
 		case uniswapv3decreaseliqudity.FieldAmount1:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount1", values[i])
-			} else if value != nil {
-				uvl.Amount1 = value
+			} else if value.Valid {
+				uvl.Amount1 = value.String
 			}
 		case uniswapv3decreaseliqudity.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -151,13 +150,13 @@ func (uvl *UniswapV3DecreaseLiqudity) String() string {
 	builder.WriteString("UniswapV3DecreaseLiqudity(")
 	builder.WriteString(fmt.Sprintf("id=%v", uvl.ID))
 	builder.WriteString(", token_id=")
-	builder.WriteString(fmt.Sprintf("%v", uvl.TokenID))
+	builder.WriteString(uvl.TokenID)
 	builder.WriteString(", liquidity=")
-	builder.WriteString(fmt.Sprintf("%v", uvl.Liquidity))
+	builder.WriteString(uvl.Liquidity)
 	builder.WriteString(", amount0=")
-	builder.WriteString(fmt.Sprintf("%v", uvl.Amount0))
+	builder.WriteString(uvl.Amount0)
 	builder.WriteString(", amount1=")
-	builder.WriteString(fmt.Sprintf("%v", uvl.Amount1))
+	builder.WriteString(uvl.Amount1)
 	builder.WriteByte(')')
 	return builder.String()
 }

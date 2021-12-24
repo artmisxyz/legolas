@@ -41,8 +41,6 @@ type Event struct {
 	BlockHash string `json:"block_hash,omitempty"`
 	// Index holds the value of the "index" field.
 	Index uint `json:"index,omitempty"`
-	// Hash holds the value of the "hash" field.
-	Hash string `json:"hash,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EventQuery when eager-loading is set.
 	Edges EventEdges `json:"edges"`
@@ -222,7 +220,7 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case event.FieldID, event.FieldBlockNumber, event.FieldTxIndex, event.FieldIndex:
 			values[i] = new(sql.NullInt64)
-		case event.FieldName, event.FieldSignature, event.FieldAddress, event.FieldTxHash, event.FieldBlockHash, event.FieldHash:
+		case event.FieldName, event.FieldSignature, event.FieldAddress, event.FieldTxHash, event.FieldBlockHash:
 			values[i] = new(sql.NullString)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Event", columns[i])
@@ -292,12 +290,6 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field index", values[i])
 			} else if value.Valid {
 				e.Index = uint(value.Int64)
-			}
-		case event.FieldHash:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field hash", values[i])
-			} else if value.Valid {
-				e.Hash = value.String
 			}
 		}
 	}
@@ -393,8 +385,6 @@ func (e *Event) String() string {
 	builder.WriteString(e.BlockHash)
 	builder.WriteString(", index=")
 	builder.WriteString(fmt.Sprintf("%v", e.Index))
-	builder.WriteString(", hash=")
-	builder.WriteString(e.Hash)
 	builder.WriteByte(')')
 	return builder.String()
 }

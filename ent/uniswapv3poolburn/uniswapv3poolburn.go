@@ -63,8 +63,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	OwnerValidator func(string) error
-)

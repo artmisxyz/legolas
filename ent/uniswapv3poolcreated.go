@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolcreated"
 )
 
@@ -22,9 +21,9 @@ type UniswapV3PoolCreated struct {
 	// Token1 holds the value of the "token1" field.
 	Token1 string `json:"token1,omitempty"`
 	// Fee holds the value of the "fee" field.
-	Fee *schema.BigInt `json:"fee,omitempty"`
+	Fee string `json:"fee,omitempty"`
 	// TickSpacing holds the value of the "tick_spacing" field.
-	TickSpacing *schema.BigInt `json:"tick_spacing,omitempty"`
+	TickSpacing string `json:"tick_spacing,omitempty"`
 	// Pool holds the value of the "pool" field.
 	Pool string `json:"pool,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -61,11 +60,9 @@ func (*UniswapV3PoolCreated) scanValues(columns []string) ([]interface{}, error)
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3poolcreated.FieldFee, uniswapv3poolcreated.FieldTickSpacing:
-			values[i] = new(schema.BigInt)
 		case uniswapv3poolcreated.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3poolcreated.FieldToken0, uniswapv3poolcreated.FieldToken1, uniswapv3poolcreated.FieldPool:
+		case uniswapv3poolcreated.FieldToken0, uniswapv3poolcreated.FieldToken1, uniswapv3poolcreated.FieldFee, uniswapv3poolcreated.FieldTickSpacing, uniswapv3poolcreated.FieldPool:
 			values[i] = new(sql.NullString)
 		case uniswapv3poolcreated.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -103,16 +100,16 @@ func (uvc *UniswapV3PoolCreated) assignValues(columns []string, values []interfa
 				uvc.Token1 = value.String
 			}
 		case uniswapv3poolcreated.FieldFee:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field fee", values[i])
-			} else if value != nil {
-				uvc.Fee = value
+			} else if value.Valid {
+				uvc.Fee = value.String
 			}
 		case uniswapv3poolcreated.FieldTickSpacing:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tick_spacing", values[i])
-			} else if value != nil {
-				uvc.TickSpacing = value
+			} else if value.Valid {
+				uvc.TickSpacing = value.String
 			}
 		case uniswapv3poolcreated.FieldPool:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -165,9 +162,9 @@ func (uvc *UniswapV3PoolCreated) String() string {
 	builder.WriteString(", token1=")
 	builder.WriteString(uvc.Token1)
 	builder.WriteString(", fee=")
-	builder.WriteString(fmt.Sprintf("%v", uvc.Fee))
+	builder.WriteString(uvc.Fee)
 	builder.WriteString(", tick_spacing=")
-	builder.WriteString(fmt.Sprintf("%v", uvc.TickSpacing))
+	builder.WriteString(uvc.TickSpacing)
 	builder.WriteString(", pool=")
 	builder.WriteString(uvc.Pool)
 	builder.WriteByte(')')

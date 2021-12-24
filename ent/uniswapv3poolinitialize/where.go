@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 )
 
 // ID filters vertices based on their ID field.
@@ -93,35 +92,35 @@ func IDLTE(id int) predicate.UniswapV3PoolInitialize {
 }
 
 // SqrtPriceX96 applies equality check predicate on the "sqrt_price_x96" field. It's identical to SqrtPriceX96EQ.
-func SqrtPriceX96(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // Tick applies equality check predicate on the "tick" field. It's identical to TickEQ.
-func Tick(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func Tick(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTick), v))
 	})
 }
 
 // SqrtPriceX96EQ applies the EQ predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96EQ(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96EQ(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96NEQ applies the NEQ predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96NEQ(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96NEQ(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96In applies the In predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96In(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96In(vs ...string) predicate.UniswapV3PoolInitialize {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -138,7 +137,7 @@ func SqrtPriceX96In(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
 }
 
 // SqrtPriceX96NotIn applies the NotIn predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96NotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96NotIn(vs ...string) predicate.UniswapV3PoolInitialize {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -155,89 +154,84 @@ func SqrtPriceX96NotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
 }
 
 // SqrtPriceX96GT applies the GT predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96GT(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96GT(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96GTE applies the GTE predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96GTE(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96GTE(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96LT applies the LT predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96LT(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96LT(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96LTE applies the LTE predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96LTE(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func SqrtPriceX96LTE(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96Contains applies the Contains predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96Contains(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func SqrtPriceX96Contains(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldSqrtPriceX96), vc))
+		s.Where(sql.Contains(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96HasPrefix applies the HasPrefix predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96HasPrefix(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func SqrtPriceX96HasPrefix(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldSqrtPriceX96), vc))
+		s.Where(sql.HasPrefix(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96HasSuffix applies the HasSuffix predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96HasSuffix(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func SqrtPriceX96HasSuffix(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldSqrtPriceX96), vc))
+		s.Where(sql.HasSuffix(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96EqualFold applies the EqualFold predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96EqualFold(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func SqrtPriceX96EqualFold(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldSqrtPriceX96), vc))
+		s.Where(sql.EqualFold(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // SqrtPriceX96ContainsFold applies the ContainsFold predicate on the "sqrt_price_x96" field.
-func SqrtPriceX96ContainsFold(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func SqrtPriceX96ContainsFold(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldSqrtPriceX96), vc))
+		s.Where(sql.ContainsFold(s.C(FieldSqrtPriceX96), v))
 	})
 }
 
 // TickEQ applies the EQ predicate on the "tick" field.
-func TickEQ(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickEQ(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTick), v))
 	})
 }
 
 // TickNEQ applies the NEQ predicate on the "tick" field.
-func TickNEQ(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickNEQ(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTick), v))
 	})
 }
 
 // TickIn applies the In predicate on the "tick" field.
-func TickIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickIn(vs ...string) predicate.UniswapV3PoolInitialize {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -254,7 +248,7 @@ func TickIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
 }
 
 // TickNotIn applies the NotIn predicate on the "tick" field.
-func TickNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickNotIn(vs ...string) predicate.UniswapV3PoolInitialize {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -271,70 +265,65 @@ func TickNotIn(vs ...*schema.BigInt) predicate.UniswapV3PoolInitialize {
 }
 
 // TickGT applies the GT predicate on the "tick" field.
-func TickGT(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickGT(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTick), v))
 	})
 }
 
 // TickGTE applies the GTE predicate on the "tick" field.
-func TickGTE(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickGTE(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTick), v))
 	})
 }
 
 // TickLT applies the LT predicate on the "tick" field.
-func TickLT(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickLT(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTick), v))
 	})
 }
 
 // TickLTE applies the LTE predicate on the "tick" field.
-func TickLTE(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
+func TickLTE(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTick), v))
 	})
 }
 
 // TickContains applies the Contains predicate on the "tick" field.
-func TickContains(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func TickContains(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTick), vc))
+		s.Where(sql.Contains(s.C(FieldTick), v))
 	})
 }
 
 // TickHasPrefix applies the HasPrefix predicate on the "tick" field.
-func TickHasPrefix(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func TickHasPrefix(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTick), vc))
+		s.Where(sql.HasPrefix(s.C(FieldTick), v))
 	})
 }
 
 // TickHasSuffix applies the HasSuffix predicate on the "tick" field.
-func TickHasSuffix(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func TickHasSuffix(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTick), vc))
+		s.Where(sql.HasSuffix(s.C(FieldTick), v))
 	})
 }
 
 // TickEqualFold applies the EqualFold predicate on the "tick" field.
-func TickEqualFold(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func TickEqualFold(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTick), vc))
+		s.Where(sql.EqualFold(s.C(FieldTick), v))
 	})
 }
 
 // TickContainsFold applies the ContainsFold predicate on the "tick" field.
-func TickContainsFold(v *schema.BigInt) predicate.UniswapV3PoolInitialize {
-	vc := v.String()
+func TickContainsFold(v string) predicate.UniswapV3PoolInitialize {
 	return predicate.UniswapV3PoolInitialize(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTick), vc))
+		s.Where(sql.ContainsFold(s.C(FieldTick), v))
 	})
 }
 

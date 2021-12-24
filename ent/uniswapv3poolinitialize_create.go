@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
 )
 
@@ -22,14 +21,14 @@ type UniswapV3PoolInitializeCreate struct {
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uvic *UniswapV3PoolInitializeCreate) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolInitializeCreate {
-	uvic.mutation.SetSqrtPriceX96(si)
+func (uvic *UniswapV3PoolInitializeCreate) SetSqrtPriceX96(s string) *UniswapV3PoolInitializeCreate {
+	uvic.mutation.SetSqrtPriceX96(s)
 	return uvic
 }
 
 // SetTick sets the "tick" field.
-func (uvic *UniswapV3PoolInitializeCreate) SetTick(si *schema.BigInt) *UniswapV3PoolInitializeCreate {
-	uvic.mutation.SetTick(si)
+func (uvic *UniswapV3PoolInitializeCreate) SetTick(s string) *UniswapV3PoolInitializeCreate {
+	uvic.mutation.SetTick(s)
 	return uvic
 }
 

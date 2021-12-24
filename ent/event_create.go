@@ -77,12 +77,6 @@ func (ec *EventCreate) SetIndex(u uint) *EventCreate {
 	return ec
 }
 
-// SetHash sets the "hash" field.
-func (ec *EventCreate) SetHash(s string) *EventCreate {
-	ec.mutation.SetHash(s)
-	return ec
-}
-
 // SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ID.
 func (ec *EventCreate) SetIncreaseLiquidityID(id int) *EventCreate {
 	ec.mutation.SetIncreaseLiquidityID(id)
@@ -392,14 +386,6 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.Index(); !ok {
 		return &ValidationError{Name: "index", err: errors.New(`ent: missing required field "index"`)}
 	}
-	if _, ok := ec.mutation.Hash(); !ok {
-		return &ValidationError{Name: "hash", err: errors.New(`ent: missing required field "hash"`)}
-	}
-	if v, ok := ec.mutation.Hash(); ok {
-		if err := event.HashValidator(v); err != nil {
-			return &ValidationError{Name: "hash", err: fmt.Errorf(`ent: validator failed for field "hash": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -490,14 +476,6 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			Column: event.FieldIndex,
 		})
 		_node.Index = value
-	}
-	if value, ok := ec.mutation.Hash(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: event.FieldHash,
-		})
-		_node.Hash = value
 	}
 	if nodes := ec.mutation.IncreaseLiquidityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

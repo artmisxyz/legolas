@@ -10,7 +10,6 @@ import (
 	"github.com/artmisxyz/legolas/ent/migrate"
 
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/position"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
@@ -34,8 +33,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
-	// Position is the client for interacting with the Position builders.
-	Position *PositionClient
 	// UniswapV3Collect is the client for interacting with the UniswapV3Collect builders.
 	UniswapV3Collect *UniswapV3CollectClient
 	// UniswapV3DecreaseLiqudity is the client for interacting with the UniswapV3DecreaseLiqudity builders.
@@ -56,6 +53,8 @@ type Client struct {
 	UniswapV3PoolSwap *UniswapV3PoolSwapClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
+	// additional fields for node api
+	tables tables
 }
 
 // NewClient creates a new client configured with the given options.
@@ -70,7 +69,6 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Event = NewEventClient(c.config)
-	c.Position = NewPositionClient(c.config)
 	c.UniswapV3Collect = NewUniswapV3CollectClient(c.config)
 	c.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(c.config)
 	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
@@ -115,7 +113,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                       ctx,
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
-		Position:                  NewPositionClient(cfg),
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
@@ -145,7 +142,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
-		Position:                  NewPositionClient(cfg),
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
@@ -186,7 +182,6 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Event.Use(hooks...)
-	c.Position.Use(hooks...)
 	c.UniswapV3Collect.Use(hooks...)
 	c.UniswapV3DecreaseLiqudity.Use(hooks...)
 	c.UniswapV3IncreaseLiqudity.Use(hooks...)
@@ -447,96 +442,6 @@ func (c *EventClient) QueryPoolFlash(e *Event) *UniswapV3PoolFlashQuery {
 // Hooks returns the client hooks.
 func (c *EventClient) Hooks() []Hook {
 	return c.hooks.Event
-}
-
-// PositionClient is a client for the Position schema.
-type PositionClient struct {
-	config
-}
-
-// NewPositionClient returns a client for the Position from the given config.
-func NewPositionClient(c config) *PositionClient {
-	return &PositionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `position.Hooks(f(g(h())))`.
-func (c *PositionClient) Use(hooks ...Hook) {
-	c.hooks.Position = append(c.hooks.Position, hooks...)
-}
-
-// Create returns a create builder for Position.
-func (c *PositionClient) Create() *PositionCreate {
-	mutation := newPositionMutation(c.config, OpCreate)
-	return &PositionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Position entities.
-func (c *PositionClient) CreateBulk(builders ...*PositionCreate) *PositionCreateBulk {
-	return &PositionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Position.
-func (c *PositionClient) Update() *PositionUpdate {
-	mutation := newPositionMutation(c.config, OpUpdate)
-	return &PositionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *PositionClient) UpdateOne(po *Position) *PositionUpdateOne {
-	mutation := newPositionMutation(c.config, OpUpdateOne, withPosition(po))
-	return &PositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *PositionClient) UpdateOneID(id int) *PositionUpdateOne {
-	mutation := newPositionMutation(c.config, OpUpdateOne, withPositionID(id))
-	return &PositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Position.
-func (c *PositionClient) Delete() *PositionDelete {
-	mutation := newPositionMutation(c.config, OpDelete)
-	return &PositionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *PositionClient) DeleteOne(po *Position) *PositionDeleteOne {
-	return c.DeleteOneID(po.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *PositionClient) DeleteOneID(id int) *PositionDeleteOne {
-	builder := c.Delete().Where(position.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &PositionDeleteOne{builder}
-}
-
-// Query returns a query builder for Position.
-func (c *PositionClient) Query() *PositionQuery {
-	return &PositionQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a Position entity by its id.
-func (c *PositionClient) Get(ctx context.Context, id int) (*Position, error) {
-	return c.Query().Where(position.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *PositionClient) GetX(ctx context.Context, id int) *Position {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *PositionClient) Hooks() []Hook {
-	return c.hooks.Position
 }
 
 // UniswapV3CollectClient is a client for the UniswapV3Collect schema.

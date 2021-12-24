@@ -22,19 +22,6 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
-// The PositionFunc type is an adapter to allow the use of ordinary
-// function as Position mutator.
-type PositionFunc func(context.Context, *ent.PositionMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f PositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.PositionMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PositionMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The UniswapV3CollectFunc type is an adapter to allow the use of ordinary
 // function as UniswapV3Collect mutator.
 type UniswapV3CollectFunc func(context.Context, *ent.UniswapV3CollectMutation) (ent.Value, error)

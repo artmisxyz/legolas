@@ -17,7 +17,7 @@ const (
 
 type flashEventHandler struct {
 	binding *pool.Pool
-	state   Storage
+	state   *Postgres
 }
 
 func NewFlashEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {

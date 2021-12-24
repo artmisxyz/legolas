@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolswap"
 )
 
@@ -42,32 +41,32 @@ func (uvsu *UniswapV3PoolSwapUpdate) SetRecipient(s string) *UniswapV3PoolSwapUp
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvsu *UniswapV3PoolSwapUpdate) SetAmount0(si *schema.BigInt) *UniswapV3PoolSwapUpdate {
-	uvsu.mutation.SetAmount0(si)
+func (uvsu *UniswapV3PoolSwapUpdate) SetAmount0(s string) *UniswapV3PoolSwapUpdate {
+	uvsu.mutation.SetAmount0(s)
 	return uvsu
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvsu *UniswapV3PoolSwapUpdate) SetAmount1(si *schema.BigInt) *UniswapV3PoolSwapUpdate {
-	uvsu.mutation.SetAmount1(si)
+func (uvsu *UniswapV3PoolSwapUpdate) SetAmount1(s string) *UniswapV3PoolSwapUpdate {
+	uvsu.mutation.SetAmount1(s)
 	return uvsu
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uvsu *UniswapV3PoolSwapUpdate) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolSwapUpdate {
-	uvsu.mutation.SetSqrtPriceX96(si)
+func (uvsu *UniswapV3PoolSwapUpdate) SetSqrtPriceX96(s string) *UniswapV3PoolSwapUpdate {
+	uvsu.mutation.SetSqrtPriceX96(s)
 	return uvsu
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvsu *UniswapV3PoolSwapUpdate) SetLiquidity(si *schema.BigInt) *UniswapV3PoolSwapUpdate {
-	uvsu.mutation.SetLiquidity(si)
+func (uvsu *UniswapV3PoolSwapUpdate) SetLiquidity(s string) *UniswapV3PoolSwapUpdate {
+	uvsu.mutation.SetLiquidity(s)
 	return uvsu
 }
 
 // SetTick sets the "tick" field.
-func (uvsu *UniswapV3PoolSwapUpdate) SetTick(si *schema.BigInt) *UniswapV3PoolSwapUpdate {
-	uvsu.mutation.SetTick(si)
+func (uvsu *UniswapV3PoolSwapUpdate) SetTick(s string) *UniswapV3PoolSwapUpdate {
+	uvsu.mutation.SetTick(s)
 	return uvsu
 }
 
@@ -155,16 +154,6 @@ func (uvsu *UniswapV3PoolSwapUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvsu *UniswapV3PoolSwapUpdate) check() error {
-	if v, ok := uvsu.mutation.Sender(); ok {
-		if err := uniswapv3poolswap.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf("ent: validator failed for field \"sender\": %w", err)}
-		}
-	}
-	if v, ok := uvsu.mutation.Recipient(); ok {
-		if err := uniswapv3poolswap.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvsu.mutation.EventID(); uvsu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -305,32 +294,32 @@ func (uvsuo *UniswapV3PoolSwapUpdateOne) SetRecipient(s string) *UniswapV3PoolSw
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvsuo *UniswapV3PoolSwapUpdateOne) SetAmount0(si *schema.BigInt) *UniswapV3PoolSwapUpdateOne {
-	uvsuo.mutation.SetAmount0(si)
+func (uvsuo *UniswapV3PoolSwapUpdateOne) SetAmount0(s string) *UniswapV3PoolSwapUpdateOne {
+	uvsuo.mutation.SetAmount0(s)
 	return uvsuo
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvsuo *UniswapV3PoolSwapUpdateOne) SetAmount1(si *schema.BigInt) *UniswapV3PoolSwapUpdateOne {
-	uvsuo.mutation.SetAmount1(si)
+func (uvsuo *UniswapV3PoolSwapUpdateOne) SetAmount1(s string) *UniswapV3PoolSwapUpdateOne {
+	uvsuo.mutation.SetAmount1(s)
 	return uvsuo
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uvsuo *UniswapV3PoolSwapUpdateOne) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolSwapUpdateOne {
-	uvsuo.mutation.SetSqrtPriceX96(si)
+func (uvsuo *UniswapV3PoolSwapUpdateOne) SetSqrtPriceX96(s string) *UniswapV3PoolSwapUpdateOne {
+	uvsuo.mutation.SetSqrtPriceX96(s)
 	return uvsuo
 }
 
 // SetLiquidity sets the "liquidity" field.
-func (uvsuo *UniswapV3PoolSwapUpdateOne) SetLiquidity(si *schema.BigInt) *UniswapV3PoolSwapUpdateOne {
-	uvsuo.mutation.SetLiquidity(si)
+func (uvsuo *UniswapV3PoolSwapUpdateOne) SetLiquidity(s string) *UniswapV3PoolSwapUpdateOne {
+	uvsuo.mutation.SetLiquidity(s)
 	return uvsuo
 }
 
 // SetTick sets the "tick" field.
-func (uvsuo *UniswapV3PoolSwapUpdateOne) SetTick(si *schema.BigInt) *UniswapV3PoolSwapUpdateOne {
-	uvsuo.mutation.SetTick(si)
+func (uvsuo *UniswapV3PoolSwapUpdateOne) SetTick(s string) *UniswapV3PoolSwapUpdateOne {
+	uvsuo.mutation.SetTick(s)
 	return uvsuo
 }
 
@@ -425,16 +414,6 @@ func (uvsuo *UniswapV3PoolSwapUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvsuo *UniswapV3PoolSwapUpdateOne) check() error {
-	if v, ok := uvsuo.mutation.Sender(); ok {
-		if err := uniswapv3poolswap.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf("ent: validator failed for field \"sender\": %w", err)}
-		}
-	}
-	if v, ok := uvsuo.mutation.Recipient(); ok {
-		if err := uniswapv3poolswap.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf("ent: validator failed for field \"recipient\": %w", err)}
-		}
-	}
 	if _, ok := uvsuo.mutation.EventID(); uvsuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

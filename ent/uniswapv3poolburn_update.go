@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolburn"
 )
 
@@ -36,32 +35,32 @@ func (uvbu *UniswapV3PoolBurnUpdate) SetOwner(s string) *UniswapV3PoolBurnUpdate
 }
 
 // SetTickLower sets the "tick_lower" field.
-func (uvbu *UniswapV3PoolBurnUpdate) SetTickLower(si *schema.BigInt) *UniswapV3PoolBurnUpdate {
-	uvbu.mutation.SetTickLower(si)
+func (uvbu *UniswapV3PoolBurnUpdate) SetTickLower(s string) *UniswapV3PoolBurnUpdate {
+	uvbu.mutation.SetTickLower(s)
 	return uvbu
 }
 
 // SetTickUpper sets the "tick_upper" field.
-func (uvbu *UniswapV3PoolBurnUpdate) SetTickUpper(si *schema.BigInt) *UniswapV3PoolBurnUpdate {
-	uvbu.mutation.SetTickUpper(si)
+func (uvbu *UniswapV3PoolBurnUpdate) SetTickUpper(s string) *UniswapV3PoolBurnUpdate {
+	uvbu.mutation.SetTickUpper(s)
 	return uvbu
 }
 
 // SetAmount sets the "amount" field.
-func (uvbu *UniswapV3PoolBurnUpdate) SetAmount(si *schema.BigInt) *UniswapV3PoolBurnUpdate {
-	uvbu.mutation.SetAmount(si)
+func (uvbu *UniswapV3PoolBurnUpdate) SetAmount(s string) *UniswapV3PoolBurnUpdate {
+	uvbu.mutation.SetAmount(s)
 	return uvbu
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvbu *UniswapV3PoolBurnUpdate) SetAmount0(si *schema.BigInt) *UniswapV3PoolBurnUpdate {
-	uvbu.mutation.SetAmount0(si)
+func (uvbu *UniswapV3PoolBurnUpdate) SetAmount0(s string) *UniswapV3PoolBurnUpdate {
+	uvbu.mutation.SetAmount0(s)
 	return uvbu
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvbu *UniswapV3PoolBurnUpdate) SetAmount1(si *schema.BigInt) *UniswapV3PoolBurnUpdate {
-	uvbu.mutation.SetAmount1(si)
+func (uvbu *UniswapV3PoolBurnUpdate) SetAmount1(s string) *UniswapV3PoolBurnUpdate {
+	uvbu.mutation.SetAmount1(s)
 	return uvbu
 }
 
@@ -149,11 +148,6 @@ func (uvbu *UniswapV3PoolBurnUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvbu *UniswapV3PoolBurnUpdate) check() error {
-	if v, ok := uvbu.mutation.Owner(); ok {
-		if err := uniswapv3poolburn.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf("ent: validator failed for field \"owner\": %w", err)}
-		}
-	}
 	if _, ok := uvbu.mutation.EventID(); uvbu.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}
@@ -281,32 +275,32 @@ func (uvbuo *UniswapV3PoolBurnUpdateOne) SetOwner(s string) *UniswapV3PoolBurnUp
 }
 
 // SetTickLower sets the "tick_lower" field.
-func (uvbuo *UniswapV3PoolBurnUpdateOne) SetTickLower(si *schema.BigInt) *UniswapV3PoolBurnUpdateOne {
-	uvbuo.mutation.SetTickLower(si)
+func (uvbuo *UniswapV3PoolBurnUpdateOne) SetTickLower(s string) *UniswapV3PoolBurnUpdateOne {
+	uvbuo.mutation.SetTickLower(s)
 	return uvbuo
 }
 
 // SetTickUpper sets the "tick_upper" field.
-func (uvbuo *UniswapV3PoolBurnUpdateOne) SetTickUpper(si *schema.BigInt) *UniswapV3PoolBurnUpdateOne {
-	uvbuo.mutation.SetTickUpper(si)
+func (uvbuo *UniswapV3PoolBurnUpdateOne) SetTickUpper(s string) *UniswapV3PoolBurnUpdateOne {
+	uvbuo.mutation.SetTickUpper(s)
 	return uvbuo
 }
 
 // SetAmount sets the "amount" field.
-func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount(si *schema.BigInt) *UniswapV3PoolBurnUpdateOne {
-	uvbuo.mutation.SetAmount(si)
+func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount(s string) *UniswapV3PoolBurnUpdateOne {
+	uvbuo.mutation.SetAmount(s)
 	return uvbuo
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount0(si *schema.BigInt) *UniswapV3PoolBurnUpdateOne {
-	uvbuo.mutation.SetAmount0(si)
+func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount0(s string) *UniswapV3PoolBurnUpdateOne {
+	uvbuo.mutation.SetAmount0(s)
 	return uvbuo
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount1(si *schema.BigInt) *UniswapV3PoolBurnUpdateOne {
-	uvbuo.mutation.SetAmount1(si)
+func (uvbuo *UniswapV3PoolBurnUpdateOne) SetAmount1(s string) *UniswapV3PoolBurnUpdateOne {
+	uvbuo.mutation.SetAmount1(s)
 	return uvbuo
 }
 
@@ -401,11 +395,6 @@ func (uvbuo *UniswapV3PoolBurnUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uvbuo *UniswapV3PoolBurnUpdateOne) check() error {
-	if v, ok := uvbuo.mutation.Owner(); ok {
-		if err := uniswapv3poolburn.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf("ent: validator failed for field \"owner\": %w", err)}
-		}
-	}
 	if _, ok := uvbuo.mutation.EventID(); uvbuo.mutation.EventCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"event\"")
 	}

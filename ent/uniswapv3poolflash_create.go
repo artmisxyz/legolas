@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolflash"
 )
 
@@ -34,26 +33,26 @@ func (uvfc *UniswapV3PoolFlashCreate) SetRecipient(s string) *UniswapV3PoolFlash
 }
 
 // SetAmount0 sets the "amount0" field.
-func (uvfc *UniswapV3PoolFlashCreate) SetAmount0(si *schema.BigInt) *UniswapV3PoolFlashCreate {
-	uvfc.mutation.SetAmount0(si)
+func (uvfc *UniswapV3PoolFlashCreate) SetAmount0(s string) *UniswapV3PoolFlashCreate {
+	uvfc.mutation.SetAmount0(s)
 	return uvfc
 }
 
 // SetAmount1 sets the "amount1" field.
-func (uvfc *UniswapV3PoolFlashCreate) SetAmount1(si *schema.BigInt) *UniswapV3PoolFlashCreate {
-	uvfc.mutation.SetAmount1(si)
+func (uvfc *UniswapV3PoolFlashCreate) SetAmount1(s string) *UniswapV3PoolFlashCreate {
+	uvfc.mutation.SetAmount1(s)
 	return uvfc
 }
 
 // SetPaid0 sets the "paid0" field.
-func (uvfc *UniswapV3PoolFlashCreate) SetPaid0(si *schema.BigInt) *UniswapV3PoolFlashCreate {
-	uvfc.mutation.SetPaid0(si)
+func (uvfc *UniswapV3PoolFlashCreate) SetPaid0(s string) *UniswapV3PoolFlashCreate {
+	uvfc.mutation.SetPaid0(s)
 	return uvfc
 }
 
 // SetPaid1 sets the "paid1" field.
-func (uvfc *UniswapV3PoolFlashCreate) SetPaid1(si *schema.BigInt) *UniswapV3PoolFlashCreate {
-	uvfc.mutation.SetPaid1(si)
+func (uvfc *UniswapV3PoolFlashCreate) SetPaid1(s string) *UniswapV3PoolFlashCreate {
+	uvfc.mutation.SetPaid1(s)
 	return uvfc
 }
 
@@ -141,18 +140,8 @@ func (uvfc *UniswapV3PoolFlashCreate) check() error {
 	if _, ok := uvfc.mutation.Sender(); !ok {
 		return &ValidationError{Name: "sender", err: errors.New(`ent: missing required field "sender"`)}
 	}
-	if v, ok := uvfc.mutation.Sender(); ok {
-		if err := uniswapv3poolflash.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "sender": %w`, err)}
-		}
-	}
 	if _, ok := uvfc.mutation.Recipient(); !ok {
 		return &ValidationError{Name: "recipient", err: errors.New(`ent: missing required field "recipient"`)}
-	}
-	if v, ok := uvfc.mutation.Recipient(); ok {
-		if err := uniswapv3poolflash.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf(`ent: validator failed for field "recipient": %w`, err)}
-		}
 	}
 	if _, ok := uvfc.mutation.Amount0(); !ok {
 		return &ValidationError{Name: "amount0", err: errors.New(`ent: missing required field "amount0"`)}

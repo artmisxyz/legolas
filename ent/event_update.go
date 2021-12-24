@@ -105,12 +105,6 @@ func (eu *EventUpdate) AddIndex(u uint) *EventUpdate {
 	return eu
 }
 
-// SetHash sets the "hash" field.
-func (eu *EventUpdate) SetHash(s string) *EventUpdate {
-	eu.mutation.SetHash(s)
-	return eu
-}
-
 // SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ID.
 func (eu *EventUpdate) SetIncreaseLiquidityID(id int) *EventUpdate {
 	eu.mutation.SetIncreaseLiquidityID(id)
@@ -453,11 +447,6 @@ func (eu *EventUpdate) check() error {
 			return &ValidationError{Name: "block_hash", err: fmt.Errorf("ent: validator failed for field \"block_hash\": %w", err)}
 		}
 	}
-	if v, ok := eu.mutation.Hash(); ok {
-		if err := event.HashValidator(v); err != nil {
-			return &ValidationError{Name: "hash", err: fmt.Errorf("ent: validator failed for field \"hash\": %w", err)}
-		}
-	}
 	return nil
 }
 
@@ -554,13 +543,6 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
-		})
-	}
-	if value, ok := eu.mutation.Hash(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: event.FieldHash,
 		})
 	}
 	if eu.mutation.IncreaseLiquidityCleared() {
@@ -1001,12 +983,6 @@ func (euo *EventUpdateOne) AddIndex(u uint) *EventUpdateOne {
 	return euo
 }
 
-// SetHash sets the "hash" field.
-func (euo *EventUpdateOne) SetHash(s string) *EventUpdateOne {
-	euo.mutation.SetHash(s)
-	return euo
-}
-
 // SetIncreaseLiquidityID sets the "increase_liquidity" edge to the UniswapV3IncreaseLiqudity entity by ID.
 func (euo *EventUpdateOne) SetIncreaseLiquidityID(id int) *EventUpdateOne {
 	euo.mutation.SetIncreaseLiquidityID(id)
@@ -1356,11 +1332,6 @@ func (euo *EventUpdateOne) check() error {
 			return &ValidationError{Name: "block_hash", err: fmt.Errorf("ent: validator failed for field \"block_hash\": %w", err)}
 		}
 	}
-	if v, ok := euo.mutation.Hash(); ok {
-		if err := event.HashValidator(v); err != nil {
-			return &ValidationError{Name: "hash", err: fmt.Errorf("ent: validator failed for field \"hash\": %w", err)}
-		}
-	}
 	return nil
 }
 
@@ -1474,13 +1445,6 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 			Type:   field.TypeUint,
 			Value:  value,
 			Column: event.FieldIndex,
-		})
-	}
-	if value, ok := euo.mutation.Hash(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: event.FieldHash,
 		})
 	}
 	if euo.mutation.IncreaseLiquidityCleared() {

@@ -17,7 +17,7 @@ const (
 
 type increaseLiquidityEventHandler struct {
 	binding *nftpositionmanager.Nftpositionmanager
-	storage Storage
+	storage *Postgres
 }
 
 func NewIncreaseLiquidityEventHandler(address common.Address, backend bind.ContractBackend, db *ent.Client) inspector.EventHandler {

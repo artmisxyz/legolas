@@ -2,8 +2,10 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // Event holds the schema definition for the Event entity.
@@ -22,7 +24,6 @@ func (Event) Fields() []ent.Field {
 		field.Uint("tx_index"),
 		field.String("block_hash").NotEmpty(),
 		field.Uint("index"),
-		field.String("hash").Unique().NotEmpty(),
 	}
 }
 
@@ -40,4 +41,18 @@ func (Event) Edges() []ent.Edge {
 		edge.To("pool_burn", UniswapV3PoolBurn.Type).Unique().StorageKey(edge.Column("event_id")),
 		edge.To("pool_flash", UniswapV3PoolFlash.Type).Unique().StorageKey(edge.Column("event_id")),
 	}
+}
+
+func (Event) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("address"),
+		index.Fields("index", "tx_hash").Unique(),
+	}
+}
+
+func BigIntField(name string) ent.Field {
+	return field.String(name).SchemaType(map[string]string{
+		dialect.SQLite:   "integer",
+		dialect.Postgres: "bigint",
+	})
 }

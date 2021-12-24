@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 )
 
@@ -18,13 +17,13 @@ type UniswapV3Collect struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// TokenID holds the value of the "token_id" field.
-	TokenID *schema.BigInt `json:"token_id,omitempty"`
+	TokenID string `json:"token_id,omitempty"`
 	// Recipient holds the value of the "recipient" field.
 	Recipient string `json:"recipient,omitempty"`
 	// Amount0 holds the value of the "amount0" field.
-	Amount0 *schema.BigInt `json:"amount0,omitempty"`
+	Amount0 string `json:"amount0,omitempty"`
 	// Amount1 holds the value of the "amount1" field.
-	Amount1 *schema.BigInt `json:"amount1,omitempty"`
+	Amount1 string `json:"amount1,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UniswapV3CollectQuery when eager-loading is set.
 	Edges    UniswapV3CollectEdges `json:"edges"`
@@ -59,11 +58,9 @@ func (*UniswapV3Collect) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case uniswapv3collect.FieldTokenID, uniswapv3collect.FieldAmount0, uniswapv3collect.FieldAmount1:
-			values[i] = new(schema.BigInt)
 		case uniswapv3collect.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3collect.FieldRecipient:
+		case uniswapv3collect.FieldTokenID, uniswapv3collect.FieldRecipient, uniswapv3collect.FieldAmount0, uniswapv3collect.FieldAmount1:
 			values[i] = new(sql.NullString)
 		case uniswapv3collect.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -89,10 +86,10 @@ func (uv *UniswapV3Collect) assignValues(columns []string, values []interface{})
 			}
 			uv.ID = int(value.Int64)
 		case uniswapv3collect.FieldTokenID:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token_id", values[i])
-			} else if value != nil {
-				uv.TokenID = value
+			} else if value.Valid {
+				uv.TokenID = value.String
 			}
 		case uniswapv3collect.FieldRecipient:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -101,16 +98,16 @@ func (uv *UniswapV3Collect) assignValues(columns []string, values []interface{})
 				uv.Recipient = value.String
 			}
 		case uniswapv3collect.FieldAmount0:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount0", values[i])
-			} else if value != nil {
-				uv.Amount0 = value
+			} else if value.Valid {
+				uv.Amount0 = value.String
 			}
 		case uniswapv3collect.FieldAmount1:
-			if value, ok := values[i].(*schema.BigInt); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount1", values[i])
-			} else if value != nil {
-				uv.Amount1 = value
+			} else if value.Valid {
+				uv.Amount1 = value.String
 			}
 		case uniswapv3collect.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -153,13 +150,13 @@ func (uv *UniswapV3Collect) String() string {
 	builder.WriteString("UniswapV3Collect(")
 	builder.WriteString(fmt.Sprintf("id=%v", uv.ID))
 	builder.WriteString(", token_id=")
-	builder.WriteString(fmt.Sprintf("%v", uv.TokenID))
+	builder.WriteString(uv.TokenID)
 	builder.WriteString(", recipient=")
 	builder.WriteString(uv.Recipient)
 	builder.WriteString(", amount0=")
-	builder.WriteString(fmt.Sprintf("%v", uv.Amount0))
+	builder.WriteString(uv.Amount0)
 	builder.WriteString(", amount1=")
-	builder.WriteString(fmt.Sprintf("%v", uv.Amount1))
+	builder.WriteString(uv.Amount1)
 	builder.WriteByte(')')
 	return builder.String()
 }

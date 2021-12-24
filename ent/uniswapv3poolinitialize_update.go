@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
-	"github.com/artmisxyz/legolas/ent/schema"
 	"github.com/artmisxyz/legolas/ent/uniswapv3poolinitialize"
 )
 
@@ -30,14 +29,14 @@ func (uviu *UniswapV3PoolInitializeUpdate) Where(ps ...predicate.UniswapV3PoolIn
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uviu *UniswapV3PoolInitializeUpdate) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolInitializeUpdate {
-	uviu.mutation.SetSqrtPriceX96(si)
+func (uviu *UniswapV3PoolInitializeUpdate) SetSqrtPriceX96(s string) *UniswapV3PoolInitializeUpdate {
+	uviu.mutation.SetSqrtPriceX96(s)
 	return uviu
 }
 
 // SetTick sets the "tick" field.
-func (uviu *UniswapV3PoolInitializeUpdate) SetTick(si *schema.BigInt) *UniswapV3PoolInitializeUpdate {
-	uviu.mutation.SetTick(si)
+func (uviu *UniswapV3PoolInitializeUpdate) SetTick(s string) *UniswapV3PoolInitializeUpdate {
+	uviu.mutation.SetTick(s)
 	return uviu
 }
 
@@ -218,14 +217,14 @@ type UniswapV3PoolInitializeUpdateOne struct {
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
-func (uviuo *UniswapV3PoolInitializeUpdateOne) SetSqrtPriceX96(si *schema.BigInt) *UniswapV3PoolInitializeUpdateOne {
-	uviuo.mutation.SetSqrtPriceX96(si)
+func (uviuo *UniswapV3PoolInitializeUpdateOne) SetSqrtPriceX96(s string) *UniswapV3PoolInitializeUpdateOne {
+	uviuo.mutation.SetSqrtPriceX96(s)
 	return uviuo
 }
 
 // SetTick sets the "tick" field.
-func (uviuo *UniswapV3PoolInitializeUpdateOne) SetTick(si *schema.BigInt) *UniswapV3PoolInitializeUpdateOne {
-	uviuo.mutation.SetTick(si)
+func (uviuo *UniswapV3PoolInitializeUpdateOne) SetTick(s string) *UniswapV3PoolInitializeUpdateOne {
+	uviuo.mutation.SetTick(s)
 	return uviuo
 }
 
