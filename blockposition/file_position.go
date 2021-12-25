@@ -1,4 +1,4 @@
-package position
+package blockposition
 
 import (
 	"bufio"
@@ -74,7 +74,7 @@ func (fp *filePosition) Create() error {
 		return err
 	}
 	defer fil.Close()
-	// new position file created, minimum position is returned
+	// new blockposition file created, minimum blockposition is returned
 	_, err = fil.Write([]byte(strconv.FormatUint(fp.minPos, 10)))
 	if err != nil {
 		return err
@@ -97,4 +97,12 @@ func (fp *filePosition) Read() (uint64, error) {
 		return 0, err
 	}
 	return blockI, nil
+}
+
+func (fp *filePosition) Incr() error {
+	curr, err := fp.Read()
+	if err != nil {
+		return err
+	}
+	return fp.Update(curr+1)
 }
