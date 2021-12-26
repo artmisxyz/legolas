@@ -1,6 +1,7 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/pool"
@@ -16,7 +17,7 @@ const (
 
 type mintEventHandler struct {
 	binding *pool.Pool
-	state   *Postgres
+	state   *database.Storage
 }
 
 func (m *mintEventHandler) Name() string {
@@ -42,6 +43,6 @@ func NewMintEventHandler(address common.Address, backend bind.ContractBackend, d
 	}
 	return &mintEventHandler{
 		binding: binding,
-		state:   NewPostgres(db),
+		state:   database.NewPostgresStorage(db),
 	}
 }

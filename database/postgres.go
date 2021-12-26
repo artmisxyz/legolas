@@ -1,7 +1,9 @@
-package uniswapv3
+package database
 
 import (
 	"context"
+	"fmt"
+	"github.com/artmisxyz/legolas/configs"
 	"github.com/artmisxyz/legolas/domain"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -10,20 +12,32 @@ import (
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
 	"github.com/artmisxyz/uniswap-go/pool"
 	"github.com/ethereum/go-ethereum/core/types"
+	_ "github.com/lib/pq"
 	"time"
 )
 
-type Postgres struct {
+type Storage struct {
 	db *ent.Client
 }
 
-func NewPostgres(db *ent.Client) *Postgres {
-	return &Postgres{
+const dataSourceSchema = "host=%s port=%d user=%s dbname=%s password=%s sslmode=%s"
+
+func NewPostgresClient(config configs.Config) (*ent.Client, error) {
+	dn := fmt.Sprintf(dataSourceSchema,
+		config.Database.Host, config.Database.Port, config.Database.User,
+		config.Database.DatabaseName, config.Database.Password, config.Database.SSLMode)
+
+	c, err := ent.Open(config.Database.Driver, dn)
+	return c, err
+}
+
+func NewPostgresStorage(db *ent.Client) *Storage {
+	return &Storage{
 		db: db,
 	}
 }
 
-func (m *Postgres) CreateEvent(t time.Time, name, signature string, log types.Log) (*domain.Event, error) {
+func (m *Storage) CreateEvent(t time.Time, name, signature string, log types.Log) (*domain.Event, error) {
 	e, err := m.db.Event.Create().
 		SetTime(t).
 		SetAddress(log.Address.String()).
@@ -41,7 +55,7 @@ func (m *Postgres) CreateEvent(t time.Time, name, signature string, log types.Lo
 	return entToDomainEvent(e), nil
 }
 
-func (m *Postgres) CreateIncreaseLiquidity(eventId int, il *nftpositionmanager.NftpositionmanagerIncreaseLiquidity) error {
+func (m *Storage) CreateIncreaseLiquidity(eventId int, il *nftpositionmanager.NftpositionmanagerIncreaseLiquidity) error {
 	_, err := m.db.UniswapV3IncreaseLiqudity.Create().
 		SetLiquidity(il.Liquidity.String()).
 		SetTokenID(il.TokenId.String()).
@@ -55,7 +69,7 @@ func (m *Postgres) CreateIncreaseLiquidity(eventId int, il *nftpositionmanager.N
 	return nil
 }
 
-func (m *Postgres) CreateDecreaseLiquidity(eventId int, dl *nftpositionmanager.NftpositionmanagerDecreaseLiquidity) error {
+func (m *Storage) CreateDecreaseLiquidity(eventId int, dl *nftpositionmanager.NftpositionmanagerDecreaseLiquidity) error {
 	_, err := m.db.UniswapV3DecreaseLiqudity.Create().
 		SetLiquidity(dl.Liquidity.String()).
 		SetTokenID(dl.TokenId.String()).
@@ -69,7 +83,7 @@ func (m *Postgres) CreateDecreaseLiquidity(eventId int, dl *nftpositionmanager.N
 	return nil
 }
 
-func (m *Postgres) CreateTransfer(eventId int, t *nftpositionmanager.NftpositionmanagerTransfer) error {
+func (m *Storage) CreateTransfer(eventId int, t *nftpositionmanager.NftpositionmanagerTransfer) error {
 	_, err := m.db.UniswapV3Transfer.Create().
 		SetTokenID(t.TokenId.String()).
 		SetFrom(t.From.String()).
@@ -82,7 +96,7 @@ func (m *Postgres) CreateTransfer(eventId int, t *nftpositionmanager.Nftposition
 	return nil
 }
 
-func (m *Postgres) CreateCollect(eventId int, c *nftpositionmanager.NftpositionmanagerCollect) error {
+func (m *Storage) CreateCollect(eventId int, c *nftpositionmanager.NftpositionmanagerCollect) error {
 	_, err := m.db.UniswapV3Collect.Create().
 		SetTokenID(c.TokenId.String()).
 		SetAmount0(c.Amount0.String()).
@@ -96,7 +110,7 @@ func (m *Postgres) CreateCollect(eventId int, c *nftpositionmanager.Nftpositionm
 	return nil
 }
 
-func (m *Postgres) CreatePoolCreated(eventId int, pc *factory.FactoryPoolCreated) error {
+func (m *Storage) CreatePoolCreated(eventId int, pc *factory.FactoryPoolCreated) error {
 	_, err := m.db.UniswapV3PoolCreated.Create().
 		SetPool(pc.Pool.String()).
 		SetToken0(pc.Token0.String()).
@@ -111,7 +125,7 @@ func (m *Postgres) CreatePoolCreated(eventId int, pc *factory.FactoryPoolCreated
 	return nil
 }
 
-func (m *Postgres) CreatePoolInitialize(eventId int, pi *pool.PoolInitialize) error {
+func (m *Storage) CreatePoolInitialize(eventId int, pi *pool.PoolInitialize) error {
 	_, err := m.db.UniswapV3PoolInitialize.Create().
 		SetTick(pi.Tick.String()).
 		SetSqrtPriceX96(pi.SqrtPriceX96.String()).
@@ -124,7 +138,7 @@ func (m *Postgres) CreatePoolInitialize(eventId int, pi *pool.PoolInitialize) er
 	return nil
 }
 
-func (m *Postgres) CreatePoolSwap(eventId int, ps *pool.PoolSwap) error {
+func (m *Storage) CreatePoolSwap(eventId int, ps *pool.PoolSwap) error {
 	_, err := m.db.UniswapV3PoolSwap.Create().
 		SetRecipient(ps.Recipient.String()).
 		SetSender(ps.Sender.String()).
@@ -142,7 +156,7 @@ func (m *Postgres) CreatePoolSwap(eventId int, ps *pool.PoolSwap) error {
 	return nil
 }
 
-func (m *Postgres) CreatePoolBurn(eventId int, pb *pool.PoolBurn) error {
+func (m *Storage) CreatePoolBurn(eventId int, pb *pool.PoolBurn) error {
 	_, err := m.db.UniswapV3PoolBurn.Create().
 		SetOwner(pb.Owner.String()).
 		SetTickLower(pb.TickLower.String()).
@@ -159,7 +173,7 @@ func (m *Postgres) CreatePoolBurn(eventId int, pb *pool.PoolBurn) error {
 	return nil
 }
 
-func (m *Postgres) CreatePoolFlash(eventId int, pf *pool.PoolFlash) error {
+func (m *Storage) CreatePoolFlash(eventId int, pf *pool.PoolFlash) error {
 	_, err := m.db.UniswapV3PoolFlash.Create().
 		SetRecipient(pf.Recipient.String()).
 		SetSender(pf.Sender.String()).
@@ -175,7 +189,7 @@ func (m *Postgres) CreatePoolFlash(eventId int, pf *pool.PoolFlash) error {
 	return nil
 }
 
-func (m *Postgres) CreatePoolMint(eventId int, pm *pool.PoolMint) error {
+func (m *Storage) CreatePoolMint(eventId int, pm *pool.PoolMint) error {
 	_, err := m.db.UniswapV3PoolMint.Create().
 		SetOwner(pm.Owner.String()).
 		SetTickLower(pm.TickLower.String()).
@@ -191,7 +205,7 @@ func (m *Postgres) CreatePoolMint(eventId int, pm *pool.PoolMint) error {
 	return nil
 }
 
-func (m *Postgres) GetEventsByBlockNumber(from, to uint64, cursor, limit int) ([]*domain.Event, error) {
+func (m *Storage) GetEventsByBlockNumber(from, to uint64, cursor, limit int) ([]*domain.Event, error) {
 	events, err := m.db.Event.
 		Query().
 		Where(event.BlockNumberGTE(from), event.BlockNumberLTE(to), event.IDGT(cursor)).
@@ -207,7 +221,7 @@ func (m *Postgres) GetEventsByBlockNumber(from, to uint64, cursor, limit int) ([
 	return ret, nil
 }
 
-func (m *Postgres) GetEvents(cursor, limit int) ([]*domain.Event, error) {
+func (m *Storage) GetEvents(cursor, limit int) ([]*domain.Event, error) {
 	events, err := m.db.Event.
 		Query().
 		Where(event.IDGT(cursor)).
@@ -223,7 +237,7 @@ func (m *Postgres) GetEvents(cursor, limit int) ([]*domain.Event, error) {
 	return ret, nil
 }
 
-func (m *Postgres) GetSwaps(cursor, limit int) ([]*domain.Swap, error) {
+func (m *Storage) GetSwaps(cursor, limit int) ([]*domain.Swap, error) {
 	swaps, err := m.db.UniswapV3PoolSwap.
 		Query().
 		Where(uniswapv3poolswap.IDGT(cursor)).

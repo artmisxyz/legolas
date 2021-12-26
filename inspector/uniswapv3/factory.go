@@ -1,6 +1,7 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/factory"
@@ -11,7 +12,7 @@ import (
 
 type poolCreatedEventHandler struct {
 	binding *factory.Factory
-	storage *Postgres
+	storage *database.Storage
 }
 
 const (
@@ -42,7 +43,7 @@ func NewPoolCreatedEventHandler(address common.Address, backend bind.ContractBac
 		panic(err)
 	}
 	return &poolCreatedEventHandler{
-		storage: NewPostgres(db),
+		storage: database.NewPostgresStorage(db),
 		binding: binding,
 	}
 }

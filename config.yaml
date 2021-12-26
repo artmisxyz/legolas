@@ -20,3 +20,11 @@ Contracts:
   TransparentUpgradeableProxy: "0xEe6A57eC80ea46401049E92587E52f5Ec1c24785"
   NonfungiblePositionManager: "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
   V3Migrator: "0xA5644E29708357803b5A882D272c41cC0dF92B34"
+Database:
+  Driver: "postgres"
+  Host: "127.0.0.1"
+  Port: 5432
+  User: "admin"
+  Password: "admin"
+  DatabaseName: "legolas"
+  SSLMode: "disable"

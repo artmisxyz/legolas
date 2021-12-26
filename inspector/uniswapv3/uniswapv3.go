@@ -2,6 +2,7 @@ package uniswapv3
 
 import (
 	"context"
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/ethereum/go-ethereum"
@@ -17,7 +18,7 @@ type uniswapV3 struct {
 	ws            *ethclient.Client
 	eventHandlers map[string]inspector.EventHandler
 	addresses     []common.Address
-	storage       *Postgres
+	storage       *database.Storage
 }
 
 const Name = "uniswapV3:inspector"
@@ -35,7 +36,7 @@ func NewUniswapV3(logger *zap.Logger, ws *ethclient.Client, db *ent.Client) insp
 		logger:        logger.Named(Name),
 		ws:            ws,
 		eventHandlers: make(map[string]inspector.EventHandler),
-		storage:       NewPostgres(db),
+		storage:       database.NewPostgresStorage(db),
 	}
 
 	v.registerAddress(common.HexToAddress(Factory))

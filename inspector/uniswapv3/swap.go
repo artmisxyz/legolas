@@ -1,6 +1,7 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/pool"
@@ -16,7 +17,7 @@ const (
 
 type swapEventHandler struct {
 	binding *pool.Pool
-	state   *Postgres
+	state   *database.Storage
 }
 
 func (s *swapEventHandler) Name() string {
@@ -42,6 +43,6 @@ func NewSwapEventHandler(address common.Address, backend bind.ContractBackend, d
 	}
 	return &swapEventHandler{
 		binding: binding,
-		state:   NewPostgres(db),
+		state:   database.NewPostgresStorage(db),
 	}
 }

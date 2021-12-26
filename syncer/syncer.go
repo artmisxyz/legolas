@@ -3,18 +3,18 @@ package syncer
 import (
 	"context"
 	"fmt"
+	"github.com/artmisxyz/legolas/blockposition"
+	"github.com/artmisxyz/legolas/configs"
 	"github.com/artmisxyz/legolas/connections"
-	"github.com/artmisxyz/legolas/ent"
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/legolas/inspector/uniswapv3"
-	"github.com/artmisxyz/legolas/position"
+	"github.com/artmisxyz/legolas/logger"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"math/big"
-	"os"
 )
 
 type Syncer struct {
@@ -24,7 +24,7 @@ type Syncer struct {
 
 	logger *zap.Logger
 
-	blockPositionHolder position.BlockPositionHolder
+	blockPositionHolder blockposition.BlockPositionHolder
 
 	currentBlockPosition uint64
 	lag                  uint64
@@ -32,32 +32,36 @@ type Syncer struct {
 	inspectors map[string]inspector.Inspector
 }
 
-func (s *Syncer) Init(conf Config) {
-	var lvl zapcore.Level
-	err := lvl.Set(conf.Logger.Level)
-	if err != nil {
-		fmt.Printf("cannot parse log level %s: %s", conf.Logger.Level, err)
-		lvl = zapcore.WarnLevel
-	}
-	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
-	defaultCore := zapcore.NewCore(encoder, zapcore.Lock(zapcore.AddSync(os.Stderr)), lvl)
-	cores := []zapcore.Core{
-		defaultCore,
-	}
-
-	core := zapcore.NewTee(cores...)
-	s.logger = zap.New(core, zap.AddCaller())
+func (s *Syncer) Init(conf configs.Config) {
+	l := logger.New(conf)
+	s.logger = l.Named("syncer")
 
 	s.ws = connections.RPC(conf.Node.Websocket)
 	s.rpc = connections.Websocket(conf.Node.RPC)
 
-	s.newHeaders, err = connections.CurrentBlockChan(s.logger, s.ws)
+	newHeaders, err := connections.CurrentBlockChan(s.logger, s.ws)
 	if err != nil {
 		panic(err)
 	}
-	s.blockPositionHolder = position.NewFilePosition(s.logger, conf.General.PosFileLocation, conf.General.PosFileName, conf.General.StartBlockNumber)
-	if ok := s.blockPositionHolder.Exists(); !ok {
-		err := s.blockPositionHolder.Create()
+	s.newHeaders = newHeaders
+
+	db, err := database.NewPostgresClient(conf)
+	if err != nil {
+		panic(err)
+	}
+
+	s.inspectors = make(map[string]inspector.Inspector)
+	univ3Inspector := uniswapv3.NewUniswapV3(s.logger, s.ws, db)
+	s.registerInspectors(univ3Inspector)
+
+	s.blockPositionHolder = blockposition.
+		NewRedisPositionHolder(
+			univ3Inspector.Name(),
+			conf.General.StartBlockNumber,
+			database.NewRedis(conf))
+	if !s.blockPositionHolder.Exists() {
+		fmt.Println("block position does not exist. creating a new one.")
+		err = s.blockPositionHolder.Create()
 		if err != nil {
 			panic(err)
 		}
@@ -66,28 +70,23 @@ func (s *Syncer) Init(conf Config) {
 	if err != nil {
 		panic(err)
 	}
-	if s.currentBlockPosition == 0 {
-		s.currentBlockPosition = conf.General.StartBlockNumber
-	}
-	s.inspectors = make(map[string]inspector.Inspector)
-	db, err := ent.Open("sqlite3", "file:db?cache=shared&_fk=1")
-	if err != nil {
-		s.logger.Fatal("failed opening connection to sqlite.", zap.Error(err))
-	}
-	// Run the auto migration tool.
-	if err := db.Schema.Create(context.Background()); err != nil {
-		s.logger.Fatal("failed creating schema resources", zap.Error(err))
-	}
-	s.registerInspectors(uniswapv3.NewUniswapV3(s.logger, s.ws, db))
+	fmt.Printf("starting from block: %d\n", s.currentBlockPosition)
 }
 
 func (s *Syncer) Sync() {
+	currentBlockPosition, err := s.blockPositionHolder.Read()
+	if err != nil {
+		s.logger.Error("error reading block position")
+		return
+	}
+	s.currentBlockPosition = currentBlockPosition
 	newHeader := <-s.newHeaders
 
 	for s.currentBlockPosition < newHeader.Number.Uint64()-s.lag {
 		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(s.currentBlockPosition)))
 		if err != nil {
 			s.logger.Error("error getting block", zap.Error(err))
+			break
 		}
 		s.logger.
 			Info("processing block",
@@ -99,7 +98,7 @@ func (s *Syncer) Sync() {
 			s.logger.Error("error inspecting block", zap.Uint64("block_number", s.currentBlockPosition), zap.Error(err))
 			break
 		}
-		err = s.blockPositionHolder.Update(s.currentBlockPosition)
+		err = s.blockPositionHolder.Incr()
 		if err != nil {
 			s.logger.Error("error updating block position file", zap.Error(err))
 			break

@@ -1,18 +1,19 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type Api struct {
-	storage *Postgres
+	storage *database.Storage
 }
 
 func NewApi(db *ent.Client) *Api {
 	return &Api{
-		storage: NewPostgres(db),
+		storage: database.NewPostgresStorage(db),
 	}
 }
 

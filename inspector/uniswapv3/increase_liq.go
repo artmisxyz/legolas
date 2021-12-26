@@ -2,6 +2,7 @@ package uniswapv3
 
 import (
 	"fmt"
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/nftpositionmanager"
@@ -17,7 +18,7 @@ const (
 
 type increaseLiquidityEventHandler struct {
 	binding *nftpositionmanager.Nftpositionmanager
-	storage *Postgres
+	storage *database.Storage
 }
 
 func (i *increaseLiquidityEventHandler) Name() string {
@@ -43,6 +44,6 @@ func NewIncreaseLiquidityEventHandler(address common.Address, backend bind.Contr
 	}
 	return &increaseLiquidityEventHandler{
 		binding: binding,
-		storage: NewPostgres(db),
+		storage: database.NewPostgresStorage(db),
 	}
 }

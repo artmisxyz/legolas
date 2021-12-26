@@ -1,6 +1,7 @@
 package uniswapv3
 
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/pool"
@@ -16,7 +17,7 @@ const (
 
 type burnEventHandler struct {
 	binding *pool.Pool
-	state   *Postgres
+	state   *database.Storage
 }
 
 func (b *burnEventHandler) Name() string {
@@ -41,7 +42,7 @@ func NewBurnEventHandler(address common.Address, backend bind.ContractBackend, d
 		panic(err)
 	}
 	return &burnEventHandler{
-		state:   NewPostgres(db),
+		state:   database.NewPostgresStorage(db),
 		binding: binding,
 	}
 }

@@ -2,6 +2,7 @@ package uniswapv3
 
 //
 import (
+	"github.com/artmisxyz/legolas/database"
 	"github.com/artmisxyz/legolas/ent"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/uniswap-go/pool"
@@ -17,7 +18,7 @@ const (
 
 type flashEventHandler struct {
 	binding *pool.Pool
-	state   *Postgres
+	state   *database.Storage
 }
 
 func (f *flashEventHandler) Name() string {
@@ -43,6 +44,6 @@ func NewFlashEventHandler(address common.Address, backend bind.ContractBackend, 
 	}
 	return &flashEventHandler{
 		binding: binding,
-		state:   NewPostgres(db),
+		state:   database.NewPostgresStorage(db),
 	}
 }
