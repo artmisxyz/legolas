@@ -1,12 +1,12 @@
-package syncer
+package main
 
 import (
 	"context"
 	"fmt"
-	"github.com/artmisxyz/legolas/blockposition"
 	"github.com/artmisxyz/legolas/configs"
-	"github.com/artmisxyz/legolas/connections"
 	"github.com/artmisxyz/legolas/database"
+	"github.com/artmisxyz/legolas/ent"
+	"github.com/artmisxyz/legolas/ent/syncer"
 	"github.com/artmisxyz/legolas/inspector"
 	"github.com/artmisxyz/legolas/inspector/uniswapv3"
 	"github.com/artmisxyz/legolas/logger"
@@ -18,31 +18,33 @@ import (
 )
 
 type Syncer struct {
-	id   int
+	name string
 	Head chan *types.Header
 	ws   *ethclient.Client
 	rpc  *ethclient.Client
 
 	logger *zap.Logger
 
-	blockPositionHolder blockposition.BlockPositionHolder
+	db *ent.Client
 
 	lag int
 
 	inspectors map[string]inspector.Inspector
+
+	current uint64
+	finish  uint64
 }
 
 func (s *Syncer) Init(id int, startBlock, finishBlock uint64, conf configs.Config) {
-	s.id = id
 	s.lag = conf.General.BlockLag
 
 	l := logger.New(conf)
-	s.logger = l.Named(fmt.Sprintf("syncer:%d", s.id))
+	s.logger = l.Named(fmt.Sprintf("syncer:%d", id))
 
-	s.ws = connections.RPC(conf.Node.Websocket)
-	s.rpc = connections.Websocket(conf.Node.RPC)
+	s.ws = Connect(conf.Node.Websocket)
+	s.rpc = Connect(conf.Node.RPC)
 
-	head, err := connections.CurrentBlockChan(s.logger, s.ws)
+	head, err := CurrentBlockChan(s.logger, s.ws)
 	if err != nil {
 		panic(err)
 	}
@@ -52,67 +54,62 @@ func (s *Syncer) Init(id int, startBlock, finishBlock uint64, conf configs.Confi
 	if err != nil {
 		panic(err)
 	}
+	s.db = db
 
 	s.inspectors = make(map[string]inspector.Inspector)
 	univ3Inspector := uniswapv3.NewUniswapV3(s.logger, s.ws, db)
 	s.registerInspectors(univ3Inspector)
 
-	s.blockPositionHolder = blockposition.
-		NewRedisPositionHolder(
-			univ3Inspector.Name()+fmt.Sprintf(":%d", id),
-			startBlock,
-			finishBlock,
-			database.NewRedis(conf))
-
-	if !s.blockPositionHolder.Exists() {
-		fmt.Printf("block position for syncer %d does not exist. creating a new one.", id)
-		err = s.blockPositionHolder.Create()
-		if err != nil {
+	s.name = univ3Inspector.Name() + fmt.Sprintf(":%d", id)
+	state, err := db.Syncer.Query().Where(syncer.NameEQ(s.name)).Only(context.Background())
+	if err != nil {
+		if !ent.IsNotFound(err) {
 			panic(err)
 		}
+		state = db.Syncer.
+			Create().
+			SetName(s.name).
+			SetStart(startBlock).
+			SetCurrent(startBlock).
+			SetFinish(finishBlock).
+			SaveX(context.Background())
 	}
+
+	s.current = state.Current
+	s.finish = state.Finish
+	fmt.Printf("%s from %d to %d\n", s.name, s.current, s.finish)
 }
 
 func (s *Syncer) Sync() {
-	startBlock, err := s.blockPositionHolder.Read(blockposition.Start)
-	if err != nil {
-		s.logger.Error("error reading block position")
-		return
-	}
-	finishBlock, err := s.blockPositionHolder.Read(blockposition.Finish)
-	if err != nil {
-		s.logger.Error("error reading block position")
-		return
-	}
-	fmt.Printf("syncer %d from %d to %d\n", s.id, startBlock, finishBlock)
 	lag := uint64(0)
-	if finishBlock == 0 {
+	if s.finish == 0 {
 		head := <-s.Head
-		finishBlock = head.Number.Uint64()
+		s.finish = head.Number.Uint64()
 		lag = uint64(s.lag)
 	}
 
-	for i := startBlock; i < finishBlock-lag; i++ {
-		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(i)))
+	for s.current < s.finish-lag {
+		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(s.current)))
 		if err != nil {
-			s.logger.Error("error getting block", zap.Uint64("block_number", i), zap.Error(err))
+			s.logger.Error("error getting block", zap.Uint64("block_number", s.current), zap.Error(err))
 			break
 		}
 		s.logger.
 			Info("processing block",
-				zap.Uint64("current_block", i),
-				zap.Float64("progress", float64(i)/float64(finishBlock)))
+				zap.Uint64("current_block", s.current),
+				zap.Float64("progress", float64(s.finish-s.current)/float64(s.finish)))
 
 		err = s.Inspect(block)
 		if err != nil {
-			s.logger.Error("error inspecting block", zap.Uint64("block_number", i), zap.Error(err))
+			s.logger.Error("error inspecting block", zap.Uint64("block_number", s.current), zap.Error(err))
 			break
 		}
-		err = s.blockPositionHolder.Update(i)
+		_, err = s.db.Syncer.Update().Where(syncer.NameEQ(s.name)).SetCurrent(s.current).Save(context.Background())
 		if err != nil {
-			s.logger.Error("error updating block position", zap.Error(err))
+			s.logger.Error("error updating syncer current block position")
 			break
 		}
+		s.current++
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -18,6 +19,7 @@ type UniswapV3TransferCreate struct {
 	config
 	mutation *UniswapV3TransferMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetTokenID sets the "token_id" field.
@@ -158,6 +160,7 @@ func (uvc *UniswapV3TransferCreate) createSpec() (*UniswapV3Transfer, *sqlgraph.
 			},
 		}
 	)
+	_spec.OnConflict = uvc.conflict
 	if value, ok := uvc.mutation.TokenID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -205,10 +208,215 @@ func (uvc *UniswapV3TransferCreate) createSpec() (*UniswapV3Transfer, *sqlgraph.
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3Transfer.Create().
+//		SetTokenID(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3TransferUpsert) {
+//			SetTokenID(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvc *UniswapV3TransferCreate) OnConflict(opts ...sql.ConflictOption) *UniswapV3TransferUpsertOne {
+	uvc.conflict = opts
+	return &UniswapV3TransferUpsertOne{
+		create: uvc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3Transfer.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvc *UniswapV3TransferCreate) OnConflictColumns(columns ...string) *UniswapV3TransferUpsertOne {
+	uvc.conflict = append(uvc.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3TransferUpsertOne{
+		create: uvc,
+	}
+}
+
+type (
+	// UniswapV3TransferUpsertOne is the builder for "upsert"-ing
+	//  one UniswapV3Transfer node.
+	UniswapV3TransferUpsertOne struct {
+		create *UniswapV3TransferCreate
+	}
+
+	// UniswapV3TransferUpsert is the "OnConflict" setter.
+	UniswapV3TransferUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3TransferUpsert) SetTokenID(v string) *UniswapV3TransferUpsert {
+	u.Set(uniswapv3transfer.FieldTokenID, v)
+	return u
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsert) UpdateTokenID() *UniswapV3TransferUpsert {
+	u.SetExcluded(uniswapv3transfer.FieldTokenID)
+	return u
+}
+
+// SetFrom sets the "from" field.
+func (u *UniswapV3TransferUpsert) SetFrom(v string) *UniswapV3TransferUpsert {
+	u.Set(uniswapv3transfer.FieldFrom, v)
+	return u
+}
+
+// UpdateFrom sets the "from" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsert) UpdateFrom() *UniswapV3TransferUpsert {
+	u.SetExcluded(uniswapv3transfer.FieldFrom)
+	return u
+}
+
+// SetTo sets the "to" field.
+func (u *UniswapV3TransferUpsert) SetTo(v string) *UniswapV3TransferUpsert {
+	u.Set(uniswapv3transfer.FieldTo, v)
+	return u
+}
+
+// UpdateTo sets the "to" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsert) UpdateTo() *UniswapV3TransferUpsert {
+	u.SetExcluded(uniswapv3transfer.FieldTo)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3Transfer.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3TransferUpsertOne) UpdateNewValues() *UniswapV3TransferUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//  client.UniswapV3Transfer.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
+func (u *UniswapV3TransferUpsertOne) Ignore() *UniswapV3TransferUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3TransferUpsertOne) DoNothing() *UniswapV3TransferUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3TransferCreate.OnConflict
+// documentation for more info.
+func (u *UniswapV3TransferUpsertOne) Update(set func(*UniswapV3TransferUpsert)) *UniswapV3TransferUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3TransferUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3TransferUpsertOne) SetTokenID(v string) *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetTokenID(v)
+	})
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertOne) UpdateTokenID() *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateTokenID()
+	})
+}
+
+// SetFrom sets the "from" field.
+func (u *UniswapV3TransferUpsertOne) SetFrom(v string) *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetFrom(v)
+	})
+}
+
+// UpdateFrom sets the "from" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertOne) UpdateFrom() *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateFrom()
+	})
+}
+
+// SetTo sets the "to" field.
+func (u *UniswapV3TransferUpsertOne) SetTo(v string) *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetTo(v)
+	})
+}
+
+// UpdateTo sets the "to" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertOne) UpdateTo() *UniswapV3TransferUpsertOne {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateTo()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3TransferUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3TransferCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3TransferUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UniswapV3TransferUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UniswapV3TransferUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UniswapV3TransferCreateBulk is the builder for creating many UniswapV3Transfer entities in bulk.
 type UniswapV3TransferCreateBulk struct {
 	config
 	builders []*UniswapV3TransferCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UniswapV3Transfer entities in the database.
@@ -234,6 +442,7 @@ func (uvcb *UniswapV3TransferCreateBulk) Save(ctx context.Context) ([]*UniswapV3
 					_, err = mutators[i+1].Mutate(root, uvcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = uvcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, uvcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -284,6 +493,153 @@ func (uvcb *UniswapV3TransferCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (uvcb *UniswapV3TransferCreateBulk) ExecX(ctx context.Context) {
 	if err := uvcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3Transfer.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3TransferUpsert) {
+//			SetTokenID(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvcb *UniswapV3TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *UniswapV3TransferUpsertBulk {
+	uvcb.conflict = opts
+	return &UniswapV3TransferUpsertBulk{
+		create: uvcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3Transfer.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvcb *UniswapV3TransferCreateBulk) OnConflictColumns(columns ...string) *UniswapV3TransferUpsertBulk {
+	uvcb.conflict = append(uvcb.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3TransferUpsertBulk{
+		create: uvcb,
+	}
+}
+
+// UniswapV3TransferUpsertBulk is the builder for "upsert"-ing
+// a bulk of UniswapV3Transfer nodes.
+type UniswapV3TransferUpsertBulk struct {
+	create *UniswapV3TransferCreateBulk
+}
+
+// UpdateNewValues updates the fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UniswapV3Transfer.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3TransferUpsertBulk) UpdateNewValues() *UniswapV3TransferUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3Transfer.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+//
+func (u *UniswapV3TransferUpsertBulk) Ignore() *UniswapV3TransferUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3TransferUpsertBulk) DoNothing() *UniswapV3TransferUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3TransferCreateBulk.OnConflict
+// documentation for more info.
+func (u *UniswapV3TransferUpsertBulk) Update(set func(*UniswapV3TransferUpsert)) *UniswapV3TransferUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3TransferUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3TransferUpsertBulk) SetTokenID(v string) *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetTokenID(v)
+	})
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertBulk) UpdateTokenID() *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateTokenID()
+	})
+}
+
+// SetFrom sets the "from" field.
+func (u *UniswapV3TransferUpsertBulk) SetFrom(v string) *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetFrom(v)
+	})
+}
+
+// UpdateFrom sets the "from" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertBulk) UpdateFrom() *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateFrom()
+	})
+}
+
+// SetTo sets the "to" field.
+func (u *UniswapV3TransferUpsertBulk) SetTo(v string) *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.SetTo(v)
+	})
+}
+
+// UpdateTo sets the "to" field to the value that was provided on create.
+func (u *UniswapV3TransferUpsertBulk) UpdateTo() *UniswapV3TransferUpsertBulk {
+	return u.Update(func(s *UniswapV3TransferUpsert) {
+		s.UpdateTo()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3TransferUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UniswapV3TransferCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3TransferCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3TransferUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

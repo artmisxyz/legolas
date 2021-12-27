@@ -25,9 +25,4 @@ type Config struct {
 	Server struct {
 		Port int `yaml:"Port"`
 	}
-	Redis struct {
-		Host     string `yaml:"Host"`
-		Port     int    `yaml:"Port"`
-		Password string `yaml:"Password"`
-	}
 }

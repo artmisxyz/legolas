@@ -8,13 +8,6 @@ services:
       - "8080:8080"
     volumes:
       - .:/go/src/app
-    depends_on:
-      - redis
-  redis:
-    image: redis
-    container_name: legolas-redis
-    ports:
-      - "6379:6379"
   database:
     image: postgres:latest
     container_name: legolas-db

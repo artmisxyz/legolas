@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/syncer"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
@@ -40,6 +41,7 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		event.Table:                     event.ValidColumn,
+		syncer.Table:                    syncer.ValidColumn,
 		uniswapv3collect.Table:          uniswapv3collect.ValidColumn,
 		uniswapv3decreaseliqudity.Table: uniswapv3decreaseliqudity.ValidColumn,
 		uniswapv3increaseliqudity.Table: uniswapv3increaseliqudity.ValidColumn,

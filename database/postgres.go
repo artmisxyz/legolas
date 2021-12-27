@@ -37,8 +37,8 @@ func NewPostgresStorage(db *ent.Client) *Storage {
 	}
 }
 
-func (m *Storage) CreateEvent(t time.Time, name, signature string, log types.Log) (*domain.Event, error) {
-	e, err := m.db.Event.Create().
+func (m *Storage) CreateEvent(t time.Time, name, signature string, log types.Log) (int, error) {
+	id, err := m.db.Event.Create().
 		SetTime(t).
 		SetAddress(log.Address.String()).
 		SetBlockHash(log.BlockHash.String()).
@@ -48,11 +48,13 @@ func (m *Storage) CreateEvent(t time.Time, name, signature string, log types.Log
 		SetTxHash(log.TxHash.String()).
 		SetName(name).
 		SetSignature(signature).
-		Save(context.Background())
+		OnConflictColumns(event.FieldTxHash, event.FieldTxIndex).
+		ID(context.Background())
+
 	if err != nil {
-		return nil, err
+		return -1, err
 	}
-	return entToDomainEvent(e), nil
+	return id, nil
 }
 
 func (m *Storage) CreateIncreaseLiquidity(eventId int, il *nftpositionmanager.NftpositionmanagerIncreaseLiquidity) error {

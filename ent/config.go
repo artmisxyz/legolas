@@ -25,6 +25,7 @@ type config struct {
 // hooks per client, for fast access.
 type hooks struct {
 	Event                     []ent.Hook
+	Syncer                    []ent.Hook
 	UniswapV3Collect          []ent.Hook
 	UniswapV3DecreaseLiqudity []ent.Hook
 	UniswapV3IncreaseLiqudity []ent.Hook

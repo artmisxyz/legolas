@@ -5,5 +5,6 @@ package runtime
 // The schema-stitching logic is generated in github.com/artmisxyz/legolas/ent/runtime.go
 
 const (
-	Version = "(devel)" // Version of ent codegen.
+	Version = "v0.9.2-0.20210821141344-368a8f7a2e9a"            // Version of ent codegen.
+	Sum     = "h1:ONZ5BfDxYM5/YMv6cceUXLAkxtCPNSNBUXyVBg6YucU=" // Sum of ent codegen.
 )

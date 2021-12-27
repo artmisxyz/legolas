@@ -39,13 +39,27 @@ var (
 			},
 		},
 	}
+	// SyncersColumns holds the columns for the "syncers" table.
+	SyncersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "start", Type: field.TypeUint64},
+		{Name: "finish", Type: field.TypeUint64},
+		{Name: "current", Type: field.TypeUint64},
+	}
+	// SyncersTable holds the schema information for the "syncers" table.
+	SyncersTable = &schema.Table{
+		Name:       "syncers",
+		Columns:    SyncersColumns,
+		PrimaryKey: []*schema.Column{SyncersColumns[0]},
+	}
 	// UniswapV3collectsColumns holds the columns for the "uniswap_v3collects" table.
 	UniswapV3collectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "recipient", Type: field.TypeString},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3collectsTable holds the schema information for the "uniswap_v3collects" table.
@@ -65,10 +79,10 @@ var (
 	// UniswapV3decreaseLiquditiesColumns holds the columns for the "uniswap_v3decrease_liqudities" table.
 	UniswapV3decreaseLiquditiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3decreaseLiquditiesTable holds the schema information for the "uniswap_v3decrease_liqudities" table.
@@ -88,10 +102,10 @@ var (
 	// UniswapV3increaseLiquditiesColumns holds the columns for the "uniswap_v3increase_liqudities" table.
 	UniswapV3increaseLiquditiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3increaseLiquditiesTable holds the schema information for the "uniswap_v3increase_liqudities" table.
@@ -112,11 +126,11 @@ var (
 	UniswapV3poolBurnsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "owner", Type: field.TypeString},
-		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3poolBurnsTable holds the schema information for the "uniswap_v3pool_burns" table.
@@ -138,8 +152,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "token0", Type: field.TypeString},
 		{Name: "token1", Type: field.TypeString},
-		{Name: "fee", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "tick_spacing", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "fee", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "tick_spacing", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "pool", Type: field.TypeString, Unique: true},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
@@ -162,10 +176,10 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "sender", Type: field.TypeString},
 		{Name: "recipient", Type: field.TypeString},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "paid0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "paid1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "paid0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "paid1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3poolFlashesTable holds the schema information for the "uniswap_v3pool_flashes" table.
@@ -185,8 +199,8 @@ var (
 	// UniswapV3poolInitializesColumns holds the columns for the "uniswap_v3pool_initializes" table.
 	UniswapV3poolInitializesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "sqrt_price_x96", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "tick", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "sqrt_price_x96", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "tick", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3poolInitializesTable holds the schema information for the "uniswap_v3pool_initializes" table.
@@ -207,11 +221,11 @@ var (
 	UniswapV3poolMintsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "owner", Type: field.TypeString},
-		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3poolMintsTable holds the schema information for the "uniswap_v3pool_mints" table.
@@ -233,11 +247,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "sender", Type: field.TypeString},
 		{Name: "recipient", Type: field.TypeString},
-		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "sqrt_price_x96", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
-		{Name: "tick", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "amount0", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "amount1", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "sqrt_price_x96", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "liquidity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
+		{Name: "tick", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// UniswapV3poolSwapsTable holds the schema information for the "uniswap_v3pool_swaps" table.
@@ -257,7 +271,7 @@ var (
 	// UniswapV3transfersColumns holds the columns for the "uniswap_v3transfers" table.
 	UniswapV3transfersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50, 0)", "sqlite3": "integer"}},
+		{Name: "token_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "from", Type: field.TypeString},
 		{Name: "to", Type: field.TypeString},
 		{Name: "event_id", Type: field.TypeInt, Unique: true, Nullable: true},
@@ -279,6 +293,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EventsTable,
+		SyncersTable,
 		UniswapV3collectsTable,
 		UniswapV3decreaseLiquditiesTable,
 		UniswapV3increaseLiquditiesTable,

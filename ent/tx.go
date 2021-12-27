@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// Syncer is the client for interacting with the Syncer builders.
+	Syncer *SyncerClient
 	// UniswapV3Collect is the client for interacting with the UniswapV3Collect builders.
 	UniswapV3Collect *UniswapV3CollectClient
 	// UniswapV3DecreaseLiqudity is the client for interacting with the UniswapV3DecreaseLiqudity builders.
@@ -170,6 +172,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Event = NewEventClient(tx.config)
+	tx.Syncer = NewSyncerClient(tx.config)
 	tx.UniswapV3Collect = NewUniswapV3CollectClient(tx.config)
 	tx.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(tx.config)
 	tx.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(tx.config)

@@ -10,6 +10,7 @@ import (
 
 	"github.com/artmisxyz/legolas/ent/event"
 	"github.com/artmisxyz/legolas/ent/predicate"
+	"github.com/artmisxyz/legolas/ent/syncer"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
@@ -34,6 +35,7 @@ const (
 
 	// Node types.
 	TypeEvent                     = "Event"
+	TypeSyncer                    = "Syncer"
 	TypeUniswapV3Collect          = "UniswapV3Collect"
 	TypeUniswapV3DecreaseLiqudity = "UniswapV3DecreaseLiqudity"
 	TypeUniswapV3IncreaseLiqudity = "UniswapV3IncreaseLiqudity"
@@ -1470,6 +1472,562 @@ func (m *EventMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Event edge %s", name)
+}
+
+// SyncerMutation represents an operation that mutates the Syncer nodes in the graph.
+type SyncerMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	name          *string
+	start         *uint64
+	addstart      *uint64
+	finish        *uint64
+	addfinish     *uint64
+	current       *uint64
+	addcurrent    *uint64
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Syncer, error)
+	predicates    []predicate.Syncer
+}
+
+var _ ent.Mutation = (*SyncerMutation)(nil)
+
+// syncerOption allows management of the mutation configuration using functional options.
+type syncerOption func(*SyncerMutation)
+
+// newSyncerMutation creates new mutation for the Syncer entity.
+func newSyncerMutation(c config, op Op, opts ...syncerOption) *SyncerMutation {
+	m := &SyncerMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSyncer,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSyncerID sets the ID field of the mutation.
+func withSyncerID(id int) syncerOption {
+	return func(m *SyncerMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Syncer
+		)
+		m.oldValue = func(ctx context.Context) (*Syncer, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Syncer.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSyncer sets the old Syncer of the mutation.
+func withSyncer(node *Syncer) syncerOption {
+	return func(m *SyncerMutation) {
+		m.oldValue = func(context.Context) (*Syncer, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SyncerMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SyncerMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SyncerMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the "name" field.
+func (m *SyncerMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SyncerMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Syncer entity.
+// If the Syncer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncerMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SyncerMutation) ResetName() {
+	m.name = nil
+}
+
+// SetStart sets the "start" field.
+func (m *SyncerMutation) SetStart(u uint64) {
+	m.start = &u
+	m.addstart = nil
+}
+
+// Start returns the value of the "start" field in the mutation.
+func (m *SyncerMutation) Start() (r uint64, exists bool) {
+	v := m.start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStart returns the old "start" field's value of the Syncer entity.
+// If the Syncer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncerMutation) OldStart(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStart is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStart: %w", err)
+	}
+	return oldValue.Start, nil
+}
+
+// AddStart adds u to the "start" field.
+func (m *SyncerMutation) AddStart(u uint64) {
+	if m.addstart != nil {
+		*m.addstart += u
+	} else {
+		m.addstart = &u
+	}
+}
+
+// AddedStart returns the value that was added to the "start" field in this mutation.
+func (m *SyncerMutation) AddedStart() (r uint64, exists bool) {
+	v := m.addstart
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStart resets all changes to the "start" field.
+func (m *SyncerMutation) ResetStart() {
+	m.start = nil
+	m.addstart = nil
+}
+
+// SetFinish sets the "finish" field.
+func (m *SyncerMutation) SetFinish(u uint64) {
+	m.finish = &u
+	m.addfinish = nil
+}
+
+// Finish returns the value of the "finish" field in the mutation.
+func (m *SyncerMutation) Finish() (r uint64, exists bool) {
+	v := m.finish
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinish returns the old "finish" field's value of the Syncer entity.
+// If the Syncer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncerMutation) OldFinish(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFinish is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFinish requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinish: %w", err)
+	}
+	return oldValue.Finish, nil
+}
+
+// AddFinish adds u to the "finish" field.
+func (m *SyncerMutation) AddFinish(u uint64) {
+	if m.addfinish != nil {
+		*m.addfinish += u
+	} else {
+		m.addfinish = &u
+	}
+}
+
+// AddedFinish returns the value that was added to the "finish" field in this mutation.
+func (m *SyncerMutation) AddedFinish() (r uint64, exists bool) {
+	v := m.addfinish
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFinish resets all changes to the "finish" field.
+func (m *SyncerMutation) ResetFinish() {
+	m.finish = nil
+	m.addfinish = nil
+}
+
+// SetCurrent sets the "current" field.
+func (m *SyncerMutation) SetCurrent(u uint64) {
+	m.current = &u
+	m.addcurrent = nil
+}
+
+// Current returns the value of the "current" field in the mutation.
+func (m *SyncerMutation) Current() (r uint64, exists bool) {
+	v := m.current
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrent returns the old "current" field's value of the Syncer entity.
+// If the Syncer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncerMutation) OldCurrent(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCurrent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCurrent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrent: %w", err)
+	}
+	return oldValue.Current, nil
+}
+
+// AddCurrent adds u to the "current" field.
+func (m *SyncerMutation) AddCurrent(u uint64) {
+	if m.addcurrent != nil {
+		*m.addcurrent += u
+	} else {
+		m.addcurrent = &u
+	}
+}
+
+// AddedCurrent returns the value that was added to the "current" field in this mutation.
+func (m *SyncerMutation) AddedCurrent() (r uint64, exists bool) {
+	v := m.addcurrent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrent resets all changes to the "current" field.
+func (m *SyncerMutation) ResetCurrent() {
+	m.current = nil
+	m.addcurrent = nil
+}
+
+// Where appends a list predicates to the SyncerMutation builder.
+func (m *SyncerMutation) Where(ps ...predicate.Syncer) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *SyncerMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Syncer).
+func (m *SyncerMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SyncerMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.name != nil {
+		fields = append(fields, syncer.FieldName)
+	}
+	if m.start != nil {
+		fields = append(fields, syncer.FieldStart)
+	}
+	if m.finish != nil {
+		fields = append(fields, syncer.FieldFinish)
+	}
+	if m.current != nil {
+		fields = append(fields, syncer.FieldCurrent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SyncerMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case syncer.FieldName:
+		return m.Name()
+	case syncer.FieldStart:
+		return m.Start()
+	case syncer.FieldFinish:
+		return m.Finish()
+	case syncer.FieldCurrent:
+		return m.Current()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SyncerMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case syncer.FieldName:
+		return m.OldName(ctx)
+	case syncer.FieldStart:
+		return m.OldStart(ctx)
+	case syncer.FieldFinish:
+		return m.OldFinish(ctx)
+	case syncer.FieldCurrent:
+		return m.OldCurrent(ctx)
+	}
+	return nil, fmt.Errorf("unknown Syncer field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SyncerMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case syncer.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case syncer.FieldStart:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStart(v)
+		return nil
+	case syncer.FieldFinish:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinish(v)
+		return nil
+	case syncer.FieldCurrent:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Syncer field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SyncerMutation) AddedFields() []string {
+	var fields []string
+	if m.addstart != nil {
+		fields = append(fields, syncer.FieldStart)
+	}
+	if m.addfinish != nil {
+		fields = append(fields, syncer.FieldFinish)
+	}
+	if m.addcurrent != nil {
+		fields = append(fields, syncer.FieldCurrent)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SyncerMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case syncer.FieldStart:
+		return m.AddedStart()
+	case syncer.FieldFinish:
+		return m.AddedFinish()
+	case syncer.FieldCurrent:
+		return m.AddedCurrent()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SyncerMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case syncer.FieldStart:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStart(v)
+		return nil
+	case syncer.FieldFinish:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFinish(v)
+		return nil
+	case syncer.FieldCurrent:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Syncer numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SyncerMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SyncerMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SyncerMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Syncer nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SyncerMutation) ResetField(name string) error {
+	switch name {
+	case syncer.FieldName:
+		m.ResetName()
+		return nil
+	case syncer.FieldStart:
+		m.ResetStart()
+		return nil
+	case syncer.FieldFinish:
+		m.ResetFinish()
+		return nil
+	case syncer.FieldCurrent:
+		m.ResetCurrent()
+		return nil
+	}
+	return fmt.Errorf("unknown Syncer field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SyncerMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SyncerMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SyncerMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SyncerMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SyncerMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SyncerMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SyncerMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Syncer unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SyncerMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Syncer edge %s", name)
 }
 
 // UniswapV3CollectMutation represents an operation that mutates the UniswapV3Collect nodes in the graph.

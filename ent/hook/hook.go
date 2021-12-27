@@ -22,6 +22,19 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The SyncerFunc type is an adapter to allow the use of ordinary
+// function as Syncer mutator.
+type SyncerFunc func(context.Context, *ent.SyncerMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SyncerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SyncerMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SyncerMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UniswapV3CollectFunc type is an adapter to allow the use of ordinary
 // function as UniswapV3Collect mutator.
 type UniswapV3CollectFunc func(context.Context, *ent.UniswapV3CollectMutation) (ent.Value, error)

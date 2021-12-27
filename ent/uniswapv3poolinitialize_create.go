@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -18,6 +19,7 @@ type UniswapV3PoolInitializeCreate struct {
 	config
 	mutation *UniswapV3PoolInitializeMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetSqrtPriceX96 sets the "sqrt_price_x96" field.
@@ -149,6 +151,7 @@ func (uvic *UniswapV3PoolInitializeCreate) createSpec() (*UniswapV3PoolInitializ
 			},
 		}
 	)
+	_spec.OnConflict = uvic.conflict
 	if value, ok := uvic.mutation.SqrtPriceX96(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -188,10 +191,189 @@ func (uvic *UniswapV3PoolInitializeCreate) createSpec() (*UniswapV3PoolInitializ
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		SetSqrtPriceX96(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3PoolInitializeUpsert) {
+//			SetSqrtPriceX96(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvic *UniswapV3PoolInitializeCreate) OnConflict(opts ...sql.ConflictOption) *UniswapV3PoolInitializeUpsertOne {
+	uvic.conflict = opts
+	return &UniswapV3PoolInitializeUpsertOne{
+		create: uvic,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvic *UniswapV3PoolInitializeCreate) OnConflictColumns(columns ...string) *UniswapV3PoolInitializeUpsertOne {
+	uvic.conflict = append(uvic.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3PoolInitializeUpsertOne{
+		create: uvic,
+	}
+}
+
+type (
+	// UniswapV3PoolInitializeUpsertOne is the builder for "upsert"-ing
+	//  one UniswapV3PoolInitialize node.
+	UniswapV3PoolInitializeUpsertOne struct {
+		create *UniswapV3PoolInitializeCreate
+	}
+
+	// UniswapV3PoolInitializeUpsert is the "OnConflict" setter.
+	UniswapV3PoolInitializeUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetSqrtPriceX96 sets the "sqrt_price_x96" field.
+func (u *UniswapV3PoolInitializeUpsert) SetSqrtPriceX96(v string) *UniswapV3PoolInitializeUpsert {
+	u.Set(uniswapv3poolinitialize.FieldSqrtPriceX96, v)
+	return u
+}
+
+// UpdateSqrtPriceX96 sets the "sqrt_price_x96" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsert) UpdateSqrtPriceX96() *UniswapV3PoolInitializeUpsert {
+	u.SetExcluded(uniswapv3poolinitialize.FieldSqrtPriceX96)
+	return u
+}
+
+// SetTick sets the "tick" field.
+func (u *UniswapV3PoolInitializeUpsert) SetTick(v string) *UniswapV3PoolInitializeUpsert {
+	u.Set(uniswapv3poolinitialize.FieldTick, v)
+	return u
+}
+
+// UpdateTick sets the "tick" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsert) UpdateTick() *UniswapV3PoolInitializeUpsert {
+	u.SetExcluded(uniswapv3poolinitialize.FieldTick)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolInitializeUpsertOne) UpdateNewValues() *UniswapV3PoolInitializeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//  client.UniswapV3PoolInitialize.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
+func (u *UniswapV3PoolInitializeUpsertOne) Ignore() *UniswapV3PoolInitializeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3PoolInitializeUpsertOne) DoNothing() *UniswapV3PoolInitializeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3PoolInitializeCreate.OnConflict
+// documentation for more info.
+func (u *UniswapV3PoolInitializeUpsertOne) Update(set func(*UniswapV3PoolInitializeUpsert)) *UniswapV3PoolInitializeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3PoolInitializeUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetSqrtPriceX96 sets the "sqrt_price_x96" field.
+func (u *UniswapV3PoolInitializeUpsertOne) SetSqrtPriceX96(v string) *UniswapV3PoolInitializeUpsertOne {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.SetSqrtPriceX96(v)
+	})
+}
+
+// UpdateSqrtPriceX96 sets the "sqrt_price_x96" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsertOne) UpdateSqrtPriceX96() *UniswapV3PoolInitializeUpsertOne {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.UpdateSqrtPriceX96()
+	})
+}
+
+// SetTick sets the "tick" field.
+func (u *UniswapV3PoolInitializeUpsertOne) SetTick(v string) *UniswapV3PoolInitializeUpsertOne {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.SetTick(v)
+	})
+}
+
+// UpdateTick sets the "tick" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsertOne) UpdateTick() *UniswapV3PoolInitializeUpsertOne {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.UpdateTick()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3PoolInitializeUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3PoolInitializeCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3PoolInitializeUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UniswapV3PoolInitializeUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UniswapV3PoolInitializeUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UniswapV3PoolInitializeCreateBulk is the builder for creating many UniswapV3PoolInitialize entities in bulk.
 type UniswapV3PoolInitializeCreateBulk struct {
 	config
 	builders []*UniswapV3PoolInitializeCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UniswapV3PoolInitialize entities in the database.
@@ -217,6 +399,7 @@ func (uvicb *UniswapV3PoolInitializeCreateBulk) Save(ctx context.Context) ([]*Un
 					_, err = mutators[i+1].Mutate(root, uvicb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = uvicb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, uvicb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -267,6 +450,139 @@ func (uvicb *UniswapV3PoolInitializeCreateBulk) Exec(ctx context.Context) error 
 // ExecX is like Exec, but panics if an error occurs.
 func (uvicb *UniswapV3PoolInitializeCreateBulk) ExecX(ctx context.Context) {
 	if err := uvicb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3PoolInitialize.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3PoolInitializeUpsert) {
+//			SetSqrtPriceX96(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvicb *UniswapV3PoolInitializeCreateBulk) OnConflict(opts ...sql.ConflictOption) *UniswapV3PoolInitializeUpsertBulk {
+	uvicb.conflict = opts
+	return &UniswapV3PoolInitializeUpsertBulk{
+		create: uvicb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvicb *UniswapV3PoolInitializeCreateBulk) OnConflictColumns(columns ...string) *UniswapV3PoolInitializeUpsertBulk {
+	uvicb.conflict = append(uvicb.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3PoolInitializeUpsertBulk{
+		create: uvicb,
+	}
+}
+
+// UniswapV3PoolInitializeUpsertBulk is the builder for "upsert"-ing
+// a bulk of UniswapV3PoolInitialize nodes.
+type UniswapV3PoolInitializeUpsertBulk struct {
+	create *UniswapV3PoolInitializeCreateBulk
+}
+
+// UpdateNewValues updates the fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolInitializeUpsertBulk) UpdateNewValues() *UniswapV3PoolInitializeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolInitialize.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolInitializeUpsertBulk) Ignore() *UniswapV3PoolInitializeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3PoolInitializeUpsertBulk) DoNothing() *UniswapV3PoolInitializeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3PoolInitializeCreateBulk.OnConflict
+// documentation for more info.
+func (u *UniswapV3PoolInitializeUpsertBulk) Update(set func(*UniswapV3PoolInitializeUpsert)) *UniswapV3PoolInitializeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3PoolInitializeUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetSqrtPriceX96 sets the "sqrt_price_x96" field.
+func (u *UniswapV3PoolInitializeUpsertBulk) SetSqrtPriceX96(v string) *UniswapV3PoolInitializeUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.SetSqrtPriceX96(v)
+	})
+}
+
+// UpdateSqrtPriceX96 sets the "sqrt_price_x96" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsertBulk) UpdateSqrtPriceX96() *UniswapV3PoolInitializeUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.UpdateSqrtPriceX96()
+	})
+}
+
+// SetTick sets the "tick" field.
+func (u *UniswapV3PoolInitializeUpsertBulk) SetTick(v string) *UniswapV3PoolInitializeUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.SetTick(v)
+	})
+}
+
+// UpdateTick sets the "tick" field to the value that was provided on create.
+func (u *UniswapV3PoolInitializeUpsertBulk) UpdateTick() *UniswapV3PoolInitializeUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolInitializeUpsert) {
+		s.UpdateTick()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3PoolInitializeUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UniswapV3PoolInitializeCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3PoolInitializeCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3PoolInitializeUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

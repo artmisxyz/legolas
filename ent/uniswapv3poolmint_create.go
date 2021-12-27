@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -18,6 +19,7 @@ type UniswapV3PoolMintCreate struct {
 	config
 	mutation *UniswapV3PoolMintMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetOwner sets the "owner" field.
@@ -185,6 +187,7 @@ func (uvmc *UniswapV3PoolMintCreate) createSpec() (*UniswapV3PoolMint, *sqlgraph
 			},
 		}
 	)
+	_spec.OnConflict = uvmc.conflict
 	if value, ok := uvmc.mutation.Owner(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -256,10 +259,293 @@ func (uvmc *UniswapV3PoolMintCreate) createSpec() (*UniswapV3PoolMint, *sqlgraph
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3PoolMint.Create().
+//		SetOwner(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3PoolMintUpsert) {
+//			SetOwner(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvmc *UniswapV3PoolMintCreate) OnConflict(opts ...sql.ConflictOption) *UniswapV3PoolMintUpsertOne {
+	uvmc.conflict = opts
+	return &UniswapV3PoolMintUpsertOne{
+		create: uvmc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolMint.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvmc *UniswapV3PoolMintCreate) OnConflictColumns(columns ...string) *UniswapV3PoolMintUpsertOne {
+	uvmc.conflict = append(uvmc.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3PoolMintUpsertOne{
+		create: uvmc,
+	}
+}
+
+type (
+	// UniswapV3PoolMintUpsertOne is the builder for "upsert"-ing
+	//  one UniswapV3PoolMint node.
+	UniswapV3PoolMintUpsertOne struct {
+		create *UniswapV3PoolMintCreate
+	}
+
+	// UniswapV3PoolMintUpsert is the "OnConflict" setter.
+	UniswapV3PoolMintUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetOwner sets the "owner" field.
+func (u *UniswapV3PoolMintUpsert) SetOwner(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldOwner, v)
+	return u
+}
+
+// UpdateOwner sets the "owner" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateOwner() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldOwner)
+	return u
+}
+
+// SetTickLower sets the "tick_lower" field.
+func (u *UniswapV3PoolMintUpsert) SetTickLower(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldTickLower, v)
+	return u
+}
+
+// UpdateTickLower sets the "tick_lower" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateTickLower() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldTickLower)
+	return u
+}
+
+// SetTickUpper sets the "tick_upper" field.
+func (u *UniswapV3PoolMintUpsert) SetTickUpper(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldTickUpper, v)
+	return u
+}
+
+// UpdateTickUpper sets the "tick_upper" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateTickUpper() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldTickUpper)
+	return u
+}
+
+// SetAmount sets the "amount" field.
+func (u *UniswapV3PoolMintUpsert) SetAmount(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldAmount, v)
+	return u
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateAmount() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldAmount)
+	return u
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3PoolMintUpsert) SetAmount0(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldAmount0, v)
+	return u
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateAmount0() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldAmount0)
+	return u
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3PoolMintUpsert) SetAmount1(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldAmount1, v)
+	return u
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateAmount1() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldAmount1)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolMint.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolMintUpsertOne) UpdateNewValues() *UniswapV3PoolMintUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//  client.UniswapV3PoolMint.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
+func (u *UniswapV3PoolMintUpsertOne) Ignore() *UniswapV3PoolMintUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3PoolMintUpsertOne) DoNothing() *UniswapV3PoolMintUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3PoolMintCreate.OnConflict
+// documentation for more info.
+func (u *UniswapV3PoolMintUpsertOne) Update(set func(*UniswapV3PoolMintUpsert)) *UniswapV3PoolMintUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3PoolMintUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetOwner sets the "owner" field.
+func (u *UniswapV3PoolMintUpsertOne) SetOwner(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetOwner(v)
+	})
+}
+
+// UpdateOwner sets the "owner" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateOwner() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateOwner()
+	})
+}
+
+// SetTickLower sets the "tick_lower" field.
+func (u *UniswapV3PoolMintUpsertOne) SetTickLower(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetTickLower(v)
+	})
+}
+
+// UpdateTickLower sets the "tick_lower" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateTickLower() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateTickLower()
+	})
+}
+
+// SetTickUpper sets the "tick_upper" field.
+func (u *UniswapV3PoolMintUpsertOne) SetTickUpper(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetTickUpper(v)
+	})
+}
+
+// UpdateTickUpper sets the "tick_upper" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateTickUpper() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateTickUpper()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *UniswapV3PoolMintUpsertOne) SetAmount(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateAmount() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3PoolMintUpsertOne) SetAmount0(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount0(v)
+	})
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateAmount0() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount0()
+	})
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3PoolMintUpsertOne) SetAmount1(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount1(v)
+	})
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateAmount1() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount1()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3PoolMintUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3PoolMintCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3PoolMintUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UniswapV3PoolMintUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UniswapV3PoolMintUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UniswapV3PoolMintCreateBulk is the builder for creating many UniswapV3PoolMint entities in bulk.
 type UniswapV3PoolMintCreateBulk struct {
 	config
 	builders []*UniswapV3PoolMintCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UniswapV3PoolMint entities in the database.
@@ -285,6 +571,7 @@ func (uvmcb *UniswapV3PoolMintCreateBulk) Save(ctx context.Context) ([]*UniswapV
 					_, err = mutators[i+1].Mutate(root, uvmcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = uvmcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, uvmcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -335,6 +622,195 @@ func (uvmcb *UniswapV3PoolMintCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (uvmcb *UniswapV3PoolMintCreateBulk) ExecX(ctx context.Context) {
 	if err := uvmcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3PoolMint.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3PoolMintUpsert) {
+//			SetOwner(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvmcb *UniswapV3PoolMintCreateBulk) OnConflict(opts ...sql.ConflictOption) *UniswapV3PoolMintUpsertBulk {
+	uvmcb.conflict = opts
+	return &UniswapV3PoolMintUpsertBulk{
+		create: uvmcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolMint.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvmcb *UniswapV3PoolMintCreateBulk) OnConflictColumns(columns ...string) *UniswapV3PoolMintUpsertBulk {
+	uvmcb.conflict = append(uvmcb.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3PoolMintUpsertBulk{
+		create: uvmcb,
+	}
+}
+
+// UniswapV3PoolMintUpsertBulk is the builder for "upsert"-ing
+// a bulk of UniswapV3PoolMint nodes.
+type UniswapV3PoolMintUpsertBulk struct {
+	create *UniswapV3PoolMintCreateBulk
+}
+
+// UpdateNewValues updates the fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolMint.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolMintUpsertBulk) UpdateNewValues() *UniswapV3PoolMintUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3PoolMint.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+//
+func (u *UniswapV3PoolMintUpsertBulk) Ignore() *UniswapV3PoolMintUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3PoolMintUpsertBulk) DoNothing() *UniswapV3PoolMintUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3PoolMintCreateBulk.OnConflict
+// documentation for more info.
+func (u *UniswapV3PoolMintUpsertBulk) Update(set func(*UniswapV3PoolMintUpsert)) *UniswapV3PoolMintUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3PoolMintUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetOwner sets the "owner" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetOwner(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetOwner(v)
+	})
+}
+
+// UpdateOwner sets the "owner" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateOwner() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateOwner()
+	})
+}
+
+// SetTickLower sets the "tick_lower" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetTickLower(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetTickLower(v)
+	})
+}
+
+// UpdateTickLower sets the "tick_lower" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateTickLower() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateTickLower()
+	})
+}
+
+// SetTickUpper sets the "tick_upper" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetTickUpper(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetTickUpper(v)
+	})
+}
+
+// UpdateTickUpper sets the "tick_upper" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateTickUpper() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateTickUpper()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetAmount(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateAmount() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetAmount0(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount0(v)
+	})
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateAmount0() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount0()
+	})
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetAmount1(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetAmount1(v)
+	})
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateAmount1() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateAmount1()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3PoolMintUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UniswapV3PoolMintCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3PoolMintCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3PoolMintUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

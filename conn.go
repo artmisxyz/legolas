@@ -1,26 +1,17 @@
-package connections
+package main
 
 import (
 	"context"
-	"fmt"
 	"go.uber.org/zap"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func RPC(baseUrl string) *ethclient.Client {
+func Connect(baseUrl string) *ethclient.Client {
 	c, err := ethclient.Dial(baseUrl)
 	if err != nil {
 		panic("cannot connect to client: " + err.Error())
-	}
-	return c
-}
-
-func Websocket(baseUrl string) *ethclient.Client {
-	c, err := ethclient.Dial(baseUrl)
-	if err != nil {
-		panic(fmt.Sprintln("cannot connect to client: ", err.Error()))
 	}
 	return c
 }

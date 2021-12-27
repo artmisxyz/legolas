@@ -54,6 +54,6 @@ func (Event) Indexes() []ent.Index {
 func BigIntField(name string) ent.Field {
 	return field.String(name).SchemaType(map[string]string{
 		dialect.SQLite:   "integer",
-		dialect.Postgres: "numeric(50, 0)",
+		dialect.Postgres: "numeric(50,0)",
 	})
 }

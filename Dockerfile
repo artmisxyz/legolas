@@ -4,7 +4,6 @@ WORKDIR /app
 COPY . ./
 RUN go build --ldflags "-linkmode external -extldflags '-static'" -v -o ./legolas .
 
-
 FROM alpine:latest
 ARG BUILD_DATE
 ARG VCS_REF

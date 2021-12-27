@@ -27,7 +27,6 @@ func (s *Server) Init(conf configs.Config) {
 		panic(err)
 	}
 	s.db = db
-	s.redis = database.NewRedis(conf)
 }
 
 func (s *Server) Listen() {
@@ -37,38 +36,8 @@ func (s *Server) Listen() {
 
 	univ3api := uniswapv3.NewApi(s.db)
 	r.GET("/", func(c *gin.Context) {
-		positionKeys, err := s.redis.Keys(context.Background(), "*:block:position").Result()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"msg": "could not retrieve info"})
-			return
-		}
-		finishKeys, err := s.redis.Keys(context.Background(), "*:block:finish").Result()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"msg": "could not retrieve info"})
-			return
-		}
-		positions := make(map[string]string)
-		for _, k := range positionKeys {
-			blockNumber, err := s.redis.Get(context.Background(), k).Result()
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"msg": "could not retrieve info"})
-				return
-			}
-			positions[k] = blockNumber
-		}
-		finishes := make(map[string]string)
-		for _, k := range finishKeys {
-			blockNumber, err := s.redis.Get(context.Background(), k).Result()
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"msg": "could not retrieve info"})
-				return
-			}
-			finishes[k] = blockNumber
-		}
-		c.JSON(200, gin.H{
-			"positions": positions,
-			"finishes":  finishes,
-		})
+		all := s.db.Syncer.Query().AllX(context.Background())
+		c.JSON(http.StatusOK, all)
 	})
 
 	r.GET("/events", univ3api.Events)

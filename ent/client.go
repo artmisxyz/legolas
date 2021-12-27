@@ -10,6 +10,7 @@ import (
 	"github.com/artmisxyz/legolas/ent/migrate"
 
 	"github.com/artmisxyz/legolas/ent/event"
+	"github.com/artmisxyz/legolas/ent/syncer"
 	"github.com/artmisxyz/legolas/ent/uniswapv3collect"
 	"github.com/artmisxyz/legolas/ent/uniswapv3decreaseliqudity"
 	"github.com/artmisxyz/legolas/ent/uniswapv3increaseliqudity"
@@ -33,6 +34,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// Syncer is the client for interacting with the Syncer builders.
+	Syncer *SyncerClient
 	// UniswapV3Collect is the client for interacting with the UniswapV3Collect builders.
 	UniswapV3Collect *UniswapV3CollectClient
 	// UniswapV3DecreaseLiqudity is the client for interacting with the UniswapV3DecreaseLiqudity builders.
@@ -53,8 +56,6 @@ type Client struct {
 	UniswapV3PoolSwap *UniswapV3PoolSwapClient
 	// UniswapV3Transfer is the client for interacting with the UniswapV3Transfer builders.
 	UniswapV3Transfer *UniswapV3TransferClient
-	// additional fields for node api
-	tables tables
 }
 
 // NewClient creates a new client configured with the given options.
@@ -69,6 +70,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Event = NewEventClient(c.config)
+	c.Syncer = NewSyncerClient(c.config)
 	c.UniswapV3Collect = NewUniswapV3CollectClient(c.config)
 	c.UniswapV3DecreaseLiqudity = NewUniswapV3DecreaseLiqudityClient(c.config)
 	c.UniswapV3IncreaseLiqudity = NewUniswapV3IncreaseLiqudityClient(c.config)
@@ -113,6 +115,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                       ctx,
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
+		Syncer:                    NewSyncerClient(cfg),
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
@@ -142,6 +145,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		config:                    cfg,
 		Event:                     NewEventClient(cfg),
+		Syncer:                    NewSyncerClient(cfg),
 		UniswapV3Collect:          NewUniswapV3CollectClient(cfg),
 		UniswapV3DecreaseLiqudity: NewUniswapV3DecreaseLiqudityClient(cfg),
 		UniswapV3IncreaseLiqudity: NewUniswapV3IncreaseLiqudityClient(cfg),
@@ -182,6 +186,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Event.Use(hooks...)
+	c.Syncer.Use(hooks...)
 	c.UniswapV3Collect.Use(hooks...)
 	c.UniswapV3DecreaseLiqudity.Use(hooks...)
 	c.UniswapV3IncreaseLiqudity.Use(hooks...)
@@ -442,6 +447,96 @@ func (c *EventClient) QueryPoolFlash(e *Event) *UniswapV3PoolFlashQuery {
 // Hooks returns the client hooks.
 func (c *EventClient) Hooks() []Hook {
 	return c.hooks.Event
+}
+
+// SyncerClient is a client for the Syncer schema.
+type SyncerClient struct {
+	config
+}
+
+// NewSyncerClient returns a client for the Syncer from the given config.
+func NewSyncerClient(c config) *SyncerClient {
+	return &SyncerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `syncer.Hooks(f(g(h())))`.
+func (c *SyncerClient) Use(hooks ...Hook) {
+	c.hooks.Syncer = append(c.hooks.Syncer, hooks...)
+}
+
+// Create returns a create builder for Syncer.
+func (c *SyncerClient) Create() *SyncerCreate {
+	mutation := newSyncerMutation(c.config, OpCreate)
+	return &SyncerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Syncer entities.
+func (c *SyncerClient) CreateBulk(builders ...*SyncerCreate) *SyncerCreateBulk {
+	return &SyncerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Syncer.
+func (c *SyncerClient) Update() *SyncerUpdate {
+	mutation := newSyncerMutation(c.config, OpUpdate)
+	return &SyncerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SyncerClient) UpdateOne(s *Syncer) *SyncerUpdateOne {
+	mutation := newSyncerMutation(c.config, OpUpdateOne, withSyncer(s))
+	return &SyncerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SyncerClient) UpdateOneID(id int) *SyncerUpdateOne {
+	mutation := newSyncerMutation(c.config, OpUpdateOne, withSyncerID(id))
+	return &SyncerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Syncer.
+func (c *SyncerClient) Delete() *SyncerDelete {
+	mutation := newSyncerMutation(c.config, OpDelete)
+	return &SyncerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *SyncerClient) DeleteOne(s *Syncer) *SyncerDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *SyncerClient) DeleteOneID(id int) *SyncerDeleteOne {
+	builder := c.Delete().Where(syncer.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SyncerDeleteOne{builder}
+}
+
+// Query returns a query builder for Syncer.
+func (c *SyncerClient) Query() *SyncerQuery {
+	return &SyncerQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Syncer entity by its id.
+func (c *SyncerClient) Get(ctx context.Context, id int) (*Syncer, error) {
+	return c.Query().Where(syncer.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SyncerClient) GetX(ctx context.Context, id int) *Syncer {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SyncerClient) Hooks() []Hook {
+	return c.hooks.Syncer
 }
 
 // UniswapV3CollectClient is a client for the UniswapV3Collect schema.

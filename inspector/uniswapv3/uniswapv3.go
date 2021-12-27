@@ -78,21 +78,26 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 		eventHandler, ok := v.eventHandlers[log.Topics[0].String()]
 		if !ok {
 			v.logger.
-				Warn("event handler not registered",
+				Info("event handler not registered",
 					zap.Uint64("block_number", log.BlockNumber),
 					zap.String("tx_hash", log.TxHash.String()),
 					zap.Uint("event_index", log.Index))
 			continue
 		}
-		e, err := v.storage.CreateEvent(t, eventHandler.Name(), eventHandler.Signature(), log)
+		id, err := v.storage.CreateEvent(t, eventHandler.Name(), eventHandler.Signature(), log)
 		if err != nil {
 			if ent.IsConstraintError(err) {
-				v.logger.Warn("event creation constraint error", zap.Error(err))
+				v.logger.
+					Warn("failed to create event",
+						zap.Error(err),
+						zap.Uint64("block_number", log.BlockNumber),
+						zap.String("tx_hash", log.TxHash.String()),
+						zap.Uint("event_index", log.Index))
 				continue
 			}
 			return err
 		}
-		err = eventHandler.ParseAndSavePayload(e.ID, log)
+		err = eventHandler.ParseAndSavePayload(id, log)
 		if err != nil {
 			return err
 		}

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -18,6 +19,7 @@ type UniswapV3IncreaseLiqudityCreate struct {
 	config
 	mutation *UniswapV3IncreaseLiqudityMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetTokenID sets the "token_id" field.
@@ -167,6 +169,7 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) createSpec() (*UniswapV3IncreaseLiq
 			},
 		}
 	)
+	_spec.OnConflict = uvlc.conflict
 	if value, ok := uvlc.mutation.TokenID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -222,10 +225,241 @@ func (uvlc *UniswapV3IncreaseLiqudityCreate) createSpec() (*UniswapV3IncreaseLiq
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		SetTokenID(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3IncreaseLiqudityUpsert) {
+//			SetTokenID(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvlc *UniswapV3IncreaseLiqudityCreate) OnConflict(opts ...sql.ConflictOption) *UniswapV3IncreaseLiqudityUpsertOne {
+	uvlc.conflict = opts
+	return &UniswapV3IncreaseLiqudityUpsertOne{
+		create: uvlc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvlc *UniswapV3IncreaseLiqudityCreate) OnConflictColumns(columns ...string) *UniswapV3IncreaseLiqudityUpsertOne {
+	uvlc.conflict = append(uvlc.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3IncreaseLiqudityUpsertOne{
+		create: uvlc,
+	}
+}
+
+type (
+	// UniswapV3IncreaseLiqudityUpsertOne is the builder for "upsert"-ing
+	//  one UniswapV3IncreaseLiqudity node.
+	UniswapV3IncreaseLiqudityUpsertOne struct {
+		create *UniswapV3IncreaseLiqudityCreate
+	}
+
+	// UniswapV3IncreaseLiqudityUpsert is the "OnConflict" setter.
+	UniswapV3IncreaseLiqudityUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3IncreaseLiqudityUpsert) SetTokenID(v string) *UniswapV3IncreaseLiqudityUpsert {
+	u.Set(uniswapv3increaseliqudity.FieldTokenID, v)
+	return u
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsert) UpdateTokenID() *UniswapV3IncreaseLiqudityUpsert {
+	u.SetExcluded(uniswapv3increaseliqudity.FieldTokenID)
+	return u
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (u *UniswapV3IncreaseLiqudityUpsert) SetLiquidity(v string) *UniswapV3IncreaseLiqudityUpsert {
+	u.Set(uniswapv3increaseliqudity.FieldLiquidity, v)
+	return u
+}
+
+// UpdateLiquidity sets the "liquidity" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsert) UpdateLiquidity() *UniswapV3IncreaseLiqudityUpsert {
+	u.SetExcluded(uniswapv3increaseliqudity.FieldLiquidity)
+	return u
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3IncreaseLiqudityUpsert) SetAmount0(v string) *UniswapV3IncreaseLiqudityUpsert {
+	u.Set(uniswapv3increaseliqudity.FieldAmount0, v)
+	return u
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsert) UpdateAmount0() *UniswapV3IncreaseLiqudityUpsert {
+	u.SetExcluded(uniswapv3increaseliqudity.FieldAmount0)
+	return u
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3IncreaseLiqudityUpsert) SetAmount1(v string) *UniswapV3IncreaseLiqudityUpsert {
+	u.Set(uniswapv3increaseliqudity.FieldAmount1, v)
+	return u
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsert) UpdateAmount1() *UniswapV3IncreaseLiqudityUpsert {
+	u.SetExcluded(uniswapv3increaseliqudity.FieldAmount1)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3IncreaseLiqudityUpsertOne) UpdateNewValues() *UniswapV3IncreaseLiqudityUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//  client.UniswapV3IncreaseLiqudity.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
+func (u *UniswapV3IncreaseLiqudityUpsertOne) Ignore() *UniswapV3IncreaseLiqudityUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) DoNothing() *UniswapV3IncreaseLiqudityUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3IncreaseLiqudityCreate.OnConflict
+// documentation for more info.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) Update(set func(*UniswapV3IncreaseLiqudityUpsert)) *UniswapV3IncreaseLiqudityUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3IncreaseLiqudityUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) SetTokenID(v string) *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetTokenID(v)
+	})
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) UpdateTokenID() *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateTokenID()
+	})
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) SetLiquidity(v string) *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetLiquidity(v)
+	})
+}
+
+// UpdateLiquidity sets the "liquidity" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) UpdateLiquidity() *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateLiquidity()
+	})
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) SetAmount0(v string) *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetAmount0(v)
+	})
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) UpdateAmount0() *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateAmount0()
+	})
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) SetAmount1(v string) *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetAmount1(v)
+	})
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) UpdateAmount1() *UniswapV3IncreaseLiqudityUpsertOne {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateAmount1()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3IncreaseLiqudityCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UniswapV3IncreaseLiqudityUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UniswapV3IncreaseLiqudityCreateBulk is the builder for creating many UniswapV3IncreaseLiqudity entities in bulk.
 type UniswapV3IncreaseLiqudityCreateBulk struct {
 	config
 	builders []*UniswapV3IncreaseLiqudityCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UniswapV3IncreaseLiqudity entities in the database.
@@ -251,6 +485,7 @@ func (uvlcb *UniswapV3IncreaseLiqudityCreateBulk) Save(ctx context.Context) ([]*
 					_, err = mutators[i+1].Mutate(root, uvlcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = uvlcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, uvlcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -301,6 +536,167 @@ func (uvlcb *UniswapV3IncreaseLiqudityCreateBulk) Exec(ctx context.Context) erro
 // ExecX is like Exec, but panics if an error occurs.
 func (uvlcb *UniswapV3IncreaseLiqudityCreateBulk) ExecX(ctx context.Context) {
 	if err := uvlcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UniswapV3IncreaseLiqudity.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UniswapV3IncreaseLiqudityUpsert) {
+//			SetTokenID(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (uvlcb *UniswapV3IncreaseLiqudityCreateBulk) OnConflict(opts ...sql.ConflictOption) *UniswapV3IncreaseLiqudityUpsertBulk {
+	uvlcb.conflict = opts
+	return &UniswapV3IncreaseLiqudityUpsertBulk{
+		create: uvlcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (uvlcb *UniswapV3IncreaseLiqudityCreateBulk) OnConflictColumns(columns ...string) *UniswapV3IncreaseLiqudityUpsertBulk {
+	uvlcb.conflict = append(uvlcb.conflict, sql.ConflictColumns(columns...))
+	return &UniswapV3IncreaseLiqudityUpsertBulk{
+		create: uvlcb,
+	}
+}
+
+// UniswapV3IncreaseLiqudityUpsertBulk is the builder for "upsert"-ing
+// a bulk of UniswapV3IncreaseLiqudity nodes.
+type UniswapV3IncreaseLiqudityUpsertBulk struct {
+	create *UniswapV3IncreaseLiqudityCreateBulk
+}
+
+// UpdateNewValues updates the fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) UpdateNewValues() *UniswapV3IncreaseLiqudityUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UniswapV3IncreaseLiqudity.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+//
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) Ignore() *UniswapV3IncreaseLiqudityUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) DoNothing() *UniswapV3IncreaseLiqudityUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UniswapV3IncreaseLiqudityCreateBulk.OnConflict
+// documentation for more info.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) Update(set func(*UniswapV3IncreaseLiqudityUpsert)) *UniswapV3IncreaseLiqudityUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UniswapV3IncreaseLiqudityUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTokenID sets the "token_id" field.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) SetTokenID(v string) *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetTokenID(v)
+	})
+}
+
+// UpdateTokenID sets the "token_id" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) UpdateTokenID() *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateTokenID()
+	})
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) SetLiquidity(v string) *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetLiquidity(v)
+	})
+}
+
+// UpdateLiquidity sets the "liquidity" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) UpdateLiquidity() *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateLiquidity()
+	})
+}
+
+// SetAmount0 sets the "amount0" field.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) SetAmount0(v string) *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetAmount0(v)
+	})
+}
+
+// UpdateAmount0 sets the "amount0" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) UpdateAmount0() *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateAmount0()
+	})
+}
+
+// SetAmount1 sets the "amount1" field.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) SetAmount1(v string) *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.SetAmount1(v)
+	})
+}
+
+// UpdateAmount1 sets the "amount1" field to the value that was provided on create.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) UpdateAmount1() *UniswapV3IncreaseLiqudityUpsertBulk {
+	return u.Update(func(s *UniswapV3IncreaseLiqudityUpsert) {
+		s.UpdateAmount1()
+	})
+}
+
+// Exec executes the query.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UniswapV3IncreaseLiqudityCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UniswapV3IncreaseLiqudityCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UniswapV3IncreaseLiqudityUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

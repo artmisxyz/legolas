@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/artmisxyz/legolas/ent/event"
@@ -28,6 +29,7 @@ type EventCreate struct {
 	config
 	mutation *EventMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetTime sets the "time" field.
@@ -423,6 +425,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	_spec.OnConflict = ec.conflict
 	if value, ok := ec.mutation.Time(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -688,10 +691,371 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Event.Create().
+//		SetTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EventUpsert) {
+//			SetTime(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (ec *EventCreate) OnConflict(opts ...sql.ConflictOption) *EventUpsertOne {
+	ec.conflict = opts
+	return &EventUpsertOne{
+		create: ec,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Event.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (ec *EventCreate) OnConflictColumns(columns ...string) *EventUpsertOne {
+	ec.conflict = append(ec.conflict, sql.ConflictColumns(columns...))
+	return &EventUpsertOne{
+		create: ec,
+	}
+}
+
+type (
+	// EventUpsertOne is the builder for "upsert"-ing
+	//  one Event node.
+	EventUpsertOne struct {
+		create *EventCreate
+	}
+
+	// EventUpsert is the "OnConflict" setter.
+	EventUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetTime sets the "time" field.
+func (u *EventUpsert) SetTime(v time.Time) *EventUpsert {
+	u.Set(event.FieldTime, v)
+	return u
+}
+
+// UpdateTime sets the "time" field to the value that was provided on create.
+func (u *EventUpsert) UpdateTime() *EventUpsert {
+	u.SetExcluded(event.FieldTime)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *EventUpsert) SetName(v string) *EventUpsert {
+	u.Set(event.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *EventUpsert) UpdateName() *EventUpsert {
+	u.SetExcluded(event.FieldName)
+	return u
+}
+
+// SetSignature sets the "signature" field.
+func (u *EventUpsert) SetSignature(v string) *EventUpsert {
+	u.Set(event.FieldSignature, v)
+	return u
+}
+
+// UpdateSignature sets the "signature" field to the value that was provided on create.
+func (u *EventUpsert) UpdateSignature() *EventUpsert {
+	u.SetExcluded(event.FieldSignature)
+	return u
+}
+
+// SetAddress sets the "address" field.
+func (u *EventUpsert) SetAddress(v string) *EventUpsert {
+	u.Set(event.FieldAddress, v)
+	return u
+}
+
+// UpdateAddress sets the "address" field to the value that was provided on create.
+func (u *EventUpsert) UpdateAddress() *EventUpsert {
+	u.SetExcluded(event.FieldAddress)
+	return u
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (u *EventUpsert) SetBlockNumber(v uint64) *EventUpsert {
+	u.Set(event.FieldBlockNumber, v)
+	return u
+}
+
+// UpdateBlockNumber sets the "block_number" field to the value that was provided on create.
+func (u *EventUpsert) UpdateBlockNumber() *EventUpsert {
+	u.SetExcluded(event.FieldBlockNumber)
+	return u
+}
+
+// SetTxHash sets the "tx_hash" field.
+func (u *EventUpsert) SetTxHash(v string) *EventUpsert {
+	u.Set(event.FieldTxHash, v)
+	return u
+}
+
+// UpdateTxHash sets the "tx_hash" field to the value that was provided on create.
+func (u *EventUpsert) UpdateTxHash() *EventUpsert {
+	u.SetExcluded(event.FieldTxHash)
+	return u
+}
+
+// SetTxIndex sets the "tx_index" field.
+func (u *EventUpsert) SetTxIndex(v uint) *EventUpsert {
+	u.Set(event.FieldTxIndex, v)
+	return u
+}
+
+// UpdateTxIndex sets the "tx_index" field to the value that was provided on create.
+func (u *EventUpsert) UpdateTxIndex() *EventUpsert {
+	u.SetExcluded(event.FieldTxIndex)
+	return u
+}
+
+// SetBlockHash sets the "block_hash" field.
+func (u *EventUpsert) SetBlockHash(v string) *EventUpsert {
+	u.Set(event.FieldBlockHash, v)
+	return u
+}
+
+// UpdateBlockHash sets the "block_hash" field to the value that was provided on create.
+func (u *EventUpsert) UpdateBlockHash() *EventUpsert {
+	u.SetExcluded(event.FieldBlockHash)
+	return u
+}
+
+// SetIndex sets the "index" field.
+func (u *EventUpsert) SetIndex(v uint) *EventUpsert {
+	u.Set(event.FieldIndex, v)
+	return u
+}
+
+// UpdateIndex sets the "index" field to the value that was provided on create.
+func (u *EventUpsert) UpdateIndex() *EventUpsert {
+	u.SetExcluded(event.FieldIndex)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.Event.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *EventUpsertOne) UpdateNewValues() *EventUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//  client.Event.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
+func (u *EventUpsertOne) Ignore() *EventUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EventUpsertOne) DoNothing() *EventUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EventCreate.OnConflict
+// documentation for more info.
+func (u *EventUpsertOne) Update(set func(*EventUpsert)) *EventUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EventUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTime sets the "time" field.
+func (u *EventUpsertOne) SetTime(v time.Time) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTime(v)
+	})
+}
+
+// UpdateTime sets the "time" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateTime() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *EventUpsertOne) SetName(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateName() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetSignature sets the "signature" field.
+func (u *EventUpsertOne) SetSignature(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetSignature(v)
+	})
+}
+
+// UpdateSignature sets the "signature" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateSignature() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateSignature()
+	})
+}
+
+// SetAddress sets the "address" field.
+func (u *EventUpsertOne) SetAddress(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetAddress(v)
+	})
+}
+
+// UpdateAddress sets the "address" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateAddress() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateAddress()
+	})
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (u *EventUpsertOne) SetBlockNumber(v uint64) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetBlockNumber(v)
+	})
+}
+
+// UpdateBlockNumber sets the "block_number" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateBlockNumber() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateBlockNumber()
+	})
+}
+
+// SetTxHash sets the "tx_hash" field.
+func (u *EventUpsertOne) SetTxHash(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTxHash(v)
+	})
+}
+
+// UpdateTxHash sets the "tx_hash" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateTxHash() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTxHash()
+	})
+}
+
+// SetTxIndex sets the "tx_index" field.
+func (u *EventUpsertOne) SetTxIndex(v uint) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTxIndex(v)
+	})
+}
+
+// UpdateTxIndex sets the "tx_index" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateTxIndex() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTxIndex()
+	})
+}
+
+// SetBlockHash sets the "block_hash" field.
+func (u *EventUpsertOne) SetBlockHash(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetBlockHash(v)
+	})
+}
+
+// UpdateBlockHash sets the "block_hash" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateBlockHash() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateBlockHash()
+	})
+}
+
+// SetIndex sets the "index" field.
+func (u *EventUpsertOne) SetIndex(v uint) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetIndex(v)
+	})
+}
+
+// UpdateIndex sets the "index" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateIndex() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateIndex()
+	})
+}
+
+// Exec executes the query.
+func (u *EventUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for EventCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EventUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *EventUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *EventUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // EventCreateBulk is the builder for creating many Event entities in bulk.
 type EventCreateBulk struct {
 	config
 	builders []*EventCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Event entities in the database.
@@ -717,6 +1081,7 @@ func (ecb *EventCreateBulk) Save(ctx context.Context) ([]*Event, error) {
 					_, err = mutators[i+1].Mutate(root, ecb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = ecb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, ecb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -767,6 +1132,237 @@ func (ecb *EventCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (ecb *EventCreateBulk) ExecX(ctx context.Context) {
 	if err := ecb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Event.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EventUpsert) {
+//			SetTime(v+v).
+//		}).
+//		Exec(ctx)
+//
+func (ecb *EventCreateBulk) OnConflict(opts ...sql.ConflictOption) *EventUpsertBulk {
+	ecb.conflict = opts
+	return &EventUpsertBulk{
+		create: ecb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Event.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+//
+func (ecb *EventCreateBulk) OnConflictColumns(columns ...string) *EventUpsertBulk {
+	ecb.conflict = append(ecb.conflict, sql.ConflictColumns(columns...))
+	return &EventUpsertBulk{
+		create: ecb,
+	}
+}
+
+// EventUpsertBulk is the builder for "upsert"-ing
+// a bulk of Event nodes.
+type EventUpsertBulk struct {
+	create *EventCreateBulk
+}
+
+// UpdateNewValues updates the fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Event.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+//
+func (u *EventUpsertBulk) UpdateNewValues() *EventUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Event.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+//
+func (u *EventUpsertBulk) Ignore() *EventUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EventUpsertBulk) DoNothing() *EventUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EventCreateBulk.OnConflict
+// documentation for more info.
+func (u *EventUpsertBulk) Update(set func(*EventUpsert)) *EventUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EventUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetTime sets the "time" field.
+func (u *EventUpsertBulk) SetTime(v time.Time) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTime(v)
+	})
+}
+
+// UpdateTime sets the "time" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateTime() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *EventUpsertBulk) SetName(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateName() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetSignature sets the "signature" field.
+func (u *EventUpsertBulk) SetSignature(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetSignature(v)
+	})
+}
+
+// UpdateSignature sets the "signature" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateSignature() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateSignature()
+	})
+}
+
+// SetAddress sets the "address" field.
+func (u *EventUpsertBulk) SetAddress(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetAddress(v)
+	})
+}
+
+// UpdateAddress sets the "address" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateAddress() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateAddress()
+	})
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (u *EventUpsertBulk) SetBlockNumber(v uint64) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetBlockNumber(v)
+	})
+}
+
+// UpdateBlockNumber sets the "block_number" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateBlockNumber() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateBlockNumber()
+	})
+}
+
+// SetTxHash sets the "tx_hash" field.
+func (u *EventUpsertBulk) SetTxHash(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTxHash(v)
+	})
+}
+
+// UpdateTxHash sets the "tx_hash" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateTxHash() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTxHash()
+	})
+}
+
+// SetTxIndex sets the "tx_index" field.
+func (u *EventUpsertBulk) SetTxIndex(v uint) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetTxIndex(v)
+	})
+}
+
+// UpdateTxIndex sets the "tx_index" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateTxIndex() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateTxIndex()
+	})
+}
+
+// SetBlockHash sets the "block_hash" field.
+func (u *EventUpsertBulk) SetBlockHash(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetBlockHash(v)
+	})
+}
+
+// UpdateBlockHash sets the "block_hash" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateBlockHash() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateBlockHash()
+	})
+}
+
+// SetIndex sets the "index" field.
+func (u *EventUpsertBulk) SetIndex(v uint) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetIndex(v)
+	})
+}
+
+// UpdateIndex sets the "index" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateIndex() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateIndex()
+	})
+}
+
+// Exec executes the query.
+func (u *EventUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the EventCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for EventCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EventUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

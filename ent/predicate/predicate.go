@@ -9,6 +9,9 @@ import (
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)
 
+// Syncer is the predicate function for syncer builders.
+type Syncer func(*sql.Selector)
+
 // UniswapV3Collect is the predicate function for uniswapv3collect builders.
 type UniswapV3Collect func(*sql.Selector)
 
