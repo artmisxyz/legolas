@@ -80,7 +80,10 @@ func (s *Syncer) Init(id int, startBlock, finishBlock uint64, conf configs.Confi
 	fmt.Printf("%s from %d to %d\n", s.name, s.current, s.finish)
 }
 
-func (s *Syncer) Sync() {
+func (s *Syncer) Sync() bool {
+	if s.current >= s.finish {
+		return true
+	}
 	lag := uint64(0)
 	if s.finish == 0 {
 		head := <-s.Head
@@ -111,12 +114,15 @@ func (s *Syncer) Sync() {
 		}
 		s.current++
 	}
+	return false
 }
 
 func (s *Syncer) Start() {
 	go func() {
 		for {
-			s.Sync()
+			if s.Sync() {
+				break
+			}
 		}
 	}()
 }
