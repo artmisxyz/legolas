@@ -3,7 +3,6 @@ package configs
 type Config struct {
 	General struct {
 		BlockLag         int    `yaml:"BlockLag"`
-		StartBlockNumber uint64 `yaml:"StartBlockNumber"`
 	} `yaml:"General"`
 	Node struct {
 		RPC       string `yaml:"RPC"`

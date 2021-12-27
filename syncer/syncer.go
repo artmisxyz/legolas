@@ -18,32 +18,35 @@ import (
 )
 
 type Syncer struct {
-	newHeaders chan *types.Header
-	ws         *ethclient.Client
-	rpc        *ethclient.Client
+	id   int
+	Head chan *types.Header
+	ws   *ethclient.Client
+	rpc  *ethclient.Client
 
 	logger *zap.Logger
 
 	blockPositionHolder blockposition.BlockPositionHolder
 
-	currentBlockPosition uint64
-	lag                  uint64
+	lag int
 
 	inspectors map[string]inspector.Inspector
 }
 
-func (s *Syncer) Init(conf configs.Config) {
+func (s *Syncer) Init(id int, startBlock, finishBlock uint64, conf configs.Config) {
+	s.id = id
+	s.lag = conf.General.BlockLag
+
 	l := logger.New(conf)
-	s.logger = l.Named("syncer")
+	s.logger = l.Named(fmt.Sprintf("syncer:%d", s.id))
 
 	s.ws = connections.RPC(conf.Node.Websocket)
 	s.rpc = connections.Websocket(conf.Node.RPC)
 
-	newHeaders, err := connections.CurrentBlockChan(s.logger, s.ws)
+	head, err := connections.CurrentBlockChan(s.logger, s.ws)
 	if err != nil {
 		panic(err)
 	}
-	s.newHeaders = newHeaders
+	s.Head = head
 
 	db, err := database.NewPostgresClient(conf)
 	if err != nil {
@@ -56,55 +59,69 @@ func (s *Syncer) Init(conf configs.Config) {
 
 	s.blockPositionHolder = blockposition.
 		NewRedisPositionHolder(
-			univ3Inspector.Name(),
-			conf.General.StartBlockNumber,
+			univ3Inspector.Name()+fmt.Sprintf(":%d", id),
+			startBlock,
+			finishBlock,
 			database.NewRedis(conf))
+
 	if !s.blockPositionHolder.Exists() {
-		fmt.Println("block position does not exist. creating a new one.")
+		fmt.Printf("block position for syncer %d does not exist. creating a new one.", id)
 		err = s.blockPositionHolder.Create()
 		if err != nil {
 			panic(err)
 		}
 	}
-	s.currentBlockPosition, err = s.blockPositionHolder.Read()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("starting from block: %d\n", s.currentBlockPosition)
 }
 
 func (s *Syncer) Sync() {
-	currentBlockPosition, err := s.blockPositionHolder.Read()
+	startBlock, err := s.blockPositionHolder.Read(blockposition.Start)
 	if err != nil {
 		s.logger.Error("error reading block position")
 		return
 	}
-	s.currentBlockPosition = currentBlockPosition
-	newHeader := <-s.newHeaders
+	finishBlock, err := s.blockPositionHolder.Read(blockposition.Finish)
+	if err != nil {
+		s.logger.Error("error reading block position")
+		return
+	}
+	fmt.Printf("syncer %d from %d to %d\n", s.id, startBlock, finishBlock)
+	lag := uint64(0)
+	if finishBlock == 0 {
+		head := <-s.Head
+		finishBlock = head.Number.Uint64()
+		lag = uint64(s.lag)
+	}
 
-	for s.currentBlockPosition < newHeader.Number.Uint64()-s.lag {
-		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(s.currentBlockPosition)))
+	for i := startBlock; i < finishBlock-lag; i++ {
+		block, err := s.rpc.BlockByNumber(context.Background(), big.NewInt(int64(i)))
 		if err != nil {
-			s.logger.Error("error getting block", zap.Error(err))
+			s.logger.Error("error getting block", zap.Uint64("block_number", i), zap.Error(err))
 			break
 		}
 		s.logger.
 			Info("processing block",
-				zap.Uint64("current_block", s.currentBlockPosition),
-				zap.Float64("progress", float64(s.currentBlockPosition)/float64(newHeader.Number.Uint64())))
+				zap.Uint64("current_block", i),
+				zap.Float64("progress", float64(i)/float64(finishBlock)))
 
 		err = s.Inspect(block)
 		if err != nil {
-			s.logger.Error("error inspecting block", zap.Uint64("block_number", s.currentBlockPosition), zap.Error(err))
+			s.logger.Error("error inspecting block", zap.Uint64("block_number", i), zap.Error(err))
 			break
 		}
-		err = s.blockPositionHolder.Incr()
+		err = s.blockPositionHolder.Update(i)
 		if err != nil {
-			s.logger.Error("error updating block position file", zap.Error(err))
+			s.logger.Error("error updating block position", zap.Error(err))
 			break
 		}
-		s.currentBlockPosition++
 	}
+}
+
+func (s *Syncer) Start() {
+	go func() {
+		for {
+			s.Sync()
+		}
+	}()
 }
 
 func (s *Syncer) Inspect(block *types.Block) error {

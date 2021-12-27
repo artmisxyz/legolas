@@ -86,6 +86,10 @@ func (v *uniswapV3) InspectBlock(block *types.Block) error {
 		}
 		e, err := v.storage.CreateEvent(t, eventHandler.Name(), eventHandler.Signature(), log)
 		if err != nil {
+			if ent.IsConstraintError(err) {
+				v.logger.Warn("event creation constraint error", zap.Error(err))
+				continue
+			}
 			return err
 		}
 		err = eventHandler.ParseAndSavePayload(e.ID, log)

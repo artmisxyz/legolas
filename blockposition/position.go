@@ -4,6 +4,14 @@ type BlockPositionHolder interface {
 	Update(uint64) error
 	Create() error
 	Exists() bool
-	Read() (uint64, error)
+	Read(point Point) (uint64, error)
 	Incr() error
 }
+
+type Point int
+
+const (
+	Start = iota
+	Current
+	Finish
+)
