@@ -28,6 +28,26 @@ func (uvmu *UniswapV3PoolMintUpdate) Where(ps ...predicate.UniswapV3PoolMint) *U
 	return uvmu
 }
 
+// SetSender sets the "sender" field.
+func (uvmu *UniswapV3PoolMintUpdate) SetSender(s string) *UniswapV3PoolMintUpdate {
+	uvmu.mutation.SetSender(s)
+	return uvmu
+}
+
+// SetNillableSender sets the "sender" field if the given value is not nil.
+func (uvmu *UniswapV3PoolMintUpdate) SetNillableSender(s *string) *UniswapV3PoolMintUpdate {
+	if s != nil {
+		uvmu.SetSender(*s)
+	}
+	return uvmu
+}
+
+// ClearSender clears the value of the "sender" field.
+func (uvmu *UniswapV3PoolMintUpdate) ClearSender() *UniswapV3PoolMintUpdate {
+	uvmu.mutation.ClearSender()
+	return uvmu
+}
+
 // SetOwner sets the "owner" field.
 func (uvmu *UniswapV3PoolMintUpdate) SetOwner(s string) *UniswapV3PoolMintUpdate {
 	uvmu.mutation.SetOwner(s)
@@ -172,6 +192,19 @@ func (uvmu *UniswapV3PoolMintUpdate) sqlSave(ctx context.Context) (n int, err er
 			}
 		}
 	}
+	if value, ok := uvmu.mutation.Sender(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: uniswapv3poolmint.FieldSender,
+		})
+	}
+	if uvmu.mutation.SenderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: uniswapv3poolmint.FieldSender,
+		})
+	}
 	if value, ok := uvmu.mutation.Owner(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -266,6 +299,26 @@ type UniswapV3PoolMintUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UniswapV3PoolMintMutation
+}
+
+// SetSender sets the "sender" field.
+func (uvmuo *UniswapV3PoolMintUpdateOne) SetSender(s string) *UniswapV3PoolMintUpdateOne {
+	uvmuo.mutation.SetSender(s)
+	return uvmuo
+}
+
+// SetNillableSender sets the "sender" field if the given value is not nil.
+func (uvmuo *UniswapV3PoolMintUpdateOne) SetNillableSender(s *string) *UniswapV3PoolMintUpdateOne {
+	if s != nil {
+		uvmuo.SetSender(*s)
+	}
+	return uvmuo
+}
+
+// ClearSender clears the value of the "sender" field.
+func (uvmuo *UniswapV3PoolMintUpdateOne) ClearSender() *UniswapV3PoolMintUpdateOne {
+	uvmuo.mutation.ClearSender()
+	return uvmuo
 }
 
 // SetOwner sets the "owner" field.
@@ -435,6 +488,19 @@ func (uvmuo *UniswapV3PoolMintUpdateOne) sqlSave(ctx context.Context) (_node *Un
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uvmuo.mutation.Sender(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: uniswapv3poolmint.FieldSender,
+		})
+	}
+	if uvmuo.mutation.SenderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: uniswapv3poolmint.FieldSender,
+		})
 	}
 	if value, ok := uvmuo.mutation.Owner(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

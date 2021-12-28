@@ -14,6 +14,7 @@ type UniswapV3PoolMint struct {
 // Fields of the UniswapV3PoolMint.
 func (UniswapV3PoolMint) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("sender").Optional(),
 		field.String("owner"),
 		BigIntField("tick_lower"),
 		BigIntField("tick_upper"),

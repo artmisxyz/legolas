@@ -220,6 +220,7 @@ var (
 	// UniswapV3poolMintsColumns holds the columns for the "uniswap_v3pool_mints" table.
 	UniswapV3poolMintsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "sender", Type: field.TypeString, Nullable: true},
 		{Name: "owner", Type: field.TypeString},
 		{Name: "tick_lower", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
 		{Name: "tick_upper", Type: field.TypeString, SchemaType: map[string]string{"postgres": "numeric(50,0)", "sqlite3": "integer"}},
@@ -236,7 +237,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "uniswap_v3pool_mints_events_pool_mint",
-				Columns:    []*schema.Column{UniswapV3poolMintsColumns[7]},
+				Columns:    []*schema.Column{UniswapV3poolMintsColumns[8]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

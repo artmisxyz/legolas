@@ -81,14 +81,16 @@ func (s *Syncer) Init(id int, startBlock, finishBlock uint64, conf configs.Confi
 }
 
 func (s *Syncer) Sync() bool {
-	if s.current >= s.finish {
-		return true
-	}
 	lag := uint64(0)
 	if s.finish == 0 {
 		head := <-s.Head
 		s.finish = head.Number.Uint64()
 		lag = uint64(s.lag)
+		fmt.Printf("%s from %d to head %d\n", s.name, s.current, s.finish)
+	}
+	if s.current >= s.finish {
+		fmt.Printf("syncer %s is done\n", s.name)
+		return true
 	}
 
 	for s.current < s.finish-lag {

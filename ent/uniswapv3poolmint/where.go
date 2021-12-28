@@ -91,6 +91,13 @@ func IDLTE(id int) predicate.UniswapV3PoolMint {
 	})
 }
 
+// Sender applies equality check predicate on the "sender" field. It's identical to SenderEQ.
+func Sender(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSender), v))
+	})
+}
+
 // Owner applies equality check predicate on the "owner" field. It's identical to OwnerEQ.
 func Owner(v string) predicate.UniswapV3PoolMint {
 	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
@@ -130,6 +137,131 @@ func Amount0(v string) predicate.UniswapV3PoolMint {
 func Amount1(v string) predicate.UniswapV3PoolMint {
 	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldAmount1), v))
+	})
+}
+
+// SenderEQ applies the EQ predicate on the "sender" field.
+func SenderEQ(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSender), v))
+	})
+}
+
+// SenderNEQ applies the NEQ predicate on the "sender" field.
+func SenderNEQ(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSender), v))
+	})
+}
+
+// SenderIn applies the In predicate on the "sender" field.
+func SenderIn(vs ...string) predicate.UniswapV3PoolMint {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSender), v...))
+	})
+}
+
+// SenderNotIn applies the NotIn predicate on the "sender" field.
+func SenderNotIn(vs ...string) predicate.UniswapV3PoolMint {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSender), v...))
+	})
+}
+
+// SenderGT applies the GT predicate on the "sender" field.
+func SenderGT(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSender), v))
+	})
+}
+
+// SenderGTE applies the GTE predicate on the "sender" field.
+func SenderGTE(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSender), v))
+	})
+}
+
+// SenderLT applies the LT predicate on the "sender" field.
+func SenderLT(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSender), v))
+	})
+}
+
+// SenderLTE applies the LTE predicate on the "sender" field.
+func SenderLTE(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSender), v))
+	})
+}
+
+// SenderContains applies the Contains predicate on the "sender" field.
+func SenderContains(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSender), v))
+	})
+}
+
+// SenderHasPrefix applies the HasPrefix predicate on the "sender" field.
+func SenderHasPrefix(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSender), v))
+	})
+}
+
+// SenderHasSuffix applies the HasSuffix predicate on the "sender" field.
+func SenderHasSuffix(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSender), v))
+	})
+}
+
+// SenderIsNil applies the IsNil predicate on the "sender" field.
+func SenderIsNil() predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSender)))
+	})
+}
+
+// SenderNotNil applies the NotNil predicate on the "sender" field.
+func SenderNotNil() predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSender)))
+	})
+}
+
+// SenderEqualFold applies the EqualFold predicate on the "sender" field.
+func SenderEqualFold(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSender), v))
+	})
+}
+
+// SenderContainsFold applies the ContainsFold predicate on the "sender" field.
+func SenderContainsFold(v string) predicate.UniswapV3PoolMint {
+	return predicate.UniswapV3PoolMint(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSender), v))
 	})
 }
 

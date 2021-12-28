@@ -7,6 +7,8 @@ const (
 	Label = "uniswap_v3pool_mint"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldSender holds the string denoting the sender field in the database.
+	FieldSender = "sender"
 	// FieldOwner holds the string denoting the owner field in the database.
 	FieldOwner = "owner"
 	// FieldTickLower holds the string denoting the tick_lower field in the database.
@@ -35,6 +37,7 @@ const (
 // Columns holds all SQL columns for uniswapv3poolmint fields.
 var Columns = []string{
 	FieldID,
+	FieldSender,
 	FieldOwner,
 	FieldTickLower,
 	FieldTickUpper,

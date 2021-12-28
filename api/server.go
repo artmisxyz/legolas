@@ -42,5 +42,14 @@ func (s *Server) Listen() {
 
 	r.GET("/events", univ3api.Events)
 	r.GET("/swaps", univ3api.Swaps)
+	r.GET("/burns", univ3api.Burns)
+	r.GET("/collects", univ3api.Collects)
+	r.GET("/decrease-liquidities", univ3api.DecreaseLiquidity)
+	r.GET("/increase-liquidities", univ3api.IncreaseLiquidity)
+	r.GET("/pool-createds", univ3api.PoolCreated)
+	r.GET("/flashes", univ3api.Flashes)
+	r.GET("/pool-initializes", univ3api.PoolInitialize)
+	r.GET("/mints", univ3api.Mints)
+	r.GET("/transfers", univ3api.Transfers)
 	r.Run(fmt.Sprintf(":%d", s.port))
 }

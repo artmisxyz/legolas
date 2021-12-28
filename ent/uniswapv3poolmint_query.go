@@ -291,12 +291,12 @@ func (uvmq *UniswapV3PoolMintQuery) WithEvent(opts ...func(*EventQuery)) *Uniswa
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Sender string `json:"sender,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.UniswapV3PoolMint.Query().
-//		GroupBy(uniswapv3poolmint.FieldOwner).
+//		GroupBy(uniswapv3poolmint.FieldSender).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +318,11 @@ func (uvmq *UniswapV3PoolMintQuery) GroupBy(field string, fields ...string) *Uni
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Sender string `json:"sender,omitempty"`
 //	}
 //
 //	client.UniswapV3PoolMint.Query().
-//		Select(uniswapv3poolmint.FieldOwner).
+//		Select(uniswapv3poolmint.FieldSender).
 //		Scan(ctx, &v)
 //
 func (uvmq *UniswapV3PoolMintQuery) Select(fields ...string) *UniswapV3PoolMintSelect {

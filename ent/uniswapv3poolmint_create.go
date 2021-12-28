@@ -22,6 +22,20 @@ type UniswapV3PoolMintCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetSender sets the "sender" field.
+func (uvmc *UniswapV3PoolMintCreate) SetSender(s string) *UniswapV3PoolMintCreate {
+	uvmc.mutation.SetSender(s)
+	return uvmc
+}
+
+// SetNillableSender sets the "sender" field if the given value is not nil.
+func (uvmc *UniswapV3PoolMintCreate) SetNillableSender(s *string) *UniswapV3PoolMintCreate {
+	if s != nil {
+		uvmc.SetSender(*s)
+	}
+	return uvmc
+}
+
 // SetOwner sets the "owner" field.
 func (uvmc *UniswapV3PoolMintCreate) SetOwner(s string) *UniswapV3PoolMintCreate {
 	uvmc.mutation.SetOwner(s)
@@ -188,6 +202,14 @@ func (uvmc *UniswapV3PoolMintCreate) createSpec() (*UniswapV3PoolMint, *sqlgraph
 		}
 	)
 	_spec.OnConflict = uvmc.conflict
+	if value, ok := uvmc.mutation.Sender(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: uniswapv3poolmint.FieldSender,
+		})
+		_node.Sender = value
+	}
 	if value, ok := uvmc.mutation.Owner(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -263,7 +285,7 @@ func (uvmc *UniswapV3PoolMintCreate) createSpec() (*UniswapV3PoolMint, *sqlgraph
 // of the `INSERT` statement. For example:
 //
 //	client.UniswapV3PoolMint.Create().
-//		SetOwner(v).
+//		SetSender(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -272,7 +294,7 @@ func (uvmc *UniswapV3PoolMintCreate) createSpec() (*UniswapV3PoolMint, *sqlgraph
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.UniswapV3PoolMintUpsert) {
-//			SetOwner(v+v).
+//			SetSender(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -309,6 +331,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetSender sets the "sender" field.
+func (u *UniswapV3PoolMintUpsert) SetSender(v string) *UniswapV3PoolMintUpsert {
+	u.Set(uniswapv3poolmint.FieldSender, v)
+	return u
+}
+
+// UpdateSender sets the "sender" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsert) UpdateSender() *UniswapV3PoolMintUpsert {
+	u.SetExcluded(uniswapv3poolmint.FieldSender)
+	return u
+}
+
+// ClearSender clears the value of the "sender" field.
+func (u *UniswapV3PoolMintUpsert) ClearSender() *UniswapV3PoolMintUpsert {
+	u.SetNull(uniswapv3poolmint.FieldSender)
+	return u
+}
 
 // SetOwner sets the "owner" field.
 func (u *UniswapV3PoolMintUpsert) SetOwner(v string) *UniswapV3PoolMintUpsert {
@@ -422,6 +462,27 @@ func (u *UniswapV3PoolMintUpsertOne) Update(set func(*UniswapV3PoolMintUpsert)) 
 		set(&UniswapV3PoolMintUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetSender sets the "sender" field.
+func (u *UniswapV3PoolMintUpsertOne) SetSender(v string) *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetSender(v)
+	})
+}
+
+// UpdateSender sets the "sender" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertOne) UpdateSender() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateSender()
+	})
+}
+
+// ClearSender clears the value of the "sender" field.
+func (u *UniswapV3PoolMintUpsertOne) ClearSender() *UniswapV3PoolMintUpsertOne {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.ClearSender()
+	})
 }
 
 // SetOwner sets the "owner" field.
@@ -638,7 +699,7 @@ func (uvmcb *UniswapV3PoolMintCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.UniswapV3PoolMintUpsert) {
-//			SetOwner(v+v).
+//			SetSender(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -709,6 +770,27 @@ func (u *UniswapV3PoolMintUpsertBulk) Update(set func(*UniswapV3PoolMintUpsert))
 		set(&UniswapV3PoolMintUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetSender sets the "sender" field.
+func (u *UniswapV3PoolMintUpsertBulk) SetSender(v string) *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.SetSender(v)
+	})
+}
+
+// UpdateSender sets the "sender" field to the value that was provided on create.
+func (u *UniswapV3PoolMintUpsertBulk) UpdateSender() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.UpdateSender()
+	})
+}
+
+// ClearSender clears the value of the "sender" field.
+func (u *UniswapV3PoolMintUpsertBulk) ClearSender() *UniswapV3PoolMintUpsertBulk {
+	return u.Update(func(s *UniswapV3PoolMintUpsert) {
+		s.ClearSender()
+	})
 }
 
 // SetOwner sets the "owner" field.

@@ -5859,6 +5859,7 @@ type UniswapV3PoolMintMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	sender        *string
 	owner         *string
 	tick_lower    *string
 	tick_upper    *string
@@ -5950,6 +5951,55 @@ func (m *UniswapV3PoolMintMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetSender sets the "sender" field.
+func (m *UniswapV3PoolMintMutation) SetSender(s string) {
+	m.sender = &s
+}
+
+// Sender returns the value of the "sender" field in the mutation.
+func (m *UniswapV3PoolMintMutation) Sender() (r string, exists bool) {
+	v := m.sender
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSender returns the old "sender" field's value of the UniswapV3PoolMint entity.
+// If the UniswapV3PoolMint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UniswapV3PoolMintMutation) OldSender(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSender is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSender requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSender: %w", err)
+	}
+	return oldValue.Sender, nil
+}
+
+// ClearSender clears the value of the "sender" field.
+func (m *UniswapV3PoolMintMutation) ClearSender() {
+	m.sender = nil
+	m.clearedFields[uniswapv3poolmint.FieldSender] = struct{}{}
+}
+
+// SenderCleared returns if the "sender" field was cleared in this mutation.
+func (m *UniswapV3PoolMintMutation) SenderCleared() bool {
+	_, ok := m.clearedFields[uniswapv3poolmint.FieldSender]
+	return ok
+}
+
+// ResetSender resets all changes to the "sender" field.
+func (m *UniswapV3PoolMintMutation) ResetSender() {
+	m.sender = nil
+	delete(m.clearedFields, uniswapv3poolmint.FieldSender)
 }
 
 // SetOwner sets the "owner" field.
@@ -6226,7 +6276,10 @@ func (m *UniswapV3PoolMintMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UniswapV3PoolMintMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
+	if m.sender != nil {
+		fields = append(fields, uniswapv3poolmint.FieldSender)
+	}
 	if m.owner != nil {
 		fields = append(fields, uniswapv3poolmint.FieldOwner)
 	}
@@ -6253,6 +6306,8 @@ func (m *UniswapV3PoolMintMutation) Fields() []string {
 // schema.
 func (m *UniswapV3PoolMintMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case uniswapv3poolmint.FieldSender:
+		return m.Sender()
 	case uniswapv3poolmint.FieldOwner:
 		return m.Owner()
 	case uniswapv3poolmint.FieldTickLower:
@@ -6274,6 +6329,8 @@ func (m *UniswapV3PoolMintMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UniswapV3PoolMintMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case uniswapv3poolmint.FieldSender:
+		return m.OldSender(ctx)
 	case uniswapv3poolmint.FieldOwner:
 		return m.OldOwner(ctx)
 	case uniswapv3poolmint.FieldTickLower:
@@ -6295,6 +6352,13 @@ func (m *UniswapV3PoolMintMutation) OldField(ctx context.Context, name string) (
 // type.
 func (m *UniswapV3PoolMintMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case uniswapv3poolmint.FieldSender:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSender(v)
+		return nil
 	case uniswapv3poolmint.FieldOwner:
 		v, ok := value.(string)
 		if !ok {
@@ -6366,7 +6430,11 @@ func (m *UniswapV3PoolMintMutation) AddField(name string, value ent.Value) error
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UniswapV3PoolMintMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(uniswapv3poolmint.FieldSender) {
+		fields = append(fields, uniswapv3poolmint.FieldSender)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -6379,6 +6447,11 @@ func (m *UniswapV3PoolMintMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UniswapV3PoolMintMutation) ClearField(name string) error {
+	switch name {
+	case uniswapv3poolmint.FieldSender:
+		m.ClearSender()
+		return nil
+	}
 	return fmt.Errorf("unknown UniswapV3PoolMint nullable field %s", name)
 }
 
@@ -6386,6 +6459,9 @@ func (m *UniswapV3PoolMintMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UniswapV3PoolMintMutation) ResetField(name string) error {
 	switch name {
+	case uniswapv3poolmint.FieldSender:
+		m.ResetSender()
+		return nil
 	case uniswapv3poolmint.FieldOwner:
 		m.ResetOwner()
 		return nil

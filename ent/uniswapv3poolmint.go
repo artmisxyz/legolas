@@ -16,6 +16,8 @@ type UniswapV3PoolMint struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Sender holds the value of the "sender" field.
+	Sender string `json:"sender,omitempty"`
 	// Owner holds the value of the "owner" field.
 	Owner string `json:"owner,omitempty"`
 	// TickLower holds the value of the "tick_lower" field.
@@ -64,7 +66,7 @@ func (*UniswapV3PoolMint) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case uniswapv3poolmint.FieldID:
 			values[i] = new(sql.NullInt64)
-		case uniswapv3poolmint.FieldOwner, uniswapv3poolmint.FieldTickLower, uniswapv3poolmint.FieldTickUpper, uniswapv3poolmint.FieldAmount, uniswapv3poolmint.FieldAmount0, uniswapv3poolmint.FieldAmount1:
+		case uniswapv3poolmint.FieldSender, uniswapv3poolmint.FieldOwner, uniswapv3poolmint.FieldTickLower, uniswapv3poolmint.FieldTickUpper, uniswapv3poolmint.FieldAmount, uniswapv3poolmint.FieldAmount0, uniswapv3poolmint.FieldAmount1:
 			values[i] = new(sql.NullString)
 		case uniswapv3poolmint.ForeignKeys[0]: // event_id
 			values[i] = new(sql.NullInt64)
@@ -89,6 +91,12 @@ func (uvm *UniswapV3PoolMint) assignValues(columns []string, values []interface{
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			uvm.ID = int(value.Int64)
+		case uniswapv3poolmint.FieldSender:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sender", values[i])
+			} else if value.Valid {
+				uvm.Sender = value.String
+			}
 		case uniswapv3poolmint.FieldOwner:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field owner", values[i])
@@ -165,6 +173,8 @@ func (uvm *UniswapV3PoolMint) String() string {
 	var builder strings.Builder
 	builder.WriteString("UniswapV3PoolMint(")
 	builder.WriteString(fmt.Sprintf("id=%v", uvm.ID))
+	builder.WriteString(", sender=")
+	builder.WriteString(uvm.Sender)
 	builder.WriteString(", owner=")
 	builder.WriteString(uvm.Owner)
 	builder.WriteString(", tick_lower=")
